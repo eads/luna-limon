@@ -8,7 +8,7 @@
 	<ul class="space-y-2">
 		{#each items as { product, quantity } (product.id)}
 			<li class="flex justify-between border-b pb-1">
-				<span>{product.name}</span>
+				<span>{product.nombre}</span>
 				<span>x{quantity}</span>
 			</li>
 		{/each}
