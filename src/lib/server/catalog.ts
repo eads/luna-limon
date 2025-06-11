@@ -2,21 +2,21 @@ import { base } from './airtable';
 
 export interface Product {
 	id: string;
-	name: string;
-	description: string;
-	price: number;
-	image?: string;
+	nombre: string;
+	descripción: string;
+	precio: number;
+	imagen?: string;
 }
 
-const TABLE = process.env.AIRTABLE_PRODUCTS_TABLE!;
+import { AIRTABLE_PRODUCTS_TABLE } from '$env/static/private';
 
 export async function listProducts(): Promise<Product[]> {
-	const records = await base(TABLE).select().all();
+	const records = await base(AIRTABLE_PRODUCTS_TABLE).select().all();
 	return records.map((r) => ({
 		id: r.id,
-		name: (r.get('name') as string) || '',
-		description: (r.get('description') as string) || '',
-		price: Number(r.get('price') ?? 0),
-		image: r.get('image') as string | undefined
+		nombre: (r.get('nombre') as string) || '',
+		descripción: (r.get('descripción') as string) || '',
+		precio: Number(r.get('precio') ?? 0),
+		image: r.get('imagen') as string | undefined
 	}));
 }

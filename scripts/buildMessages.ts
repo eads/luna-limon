@@ -3,10 +3,10 @@ import Airtable from 'airtable';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const { AIRTABLE_TOKEN, AIRTABLE_BASE, AIRTABLE_TABLE } = process.env;
+const { AIRTABLE_TOKEN, AIRTABLE_BASE, AIRTABLE_COPY_TABLE } = process.env;
 const base = new Airtable({ apiKey: AIRTABLE_TOKEN }).base(AIRTABLE_BASE);
 
-const records = await base(AIRTABLE_TABLE).select().all();
+const records = await base(AIRTABLE_COPY_TABLE).select().all();
 
 const bundles: Record<string, Record<string, { variants: { value: string }[] }>> = {};
 
