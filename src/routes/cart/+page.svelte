@@ -14,6 +14,9 @@
 		{/each}
 	</ul>
 	<a href="/checkout" class="mt-4 inline-block text-blue-600 underline">Checkout</a>
+	<button class="ml-4 text-red-600 underline text-sm" on:click={() => cart.clear()}>
+		Reset cart
+	</button>
 {:else}
 	<p>Cart is empty</p>
 {/if}
