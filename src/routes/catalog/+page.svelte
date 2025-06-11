@@ -3,6 +3,16 @@
 	import { cart } from '$lib/cart';
 	export let data: { products: Product[] };
 	console.log(data);
+	let added = new Set<string>();
+	function handleAdd(product: Product) {
+		cart.add(product);
+		added.add(product.id);
+		added = new Set(added);
+		setTimeout(() => {
+			added.delete(product.id);
+			added = new Set(added);
+		}, 800);
+	}
 </script>
 
 <h1 class="text-2xl font-bold mb-4">Catalog</h1>
@@ -14,9 +24,13 @@
 			<p class="font-medium">${product.precio}</p>
 			<button
 				class="mt-auto rounded bg-blue-600 text-white py-1 px-2 text-sm"
-				on:click={() => cart.add(product)}
+				on:click={() => handleAdd(product)}
 			>
-				Add
+				{#if added.has(product.id)}
+					Added!
+				{:else}
+					Add
+				{/if}
 			</button>
 		</li>
 	{/each}
