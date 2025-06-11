@@ -37,6 +37,10 @@ You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
 
+## Styling
+
+This project is configured with [Tailwind CSS](https://tailwindcss.com/) using the `forms` and `typography` plugins. Global styles are loaded from `src/app.css` and Tailwind scans the `src` directory for class names.
+
 ## Environment variables
 
 Copy `.env.example` to `.env` and fill in your Airtable and Wompi credentials:

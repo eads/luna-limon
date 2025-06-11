@@ -3,14 +3,17 @@
 	$: items = $cart;
 </script>
 
-<h1>Cart</h1>
+<h1 class="text-2xl font-bold mb-4">Cart</h1>
 {#if items.length}
-	<ul>
+	<ul class="space-y-2">
 		{#each items as { product, quantity } (product.id)}
-			<li>{product.name} x{quantity}</li>
+			<li class="flex justify-between border-b pb-1">
+				<span>{product.name}</span>
+				<span>x{quantity}</span>
+			</li>
 		{/each}
 	</ul>
-	<a href="/checkout">Checkout</a>
+	<a href="/checkout" class="mt-4 inline-block text-blue-600 underline">Checkout</a>
 {:else}
 	<p>Cart is empty</p>
 {/if}
