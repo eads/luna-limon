@@ -8,7 +8,7 @@ const base = new Airtable({ apiKey: AIRTABLE_TOKEN }).base(AIRTABLE_BASE);
 
 const records = await base(AIRTABLE_TABLE).select().all();
 
-const bundles: Record<string, Record<string, { variants: { value: string }[] }>> = {};
+const bundles: Record<string, Record<string, string>> = {};
 
 for (const record of records) {
   const key = record.get('clave') as string;
