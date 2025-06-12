@@ -27,7 +27,14 @@
 <h1 class="text-2xl font-bold mb-4">Catalog</h1>
 <ul class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
 	{#each data.products as product (product.id)}
-		<li class="border rounded shadow p-4 flex flex-col gap-2 bg-white">
+		<li class="border rounded-lg shadow-md p-4 flex flex-col gap-2 bg-white">
+			{#if product.imagen}
+				<img
+					src={product.imagen}
+					alt={product.nombre}
+					class="w-full h-48 object-cover rounded-md"
+				/>
+			{/if}
 			<h2 class="font-semibold text-lg">{product.nombre}</h2>
 			<p class="text-sm text-gray-700">{product.descripción}</p>
 			<p class="font-medium">${product.precio}</p>
