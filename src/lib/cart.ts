@@ -10,13 +10,13 @@ function createCart() {
 	const { subscribe, update } = writable<CartItem[]>([]);
 	return {
 		subscribe,
-		add(product: Product) {
+		add(product: Product, qty = 1) {
 			update((items) => {
 				const existing = items.find((i) => i.product.id === product.id);
 				if (existing) {
-					existing.quantity += 1;
+					existing.quantity += qty;
 				} else {
-					items.push({ product, quantity: 1 });
+					items.push({ product, quantity: qty });
 				}
 				return items;
 			});
