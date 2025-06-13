@@ -10,7 +10,11 @@
 		{#each items as { product, quantity } (product.id)}
 			<li class="flex items-center gap-4 border-b pb-4">
 				{#if product.imagen}
-					<img src={product.imagen} alt={product.nombre} class="w-16 h-16 object-cover rounded" />
+					<img
+						src={product.imagen}
+						alt={product.nombre}
+						class="w-24 h-24 object-cover rounded-md"
+					/>
 				{/if}
 				<div class="flex-1">
 					<p class="font-medium">{product.nombre}</p>
