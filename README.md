@@ -55,3 +55,23 @@ At a minimum, `AIRTABLE_TOKEN`, `AIRTABLE_BASE` and table names must be provided
 
 Products are loaded from the Airtable table defined in `AIRTABLE_PRODUCTS_TABLE`.
 Users can add items to a cart and provide their WhatsApp number during checkout. Orders are logged to Airtable via `/api/order`. When a `WOMPI_PUBLIC_KEY` is present, the API returns a Wompi checkout URL for card payments.
+
+## SST deployment
+
+This project deploys using [SST](https://sst.dev/). Two stages are configured
+with custom domains:
+
+- `staging` → `lunalimon--staging.grupovisual.org`
+- `production` → `lunalimon--production.grupovisual.org`
+
+Edit `sst.config.ts` if you need to adjust these domains.
+
+## Triggering rebuilds from Airtable
+
+`scripts/airtableWebhook.ts` provides a tiny HTTP server for Airtable webhooks.
+Each POST request schedules a rebuild and deployment after 30 seconds so that
+multiple edits are batched. Start it locally with:
+
+```bash
+pnpm run webhook
+```
