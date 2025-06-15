@@ -1,4 +1,5 @@
 {
   "$schema": "https://inlang.com/schema/message",
-  "hola": "Hola mundo.\n"
+  "etiqueta_catalogo": "Elija su desayuno\t\n",
+  "sobre_lunalimon": "Una chispa de magia.\n"
 }
