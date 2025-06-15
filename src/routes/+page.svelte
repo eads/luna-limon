@@ -57,4 +57,5 @@
 		</li>
 	{/each}
 </ul>
+
 <a href="/cart" class="block mt-6 text-blue-600 underline">Go to cart</a>

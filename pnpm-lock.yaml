@@ -31,7 +31,7 @@ importers:
         specifier: ^3.0.11
         version: 3.0.11
       '@inlang/paraglide-js':
-        specifier: ^2.0.13
+        specifier: 2.0.13
         version: 2.0.13
       '@sveltejs/adapter-auto':
         specifier: ^6.0.0
