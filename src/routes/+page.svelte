@@ -1,17 +1,21 @@
+<!-- +page.svelte -->
 <script lang="ts">
 	import type { Product } from '$lib/server/catalog';
 	import { cart } from '$lib/cart';
+	import { m } from '$lib/paraglide/messages';
+	import { getResizedImageUrl } from '$lib/utils/images';
 	import { onMount } from 'svelte';
+	
 	export let data: { products: Product[] };
 	let added = new Set<string>();
 	let quantities: Record<string, number> = {};
-
+	
 	onMount(() => {
 		for (const p of data.products) {
 			quantities[p.id] = 1;
 		}
 	});
-
+	
 	function handleAdd(product: Product) {
 		const qty = quantities[product.id] ?? 1;
 		cart.add(product, qty);
@@ -24,15 +28,16 @@
 	}
 </script>
 
-<h1 class="text-2xl font-bold mb-4">Catalog</h1>
+<h1 class="text-2xl font-bold mb-4">{m.etiqueta_catalogo()}</h1>
 <ul class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
 	{#each data.products as product (product.id)}
 		<li class="border rounded-lg shadow-md p-4 flex flex-col gap-2 bg-white">
 			{#if product.imagen}
 				<img
-					src={product.imagen}
+					src={getResizedImageUrl(product.imagen, 400)}
 					alt={product.nombre}
 					class="w-full h-48 object-cover rounded-md"
+					loading="lazy"
 				/>
 			{/if}
 			<h2 class="font-semibold text-lg">{product.nombre}</h2>
@@ -57,4 +62,3 @@
 		</li>
 	{/each}
 </ul>
-<a href="/cart" class="block mt-6 text-blue-600 underline">Go to cart</a>
