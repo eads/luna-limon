@@ -1,5 +1,4 @@
 {
-  "$schema": "https://inlang.com/schema/message",
-  "etiqueta_catalogo": "Choose your breakfast\n",
-  "sobre_lunalimon": "A spark of magic.\n"
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "hola": "Hello world.\n"
 }
