@@ -24,19 +24,19 @@ export default $config({
 			}
 		});
 
+		// Debug the domain logic
+		const domainName = stage === 'production'
+			? 'lunalimon--production.grupovisual.org'
+			: 'lunalimon--staging.grupovisual.org';
+		
 		new sst.aws.SvelteKit('LunaLimonSite', {
-			customDomain: {
-				domainName:
-					stage === 'production'
-						? 'lunalimon--production.grupovisual.org'
-						: 'lunalimon--staging.grupovisual.org',
-				hostedZone: 'grupovisual.org'
+			domain: {
+				name: domainName
 			},
 			link: [imageResizer],
 			environment: {
 				RESIZER_URL: imageResizer.url
 			}
 		});
-
 	}
 });
