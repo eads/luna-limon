@@ -51,10 +51,12 @@
 		]
 	},
 	"dependencies": {
+		"@iconify-json/mdi": "^1.2.3",
 		"marked": "^15.0.12",
 		"node-fetch": "^3.3.2",
 		"sst": "3.14.27",
 		"svelte-i18n": "^4.0.1",
-		"svelte-kit-sst": "2.43.5"
+		"svelte-kit-sst": "2.43.5",
+		"unplugin-icons": "^22.1.0"
 	}
 }

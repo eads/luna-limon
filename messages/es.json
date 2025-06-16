@@ -1,6 +1,12 @@
 {
-  "$schema": "https://inlang.com/schema/inlang-message-format",
-  "hola": "Hola mundo.\n",
+  "$schema": "https://inlang.com/schema/message",
+  "agrega_label": "Agrega\n",
+  "carrito_total": "Total\n",
+  "carrito_label": "Carrito\n\n",
+  "carrito_vacio": "El carrito está vacío\n\n",
   "etiqueta_catalogo": "Elija su desayuno\t\n",
-  "sobre_lunalimon": "Una chispa de magia.\n"
+  "agregado_label": "Agregado\n",
+  "reiniciar_carrito": "Reiniciar carrito\n",
+  "sobre_lunalimon": "Una chispa de magia.\n",
+  "finalizar_compra": "Finalizar compra\n"
 }

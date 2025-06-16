@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { cart } from '$lib/cart';
+	import { m } from '$lib/paraglide/messages';
 	$: items = $cart;
 	$: total = items.reduce((sum, i) => sum + i.product.precio * i.quantity, 0);
 </script>
 
-<h1 class="text-2xl font-bold mb-4">Cart</h1>
+<h1 class="text-2xl font-bold mb-4">{m.carrito_label()}</h1>
 {#if items.length}
 	<ul class="space-y-4">
 		{#each items as { product, quantity } (product.id)}
@@ -24,13 +25,13 @@
 			</li>
 		{/each}
 	</ul>
-	<p class="mt-4 font-semibold">Total: ${total}</p>
+	<p class="mt-4 font-semibold">{m.carrito_total()} ${total}</p>
 	<div class="mt-4 flex gap-4">
-		<a href="/checkout" class="rounded bg-green-600 text-white py-2 px-4">Checkout</a>
+		<a href="/checkout" class="rounded bg-green-600 text-white py-2 px-4">${m.finalizar_compra()}</a>
 		<button class="text-red-600 underline text-sm" on:click={() => cart.clear()}>
-			Reset cart
+			{m.carrito_vacio()}
 		</button>
 	</div>
 {:else}
-	<p>Cart is empty</p>
+	<p>{m.carrito_vacio()}</p>
 {/if}

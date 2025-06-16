@@ -54,9 +54,9 @@
 				on:click={() => handleAdd(product)}
 			>
 				{#if added.has(product.id)}
-					Added!
+					{m.agregado_label()}
 				{:else}
-					Add
+					{m.agrega_label()}
 				{/if}
 			</button>
 		</li>

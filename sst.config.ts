@@ -10,7 +10,7 @@ export default $config({
 		};
 	},
 	async run() {
-		// Access stage through $app.stage instead of destructuring
+		// Debug: Let's see what stage actually is
 		const stage = $app.stage;
 		
 		// Create the function first
