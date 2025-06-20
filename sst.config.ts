@@ -4,32 +4,71 @@ export default $config({
 	app(input) {
 		return {
 			name: 'luna-limon',
-			removal: input?.stage === 'production' ? 'retain' : 'remove',
-			protect: ['production'].includes(input?.stage),
+			// removal: input?.stage === 'production' ? 'retain' : 'remove',
+			// protect: ['production'].includes(input?.stage),
 			home: 'aws'
 		};
 	},
 	async run() {
-		// Debug: Let's see what stage actually is
+		// Stash current stage
 		const stage = $app.stage;
-		
-		// Create the function first
+	
+    // SQS Queue for debouncing webhook events
+    const rebuildQueue = new sst.aws.Queue("RebuildQueue", {
+      visibilityTimeoutSeconds: 300, // 5 minutes
+    });
+
+    // API for receiving webhooks
+    const api = new sst.aws.ApiGatewayV2("WebhookApi", {
+      routes: {
+        "POST /webhook/airtable": {
+          handler: "src/functions/airtableWebhook.handler",
+          environment: {
+            REBUILD_QUEUE_URL: rebuildQueue.url,
+            WEBHOOK_SECRET: process.env.WEBHOOK_SECRET || "your-secret-key",
+          },
+					permissions: [
+            {
+              actions: ["sqs:SendMessage"],
+              resources: [rebuildQueue.arn]
+            }
+          ]
+        },
+        "POST /webhook/deploy": {
+          handler: "src/functions/deployWebhook.handler",
+          timeout: "15 minutes",
+          environment: {
+            DEPLOY_WEBHOOK_SECRET: process.env.DEPLOY_WEBHOOK_SECRET || "deploy-secret",
+          },
+        },
+      },
+    });
+
+		// Consumer function for the queue
+    rebuildQueue.subscribe("src/functions/processRebuild.handler", {
+      timeout: "15 minutes",
+      environment: {
+        WEBHOOK_SECRET: process.env.WEBHOOK_SECRET || "your-secret-key",
+        DEPLOY_WEBHOOK_URL: $interpolate`${api.url}/webhook/deploy`,
+        DEPLOY_WEBHOOK_SECRET: process.env.DEPLOY_WEBHOOK_SECRET || "deploy-secret",
+      },
+    });
+
+		// Create image resizer Lambda function
 		const imageResizer = new sst.aws.Function("ImageResizerFn", {
-			handler: "src/services/image-resizer.handler",
+			handler: "src/functions/imageResize.handler",
 			nodejs: { install: ["sharp", "node-fetch"] },
 			timeout: "30 seconds",
 			memory: "512 MB",
-			url: {
-				auth: stage === "production" ? { type: "jwt" } : undefined
-			}
+			url: true,
 		});
 
-		// Debug the domain logic
+		// Per stage domain names
 		const domainName = stage === 'production'
 			? 'lunalimon--production.grupovisual.org'
 			: 'lunalimon--staging.grupovisual.org';
 		
-		new sst.aws.SvelteKit('LunaLimonSite', {
+		const site = new sst.aws.SvelteKit('LunaLimonSite', {
 			domain: {
 				name: domainName
 			},
@@ -38,5 +77,13 @@ export default $config({
 				RESIZER_URL: imageResizer.url
 			}
 		});
+
+    return {
+      WebhookUrl: $interpolate`${api.url}/webhook/airtable`,
+      DeployWebhookUrl: $interpolate`${api.url}/webhook/deploy`, 
+      QueueUrl: rebuildQueue.url,
+      SiteUrl: site.url,
+    };
+
 	}
 });

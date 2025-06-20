@@ -13,7 +13,7 @@
 		"lint": "prettier --check . && eslint .",
 		"prepare": "svelte-kit sync || echo ''",
 		"preview": "vite preview",
-		"webhook": "tsx scripts/airtableWebhook.ts"
+	  "setup:webhook": "tsx scripts/setupAirtableWebhook.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",

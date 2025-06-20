@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import FloatyCart from '$lib/FloatyCart.svelte';
+	import FloatyCart from '$lib/components/FloatyCart.svelte';
 	// @ts-expect-error - runtime types not generated yet
 	import { locales, getLocale, setLocale } from '$lib/paraglide/runtime.js';
 

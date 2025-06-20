@@ -5,15 +5,6 @@
 
 declare module "sst" {
   export interface Resource {
-    "ImageResizerFn": {
-      "name": string
-      "type": "sst.aws.Function"
-      "url": string
-    }
-    "LunaLimonSite": {
-      "type": "sst.aws.SvelteKit"
-      "url": string
-    }
   }
 }
 /// <reference path="sst-env.d.ts" />
