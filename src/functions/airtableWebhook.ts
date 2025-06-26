@@ -5,6 +5,14 @@ import crypto from 'crypto';
 const sqs = new SQSClient({});
 
 export const handler: APIGatewayProxyHandler = async (event) => {
+	// Respond to Airtable's HEAD check used when validating webhook URLs
+	if (event.httpMethod === 'HEAD' || event.httpMethod === 'GET') {
+		return {
+			statusCode: 200,
+			body: ''
+		};
+	}
+
 	try {
 		// Verify webhook signature from Airtable
 		const signature = event.headers['x-airtable-content-mac'];

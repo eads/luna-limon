@@ -21,7 +21,7 @@ export default $config({
 		// API for receiving webhooks
 		const api = new sst.aws.ApiGatewayV2('WebhookApi', {
 			routes: {
-				'POST /webhook/airtable': {
+				'ANY /webhook/airtable': {
 					handler: 'src/functions/airtableWebhook.handler',
 					environment: {
 						REBUILD_QUEUE_URL: rebuildQueue.url,
