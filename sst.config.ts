@@ -19,9 +19,7 @@ export default $config({
 			nodejs: { install: ['sharp', 'node-fetch'] },
 			timeout: '30 seconds',
 			memory: '512 MB',
-			url: {
-				auth: stage === 'production' ? { type: 'jwt' } : undefined
-			}
+			url: { auth: undefined }
 		});
 
 		const airtableWebhook = new sst.aws.Function('AirtableWebhookFn', {
@@ -29,7 +27,6 @@ export default $config({
 			url: { auth: undefined }
 		});
 
-		// Debug the domain logic
 		const domainName =
 			stage === 'production'
 				? 'lunalimon--production.grupovisual.org'
