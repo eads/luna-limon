@@ -25,9 +25,11 @@ export default $config({
                const airtableWebhook = new sst.aws.Function('AirtableWebhookFn', {
                         handler: 'src/services/airtable-webhook.handler',
                         url: { auth: undefined },
+                        nodejs: { install: ['@aws-sdk/client-codebuild'] },
                         environment: {
                                 WAIT_BEFORE_BUILD: process.env.WAIT_BEFORE_BUILD ?? '30000',
                                 BUILD_DEBOUNCE: process.env.BUILD_DEBOUNCE ?? '300000',
+                                CODEBUILD_PROJECT: process.env.CODEBUILD_PROJECT ?? '',
                                 SST_STAGE: stage
                         }
                 });

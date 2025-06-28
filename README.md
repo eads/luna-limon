@@ -51,6 +51,9 @@ cp .env.example .env
 
 At a minimum, `AIRTABLE_TOKEN`, `AIRTABLE_BASE` and table names must be provided. `WOMPI_PUBLIC_KEY` can be left empty to disable card payments.
 
+For automatic deploys from Airtable, set `CODEBUILD_PROJECT` to the AWS
+CodeBuild project that runs your deploy script.
+
 ## Catalog and checkout
 
 Products are loaded from the Airtable table defined in `AIRTABLE_PRODUCTS_TABLE`.
@@ -69,8 +72,8 @@ Edit `sst.config.ts` if you need to adjust these domains.
 ## Triggering rebuilds from Airtable
 
 The `AirtableWebhookFn` lambda handles Airtable webhook events. Each POST
-request schedules a build and `sst deploy` to update the site. The delay before
-starting is controlled by the `WAIT_BEFORE_BUILD` environment variable (default
-`30000` milliseconds) and repeated builds are throttled via `BUILD_DEBOUNCE`
-(default `300000` milliseconds). The deployment stage comes from the
-`SST_STAGE` environment variable.
+request triggers an AWS CodeBuild project to rebuild and deploy the site. The
+lambda waits `WAIT_BEFORE_BUILD` milliseconds (default `30000`) before starting
+and throttles subsequent builds using `BUILD_DEBOUNCE` (default `300000`). The
+CodeBuild project name comes from the `CODEBUILD_PROJECT` environment variable
+and the deployment stage is passed via `SST_STAGE`.

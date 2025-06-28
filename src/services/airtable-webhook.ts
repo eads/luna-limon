@@ -1,6 +1,6 @@
 // services/airtable-webhook.ts
 import { APIGatewayProxyEventV2, APIGatewayProxyResult, Context } from 'aws-lambda';
-import { spawn } from 'child_process';
+import { CodeBuildClient, StartBuildCommand } from '@aws-sdk/client-codebuild';
 
 // WAIT_BEFORE_BUILD and BUILD_DEBOUNCE are in milliseconds
 
@@ -9,6 +9,8 @@ const BUILD_DEBOUNCE = parseInt(process.env.BUILD_DEBOUNCE ?? '300000', 10);
 
 let buildTimer: NodeJS.Timeout | null = null;
 let lastBuild = 0;
+const CODEBUILD_PROJECT = process.env.CODEBUILD_PROJECT!;
+const codebuild = new CodeBuildClient({});
 
 export const handler = async (
 	event: APIGatewayProxyEventV2,
@@ -30,7 +32,7 @@ export const handler = async (
 
 		lastBuild = Date.now();
 		buildTimer = null;
-		runBuild();
+               runBuild().catch((err) => console.error('Build failed', err));
 	}, WAIT_BEFORE_BUILD);
 
 	return {
@@ -39,14 +41,24 @@ export const handler = async (
 	};
 };
 
-function runBuild() {
-       console.log('Running build job...');
+async function runBuild() {
+       console.log('Starting CodeBuild project...');
        const stage = process.env.SST_STAGE ?? process.env.STAGE ?? 'staging';
-       const command = `pnpm build:i18n && pnpm build && npx sst deploy --stage ${stage}`;
-       const proc = spawn('sh', ['-c', command], {
-               stdio: 'inherit'
-       });
-       proc.on('close', (code) => {
-               console.log('Build finished with code', code);
-       });
+       try {
+               await codebuild.send(
+                       new StartBuildCommand({
+                               projectName: CODEBUILD_PROJECT,
+                               environmentVariablesOverride: [
+                                       {
+                                               name: 'SST_STAGE',
+                                               value: stage,
+                                               type: 'PLAINTEXT'
+                                       }
+                               ]
+                       })
+               );
+               console.log('CodeBuild started.');
+       } catch (err) {
+               console.error('Failed to start CodeBuild', err);
+       }
 }
