@@ -40,11 +40,13 @@ export const handler = async (
 };
 
 function runBuild() {
-	console.log('Running build job...');
-	const proc = spawn('sh', ['-c', 'pnpm build:i18n && pnpm build'], {
-		stdio: 'inherit'
-	});
-	proc.on('close', (code) => {
-		console.log('Build finished with code', code);
-	});
+       console.log('Running build job...');
+       const stage = process.env.SST_STAGE ?? process.env.STAGE ?? 'staging';
+       const command = `pnpm build:i18n && pnpm build && npx sst deploy --stage ${stage}`;
+       const proc = spawn('sh', ['-c', command], {
+               stdio: 'inherit'
+       });
+       proc.on('close', (code) => {
+               console.log('Build finished with code', code);
+       });
 }

@@ -69,7 +69,8 @@ Edit `sst.config.ts` if you need to adjust these domains.
 ## Triggering rebuilds from Airtable
 
 The `AirtableWebhookFn` lambda handles Airtable webhook events. Each POST
-request schedules a build. The delay before starting is controlled by the
-`WAIT_BEFORE_BUILD` environment variable (default `30000` milliseconds) and
-repeated builds are throttled via `BUILD_DEBOUNCE` (default `300000`
-milliseconds).
+request schedules a build and `sst deploy` to update the site. The delay before
+starting is controlled by the `WAIT_BEFORE_BUILD` environment variable (default
+`30000` milliseconds) and repeated builds are throttled via `BUILD_DEBOUNCE`
+(default `300000` milliseconds). The deployment stage comes from the
+`SST_STAGE` environment variable.
