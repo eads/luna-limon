@@ -22,10 +22,14 @@ export default $config({
 			url: { auth: undefined }
 		});
 
-		const airtableWebhook = new sst.aws.Function('AirtableWebhookFn', {
-			handler: 'src/services/airtable-webhook.handler',
-			url: { auth: undefined }
-		});
+                const airtableWebhook = new sst.aws.Function('AirtableWebhookFn', {
+                        handler: 'src/services/airtable-webhook.handler',
+                        url: { auth: undefined },
+                        environment: {
+                                WAIT_BEFORE_BUILD: process.env.WAIT_BEFORE_BUILD ?? '30000',
+                                BUILD_DEBOUNCE: process.env.BUILD_DEBOUNCE ?? '300000'
+                        }
+                });
 
 		const domainName =
 			stage === 'production'

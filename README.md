@@ -68,10 +68,8 @@ Edit `sst.config.ts` if you need to adjust these domains.
 
 ## Triggering rebuilds from Airtable
 
-`scripts/airtableWebhook.ts` provides a tiny HTTP server for Airtable webhooks.
-Each POST request schedules a rebuild and deployment after 30 seconds so that
-multiple edits are batched. Start it locally with:
-
-```bash
-pnpm run webhook
-```
+The `AirtableWebhookFn` lambda handles Airtable webhook events. Each POST
+request schedules a build. The delay before starting is controlled by the
+`WAIT_BEFORE_BUILD` environment variable (default `30000` milliseconds) and
+repeated builds are throttled via `BUILD_DEBOUNCE` (default `300000`
+milliseconds).

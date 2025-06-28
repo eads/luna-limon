@@ -2,6 +2,8 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { spawn } from 'child_process';
 
+// WAIT_BEFORE_BUILD and BUILD_DEBOUNCE are in milliseconds
+
 const WAIT_BEFORE_BUILD = parseInt(process.env.WAIT_BEFORE_BUILD ?? '30000', 10);
 const BUILD_DEBOUNCE = parseInt(process.env.BUILD_DEBOUNCE ?? '300000', 10);
 
