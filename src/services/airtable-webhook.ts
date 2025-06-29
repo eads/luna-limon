@@ -1,6 +1,5 @@
 // services/airtable-webhook.ts
 import { APIGatewayProxyEventV2, APIGatewayProxyResult, Context } from 'aws-lambda';
-import { spawn } from 'child_process';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 

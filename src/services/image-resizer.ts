@@ -1,8 +1,9 @@
 // services/image-resizer.ts
 import sharp from 'sharp';
 import fetch from 'node-fetch';
+import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 
-export const handler = async (event: any) => {
+export const handler = async (event: APIGatewayProxyEventV2) => {
   const imageUrl = event.queryStringParameters?.url;
   const width = parseInt(event.queryStringParameters?.w || '400', 10);
   
