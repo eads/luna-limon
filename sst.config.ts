@@ -16,7 +16,7 @@ export default $config({
 
                // Create the functions
                const buildState = new sst.aws.Dynamo('BuildState', {
-                        fields: { id: 'string', timestamp: 'number' },
+                        fields: { id: 'string' },
                         primaryIndex: { hashKey: 'id' }
                 });
 		const imageResizer = new sst.aws.Function('ImageResizerFn', {
