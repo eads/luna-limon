@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="./.sst/platform/config.d.ts" />
 
 export default $config({
@@ -14,9 +15,9 @@ export default $config({
 		const stage = $app.stage;
 
                // Create the functions
-               const buildState = new sst.aws.Table('BuildState', {
+               const buildState = new sst.aws.Dynamo('BuildState', {
                         fields: { id: 'string', timestamp: 'number' },
-                        primaryIndex: { partitionKey: 'id' }
+                        primaryIndex: { hashKey: 'id' }
                 });
 		const imageResizer = new sst.aws.Function('ImageResizerFn', {
 			handler: 'src/services/image-resizer.handler',
