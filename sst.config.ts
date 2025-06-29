@@ -13,7 +13,11 @@ export default $config({
 		// Debug: Let's see what stage actually is
 		const stage = $app.stage;
 
-		// Create the functions
+               // Create the functions
+               const buildState = new sst.aws.Table('BuildState', {
+                        fields: { id: 'string', timestamp: 'number' },
+                        primaryIndex: { partitionKey: 'id' }
+                });
 		const imageResizer = new sst.aws.Function('ImageResizerFn', {
 			handler: 'src/services/image-resizer.handler',
 			nodejs: { install: ['sharp', 'node-fetch'] },
@@ -22,10 +26,20 @@ export default $config({
 			url: { auth: undefined }
 		});
 
-		const airtableWebhook = new sst.aws.Function('AirtableWebhookFn', {
-			handler: 'src/services/airtable-webhook.handler',
-			url: { auth: undefined }
-		});
+               const airtableWebhook = new sst.aws.Function('AirtableWebhookFn', {
+                        handler: 'src/services/airtable-webhook.handler',
+                        url: { auth: undefined },
+                        nodejs: { install: ['@aws-sdk/client-codebuild', '@aws-sdk/client-dynamodb', '@aws-sdk/lib-dynamodb'] },
+                        environment: {
+                                WAIT_BEFORE_BUILD: process.env.WAIT_BEFORE_BUILD ?? '30000',
+                                BUILD_DEBOUNCE: process.env.BUILD_DEBOUNCE ?? '300000',
+                                CODEBUILD_PROJECT: process.env.CODEBUILD_PROJECT ?? '',
+                                SST_STAGE: stage,
+                                BUILD_TABLE: buildState.name
+                        }
+                });
+
+               airtableWebhook.permissions.add(buildState);
 
 		const domainName =
 			stage === 'production'
