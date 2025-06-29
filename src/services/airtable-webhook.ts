@@ -1,6 +1,6 @@
 // services/airtable-webhook.ts
 import { APIGatewayProxyEventV2, APIGatewayProxyResult, Context } from 'aws-lambda';
-import { CodeBuildClient, StartBuildCommand } from '@aws-sdk/client-codebuild';
+import { spawn } from 'child_process';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 
@@ -14,8 +14,6 @@ const BUILD_TABLE = process.env.BUILD_TABLE ?? '';
 let buildTimer: NodeJS.Timeout | null = null;
 let lastBuild = 0;
 let loadedFromStore = false;
-const CODEBUILD_PROJECT = process.env.CODEBUILD_PROJECT!;
-const codebuild = new CodeBuildClient({});
 const dynamo = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 export const handler = async (
@@ -38,12 +36,15 @@ export const handler = async (
 	buildTimer = setTimeout(() => {
 		if (Date.now() - lastBuild < BUILD_DEBOUNCE) {
 			console.log('Skipping build due to debounce window');
-			return;
+			return {
+				statusCode: 200,
+				body: 'skipped'
+			};
 		}
 
 		lastBuild = Date.now();
 		buildTimer = null;
-               runBuild().catch((err) => console.error('Build failed', err));
+		runBuild();
 	}, WAIT_BEFORE_BUILD);
 
 	return {
@@ -52,8 +53,8 @@ export const handler = async (
 	};
 };
 
-async function runBuild() {
-       console.log('Starting CodeBuild project...');
+function runBuild() {
+       console.log('Running build job...');
        const stage = process.env.SST_STAGE ?? process.env.STAGE ?? 'staging';
        try {
                await codebuild.send(
