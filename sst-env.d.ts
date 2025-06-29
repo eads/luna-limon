@@ -10,9 +10,9 @@ declare module "sst" {
       "type": "sst.aws.Function"
       "url": string
     }
-    "BuildState": {
-      "name": string
-      "type": "sst.aws.Dynamo"
+    "BuildQueue": {
+      "type": "sst.aws.Queue"
+      "url": string
     }
     "ImageResizerFn": {
       "name": string

@@ -1,6 +1,7 @@
 /// <reference path="./.sst/platform/config.d.ts" />
 
 export default $config({
+  // Global app configuration
   app(input) {
     return {
       name: 'luna-limon',
@@ -10,14 +11,26 @@ export default $config({
     };
   },
 
+  // Define all resources using run() for SST v3
   async run() {
-    // Debug: Let's see what stage actually is
     const stage = $app.stage;
 
-    // Use SST's built-in AWS Dynamo construct for DynamoDB
-    const buildState = new sst.aws.Dynamo('BuildState', {
-      fields: { id: 'string' },
-      primaryIndex: { hashKey: 'id' },
+    // SQS FIFO queue for debouncing build triggers
+    const buildQueue = new sst.aws.Queue('BuildQueue', {
+      fifo: true,
+      contentBasedDeduplication: true,
+      queueName: 'luna-limon-builds.fifo',
+      delay: '30 seconds',
+      visibilityTimeout: '900 seconds',
+    });    // Attach invoker Lambda as a subscriber of the queue
+    buildQueue.subscribe({
+      handler: 'src/services/airtable-build-invoker.handler',
+      functionName: 'BuildQueueConsumerFunction',
+      nodejs: { install: ['@aws-sdk/client-codebuild'] },
+      environment: {
+        CODEBUILD_PROJECT: process.env.CODEBUILD_PROJECT ?? '',
+        SST_STAGE: stage,
+      },
     });
 
     // Image Resizer function
@@ -26,38 +39,30 @@ export default $config({
       nodejs: { install: ['sharp', 'node-fetch'] },
       timeout: '30 seconds',
       memory: '512 MB',
-      url: { auth: undefined },
+      url: true,
     });
 
-    // Airtable Webhook function
+    // Airtable Webhook function: enqueues messages into SQS
     const airtableWebhook = new sst.aws.Function('AirtableWebhookFn', {
       handler: 'src/services/airtable-webhook.handler',
-      url: { auth: undefined },
-      nodejs: {
-        install: [
-          '@aws-sdk/client-codebuild',
-          '@aws-sdk/client-dynamodb',
-          '@aws-sdk/lib-dynamodb',
-        ],
-      },
+      nodejs: { install: ['@aws-sdk/client-sqs'] },
+      url: true,
       environment: {
         WAIT_BEFORE_BUILD: process.env.WAIT_BEFORE_BUILD ?? '30000',
-        BUILD_DEBOUNCE: process.env.BUILD_DEBOUNCE ?? '300000',
-        CODEBUILD_PROJECT: process.env.CODEBUILD_PROJECT ?? '',
+        BUILD_QUEUE_URL: buildQueue.url,
         SST_STAGE: stage,
-        BUILD_TABLE: buildState.tableName,
       },
+      link: [buildQueue],
     });
 
-    // Determine custom domain based on stage
-    const domainName =
-      stage === 'production'
-        ? 'lunalimon--production.grupovisual.org'
-        : 'lunalimon--staging.grupovisual.org';
-
-    // Deploy SvelteKit app with linked functions
+    // Deploy SvelteKit site with only necessary links
     new sst.aws.SvelteKit('LunaLimonSite', {
-      domain: { name: domainName },
+      domain: {
+        name:
+          stage === 'production'
+            ? 'lunalimon--production.grupovisual.org'
+            : 'lunalimon--staging.grupovisual.org',
+      },
       link: [imageResizer, airtableWebhook],
       environment: {
         RESIZER_URL: imageResizer.url,
