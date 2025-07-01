@@ -58,10 +58,7 @@ export default $config({
     // Deploy SvelteKit site with only necessary links
     new sst.aws.SvelteKit('LunaLimonSite', {
       domain: {
-        name:
-          stage === 'production'
-            ? 'lunalimon--production.grupovisual.org'
-            : 'lunalimon--staging.grupovisual.org',
+        name: `lunalimon--${stage}.grupovisual.org`,
       },
       link: [imageResizer, airtableWebhook],
       environment: {
