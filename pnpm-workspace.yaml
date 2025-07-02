@@ -1,0 +1,4 @@
+packages:
+  # every folder that owns a package.json gets listed here
+  - "packages/*"   # ➊ web/, functions/, …
+  - "stacks"       # ➋ treat stacks/ as a tiny TS workspace (optional)

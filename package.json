@@ -1,0 +1,23 @@
+{
+  "name": "luna-limon",
+  "private": true,
+  "scripts": {
+    "dev": "sst dev",
+    "dev:web": "pnpm --filter web dev",
+    "deploy": "sst deploy --stage prod",
+    "deploy:staging": "sst deploy --stage staging",
+    "remove": "sst remove --stage prod",
+    "typecheck": "tsc -b stacks"
+  },
+  "devDependencies": {
+    "sst": "^3.17.8",
+    "typescript": "^5.5.0",
+    "@types/node": "^20.8.8",
+    "eslint": "^9.30.1",
+    "prettier": "^3.2.5"
+  },
+  "engines": {
+    "node": ">=18.18"
+  },
+  "packageManager": "pnpm@8.15.4"
+}
