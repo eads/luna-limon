@@ -20,9 +20,6 @@ importers:
       node-fetch:
         specifier: ^3.3.2
         version: 3.3.2
-      sst:
-        specifier: 3.14.27
-        version: 3.14.27
       svelte-i18n:
         specifier: ^4.0.1
         version: 4.0.1(svelte@5.30.2)
@@ -99,6 +96,9 @@ importers:
       sharp:
         specifier: ^0.34.2
         version: 0.34.2
+      sst:
+        specifier: 3.14.27
+        version: 3.14.27
       svelte:
         specifier: ^5.0.0
         version: 5.30.2
