@@ -5,21 +5,12 @@
 
 declare module "sst" {
   export interface Resource {
-    "AirtableWebhookFn": {
+    "ImageResizer": {
       "name": string
       "type": "sst.aws.Function"
       "url": string
     }
-    "BuildQueue": {
-      "type": "sst.aws.Queue"
-      "url": string
-    }
-    "ImageResizerFn": {
-      "name": string
-      "type": "sst.aws.Function"
-      "url": string
-    }
-    "LunaLimonSite": {
+    "Web": {
       "type": "sst.aws.SvelteKit"
       "url": string
     }

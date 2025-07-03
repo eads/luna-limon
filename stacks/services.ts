@@ -1,17 +1,14 @@
-// stacks/services.ts
-import { StackContext, Function } from "sst/constructs";
-
-export function ServicesStack({ stack }: StackContext) {
-  // Image optimiser Lambda with a public Function URL
-  const resizer = new Function(stack, "ImageResizer", {
-    handler: 'packages/services/image-resizer.handler',
+// stacks/services.ts      (no imports!)
+export function Services() {
+  // Same component code as before
+  const resizer = new sst.aws.Function("ImageResizer", {
+    handler: "packages/services/image-resizer.handler",
     url: true,
+    runtime: "nodejs20.x",
     memory: "1024 MB",
+    nodejs: { install: ['sharp'] },
   });
 
-  // Surface in Cloud Outputs for humans
-  stack.addOutputs({ ResizerURL: resizer.url });
-
-  // Expose to other stacks via `use()` (see WebStack)
+  // Expose for other stacks
   return { resizer };
 }
