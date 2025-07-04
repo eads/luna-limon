@@ -54,8 +54,11 @@ export function Services() {
   const buildProject = new aws.codebuild.Project("WebDeployProject", {
     name: `${stage}-web-deploy`,
     serviceRole: buildRole.arn,
-    // Lambda uploads no source; we just feed a buildspec
-    source: { type: "NO_SOURCE" },
+    source: {
+      type: "GITHUB",
+      location: "https://github.com/eads/luna-limon.git",
+      buildspec: "buildspec.yml",   // now it can read the file from the repo
+    },
     artifacts: { type: "NO_ARTIFACTS" },
     environment: {
       type: "LINUX_CONTAINER",
@@ -63,7 +66,6 @@ export function Services() {
       image: "aws/codebuild/standard:7.0",      // Node 20+ is baked in  :contentReference[oaicite:0]{index=0}
       environmentVariables: [{ name: "STAGE", value: stage }],
     },
-    buildspec: fs.readFileSync("buildspec.yml", "utf8"),
     cache: {
       type: "LOCAL",
       modes: ["LOCAL_SOURCE_CACHE", "LOCAL_DOCKER_LAYER_CACHE"],

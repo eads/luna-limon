@@ -9,7 +9,8 @@ phases:
       - pnpm install --frozen-lockfile
   build:
     commands:
-      - pnpm sst deploy --stage $STAGE --target web
+      - pnpm --filter web build:i18n
+      - pnpm pnpm sst deploy --stage $STAGE --target Web
 cache:
   paths:
     - "/root/.pnpm-store/**"
