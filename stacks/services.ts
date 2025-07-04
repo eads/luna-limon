@@ -1,14 +1,23 @@
-// stacks/services.ts      (no imports!)
+// import * as sst from "sst";
 export function Services() {
-  // Same component code as before
-  const resizer = new sst.aws.Function("ImageResizer", {
+  const resizer = new sst.aws.Function("ImageResizerFn", {
     handler: "packages/services/image-resizer.handler",
-    url: true,
+    nodejs: { install: ["sharp"] },
     runtime: "nodejs20.x",
-    memory: "1024 MB",
-    nodejs: { install: ['sharp'] },
+    memory: "512 MB",
+    url: true            // creates a Function URL
   });
 
-  // Expose for other stacks
+  // Tiny “facade” that surfaces only the URL (+ optional perms)
+  new sst.Linkable("ImageResizer", {
+    properties: { url: resizer.url },
+    include: [
+      sst.aws.permission({
+        actions: ["lambda:InvokeFunctionUrl"],
+        resources: [resizer.arn]
+      })
+    ]
+  });
+
   return { resizer };
 }

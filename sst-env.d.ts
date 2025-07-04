@@ -6,6 +6,10 @@
 declare module "sst" {
   export interface Resource {
     "ImageResizer": {
+      "type": "sst.sst.Linkable"
+      "url": string
+    }
+    "ImageResizerFn": {
       "name": string
       "type": "sst.aws.Function"
       "url": string
