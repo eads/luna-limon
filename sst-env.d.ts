@@ -5,6 +5,15 @@
 
 declare module "sst" {
   export interface Resource {
+    "AirtableWebhookFn": {
+      "name": string
+      "type": "sst.aws.Function"
+      "url": string
+    }
+    "BuildQueue": {
+      "type": "sst.aws.Queue"
+      "url": string
+    }
     "ImageResizer": {
       "type": "sst.sst.Linkable"
       "url": string
