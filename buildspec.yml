@@ -1,0 +1,15 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20          # Node 20/22 are now in the standard images 🥳
+    commands:
+      - npm i -g pnpm
+      - pnpm install --frozen-lockfile
+  build:
+    commands:
+      - pnpm sst deploy --stage $STAGE --target web
+cache:
+  paths:
+    - "/root/.pnpm-store/**"

@@ -1,12 +1,12 @@
 {
   "$schema": "https://inlang.com/schema/message",
-  "agrega_label": "Add\n",
+  "agrega_label": "Add to cart\n",
   "carrito_total": "Total\n",
   "carrito_label": "Cart\n",
   "carrito_vacio": "Cart is empty\n",
   "etiqueta_catalogo": "Choose your breakfast\n",
   "agregado_label": "Added\n",
-  "reiniciar_carrito": "Reset cart\n",
+  "reiniciar_carrito": "Empty cart\n",
   "sobre_lunalimon": "A spark of magic.\n",
-  "finalizar_compra": "Checkout\n"
+  "finalizar_compra": "Finish ordering\n"
 }

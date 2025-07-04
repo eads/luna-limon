@@ -14,12 +14,16 @@ declare module "sst" {
       "type": "sst.aws.Queue"
       "url": string
     }
+    "ImageResizer": {
+      "type": "sst.sst.Linkable"
+      "url": string
+    }
     "ImageResizerFn": {
       "name": string
       "type": "sst.aws.Function"
       "url": string
     }
-    "LunaLimonSite": {
+    "Web": {
       "type": "sst.aws.SvelteKit"
       "url": string
     }
