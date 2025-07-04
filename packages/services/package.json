@@ -8,9 +8,13 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "aws-lambda": "^1.0.7",
     "sharp": "^0.34.2"
+  },
+  "devDependencies": {
+    "@pulumi/aws": "^6.83.0",
+    "@pulumi/pulumi": "^3.181.0"
   }
 }

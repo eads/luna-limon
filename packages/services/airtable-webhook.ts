@@ -22,7 +22,7 @@ export const handler = async (
       QueueUrl:              QUEUE_URL,
       MessageBody:           "build",              // arbitrary payload
       MessageGroupId:        "luna-limon-builds",  // all messages in one group
-      MessageDeduplicationId: "last-build",         // static => only one in flight
+      MessageDeduplicationId: "last-build",        // static => only one in flight
     })
   );
 
