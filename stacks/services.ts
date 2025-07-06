@@ -86,6 +86,36 @@ export function Services() {
     }),
   });
 
+  const sstStatePolicy = new aws.iam.Policy("codebuild-sst-state-s3", {
+    description: "Let CodeBuild read/write SST state bucket",
+    policy: JSON.stringify({
+      Version: "2012-10-17",
+      Statement: [
+        {
+          Effect: "Allow",
+          Action: [
+            "s3:ListBucket",
+            "s3:GetObject",
+            "s3:PutObject",
+            "s3:DeleteObject"
+          ],
+          Resource: [
+            // bucket itself
+            "arn:aws:s3:::sst-state-*",
+            // and everything inside
+            "arn:aws:s3:::sst-state-*/*"
+          ]
+        }
+      ]
+    })
+  });
+
+  new aws.iam.RolePolicyAttachment("attach-sst-state-s3", {
+    role: buildRole.name,
+    policyArn: sstStatePolicy.arn,
+  });
+
+
   const buildProject = new aws.codebuild.Project("WebDeployProject", {
     name: `${stage}-web-deploy`,
     serviceRole: buildRole.arn,
