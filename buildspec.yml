@@ -6,7 +6,7 @@ phases:
       nodejs: 20          # Node 20/22 are now in the standard images 🥳
     commands:
       - npm i -g pnpm
-      - pnpm install --frozen-lockfile
+      - pnpm install -r --frozen-lockfile --prod=false
   build:
     commands:
       - pnpm --filter web build:i18n
