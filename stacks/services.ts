@@ -1,6 +1,18 @@
+// stack/services.ts
 import * as aws from "@pulumi/aws";
-// import * as pulumi from "@pulumi/pulumi";
-import * as fs from "fs";
+import * as dotenv from "dotenv";
+import * as path from "path";
+
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+
+const buildEnvKeys = [
+  "AIRTABLE_TOKEN",
+  "AIRTABLE_BASE",
+  "AIRTABLE_COPY_TABLE",
+  "AIRTABLE_PRODUCTS_TABLE",
+  "AIRTABLE_ORDERS_TABLE",
+  "WOMPI_PUBLIC_KEY",
+] as const;
 
 export function Services() {
   const stage = $app.stage;
@@ -82,7 +94,14 @@ export function Services() {
       type: "LINUX_CONTAINER",
       computeType: "BUILD_GENERAL1_SMALL",
       image: "aws/codebuild/standard:7.0",      // Node 20+ is baked in  :contentReference[oaicite:0]{index=0}
-      environmentVariables: [{ name: "STAGE", value: stage }],
+      environmentVariables: [
+        { name: "STAGE", value: stage },
+        ...buildEnvKeys.map((key) => ({
+          name: key,
+          value: process.env[key] ?? "",        // crash-safe if a var is missing
+          type: "PLAINTEXT",
+        })),
+      ],
     },
     cache: {
       type: "LOCAL",
