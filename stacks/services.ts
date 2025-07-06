@@ -63,6 +63,11 @@ export function Services() {
     policyArn: aws.iam.ManagedPolicy.AWSCodeBuildDeveloperAccess,
   });
 
+  new aws.iam.RolePolicyAttachment("codebuild-ssm-readonly", {
+    role: buildRole.name,
+    policyArn: "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess",
+  });
+
   new aws.iam.RolePolicy("CodeBuildLogsWrite", {
     role: buildRole.id,
     policy: JSON.stringify({
