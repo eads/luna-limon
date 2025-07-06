@@ -134,7 +134,7 @@ export function Services() {
     nodejs: { install: ["@aws-sdk/client-sqs"] },
     url: true,
     environment: {
-      WAIT_BEFORE_BUILD: process.env.WAIT_BEFORE_BUILD ?? "30000",
+      WAIT_BEFORE_BUILD: process.env.WAIT_BEFORE_BUILD ?? "10000",
       BUILD_QUEUE_URL: buildQueue.url,
       SST_STAGE: stage,
     },
