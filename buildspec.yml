@@ -10,7 +10,7 @@ phases:
   build:
     commands:
       - pnpm --filter web build:i18n
-      - pnpm pnpm sst deploy --stage $STAGE --target Web
+      - pnpm sst deploy --stage $STAGE --target Web
 cache:
   paths:
     - "/root/.pnpm-store/**"

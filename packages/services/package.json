@@ -12,6 +12,7 @@
   "dependencies": {
     "@aws-sdk/client-codebuild": "^3.840.0",
     "aws-lambda": "^1.0.7",
+    "dotenv": "^16.6.1",
     "sharp": "^0.34.2"
   },
   "devDependencies": {
