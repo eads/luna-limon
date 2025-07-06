@@ -30,7 +30,7 @@ export async function runBuild(
         { name: "STAGE", value: stage, type: "PLAINTEXT" },
       ],
     }),
-  ); :contentReference[oaicite:1]{index=1}
+  ); 
 
   if (!build?.id) throw new Error("StartBuild returned no build ID");
   console.log("Build started →", build.id);

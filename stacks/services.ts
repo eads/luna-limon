@@ -51,6 +51,24 @@ export function Services() {
     policyArn: aws.iam.ManagedPolicy.AWSCodeBuildDeveloperAccess,
   });
 
+  new aws.iam.RolePolicy("CodeBuildLogsWrite", {
+    role: buildRole.id,
+    policy: JSON.stringify({
+      Version: "2012-10-17",
+      Statement: [
+        {
+          Effect: "Allow",
+          Action: [
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+          ],
+          Resource: "arn:aws:logs:*:*:log-group:/aws/codebuild/*"
+        }
+      ]
+    }),
+  });
+
   const buildProject = new aws.codebuild.Project("WebDeployProject", {
     name: `${stage}-web-deploy`,
     serviceRole: buildRole.arn,
@@ -82,21 +100,11 @@ export function Services() {
       CODEBUILD_PROJECT: buildProject.name,   // << now wired in
       SST_STAGE: stage,
     },
+    // 👉 Fix: use SST’s permission helper
     permissions: [
-      // Only what the SDK call actually needs
-      new aws.iam.Policy("StartBuildPerms", {
-        policy: buildProject.arn.apply((arn) =>
-          JSON.stringify({
-            Version: "2012-10-17",
-            Statement: [
-              {
-                Effect: "Allow",
-                Action: ["codebuild:StartBuild", "codebuild:BatchGetBuilds"],
-                Resource: arn,
-              },
-            ],
-          })
-        ),
+      sst.aws.permission({
+        actions: ["codebuild:StartBuild", "codebuild:BatchGetBuilds"],
+        resources: [buildProject.arn],
       }),
     ],
   });
