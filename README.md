@@ -71,13 +71,19 @@ with custom domains:
 
 Edit `sst.config.ts` if you need to adjust these domains.
 
-## Triggering rebuilds from Airtable
+## Airtable → CDN invalidation
 
-The `AirtableWebhookFn` lambda handles Airtable webhook events. Each POST
-request triggers an AWS CodeBuild project to rebuild and deploy the site. The
-lambda waits `WAIT_BEFORE_BUILD` milliseconds (default `30000`) before starting
-and throttles subsequent builds using `BUILD_DEBOUNCE` (default `300000`). The
-lambda persists the timestamp of the last build in a DynamoDB table so the
-debounce works across cold starts. The table name is exposed via `BUILD_TABLE`.
-The CodeBuild project name comes from the `CODEBUILD_PROJECT` environment
-variable and the deployment stage is passed via `SST_STAGE`.
+The `AirtableWebhookFn` now switches from triggering slow rebuilds to
+invalidating CloudFront and warming the cache. Pages fetch live data from
+Airtable at request time and set `Cache-Control: public, s-maxage=3600, stale-while-revalidate=60`.
+
+On each webhook:
+
+- The function finds the CloudFront distribution (by alias `luna-limon--$STAGE.grupovisual.org` or by `CLOUDFRONT_DISTRIBUTION_ID` if set),
+- Issues a `CreateInvalidation` for common paths (or `/*` as a fallback), and
+- Warms `/, /es, /en` to repopulate edge caches quickly.
+
+Env vars (optional but recommended):
+
+- `WEBHOOK_SECRET`: Require `?secret=...` on the webhook URL.
+- `CLOUDFRONT_DISTRIBUTION_ID`: Set explicitly to skip lookup-by-alias.

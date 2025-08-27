@@ -1,13 +1,25 @@
 <!-- +page.svelte -->
 <script lang="ts">
-	import type { Product } from '$lib/server/catalog';
+    type Product = {
+      id: string;
+      nombre: { es?: string; en?: string };
+      descripción: { es?: string; en?: string };
+      precio: number;
+      imagen?: string;
+    };
 	import { cart } from '$lib/cart';
-	import { m } from '$lib/paraglide/messages';
+	import { useI18n } from '$lib/i18n/context';
+	const { t } = useI18n();
 	import { getResizedImageUrl } from '$lib/utils/images';
 	import { onMount } from 'svelte';
 	
-	export let data: { products: Product[] };
-	let added = new Set<string>();
+    let { data } = $props<{ data: { products: Product[] } }>();
+    // current locale used to pick fields inline
+    // @ts-expect-error - runtime types not generated yet
+    import { getLocale } from '$lib/paraglide/runtime.js';
+    const nameOf = (p: Product) => p.nombre[getLocale() as 'es'|'en'] ?? p.nombre.es ?? p.nombre.en ?? '';
+    const descOf = (p: Product) => p.descripción[getLocale() as 'es'|'en'] ?? p.descripción.es ?? p.descripción.en ?? '';
+	let added = $state(new Set<string>());
 	let quantities: Record<string, number> = {};
 	
 	onMount(() => {
@@ -28,20 +40,20 @@
 	}
 </script>
 
-<h1 class="text-2xl font-bold mb-4">{m.etiqueta_catalogo()}</h1>
+<h1 class="text-2xl font-bold mb-4">{t('etiqueta_catalogo')}</h1>
 <ul class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
 	{#each data.products as product (product.id)}
 		<li class="border rounded-lg shadow-md p-4 flex flex-col gap-2 bg-white">
 			{#if product.imagen}
 				<img
 					src={getResizedImageUrl(product.imagen, 400)}
-					alt={product.nombre}
+					alt={nameOf(product)}
 					class="w-full h-48 object-cover rounded-md"
 					loading="lazy"
 				/>
 			{/if}
-			<h2 class="font-semibold text-lg">{product.nombre}</h2>
-			<p class="text-sm text-gray-700">{product.descripción}</p>
+            <h2 class="font-semibold text-lg">{nameOf(product)}</h2>
+            <p class="text-sm text-gray-700">{descOf(product)}</p>
 			<p class="font-medium">${product.precio}</p>
 			<input
 				type="number"
@@ -51,12 +63,12 @@
 			/>
 			<button
 				class={`mt-auto rounded text-white py-1 px-2 text-sm ${added.has(product.id) ? 'bg-green-600' : 'bg-blue-600'}`}
-				on:click={() => handleAdd(product)}
+				onclick={() => handleAdd(product)}
 			>
 				{#if added.has(product.id)}
-					{m.agregado_label()}
+					{t('agregado_label')}
 				{:else}
-					{m.agrega_label()}
+					{t('agrega_label')}
 				{/if}
 			</button>
 		</li>

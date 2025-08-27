@@ -5,7 +5,9 @@ const ORDERS_TABLE = process.env.AIRTABLE_ORDERS_TABLE!;
 const WOMPI_PUBLIC_KEY = process.env.WOMPI_PUBLIC_KEY;
 const WOMPI_REDIRECT_URL = process.env.WOMPI_REDIRECT_URL;
 
-export async function POST({ request }) {
+export async function POST({ request, setHeaders }) {
+  // Do not cache order responses
+  setHeaders({ 'Cache-Control': 'no-store' });
 	const { phone, items } = await request.json();
 	await base(ORDERS_TABLE).create({
 		phone,

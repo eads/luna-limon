@@ -163,17 +163,28 @@ export function Services() {
     ],
   });
 
-  /* ───────────────── Airtable webhook FN (unchanged) ──────── */
+  /* ───────────────── Airtable webhook → CDN invalidate ────── */
   const airtableWebhook = new sst.aws.Function("AirtableWebhookFn", {
     handler: "packages/services/airtable-webhook.handler",
-    nodejs: { install: ["@aws-sdk/client-sqs"] },
+    nodejs: { install: ["@aws-sdk/client-cloudfront"] },
     url: true,
     environment: {
-      WAIT_BEFORE_BUILD: process.env.WAIT_BEFORE_BUILD ?? "10000",
-      BUILD_QUEUE_URL: buildQueue.url,
       SST_STAGE: stage,
+      WEBHOOK_SECRET: process.env.WEBHOOK_SECRET ?? "",
+      // Optionally set explicitly if lookup-by-alias isn't desired
+      CLOUDFRONT_DISTRIBUTION_ID: process.env.CLOUDFRONT_DISTRIBUTION_ID ?? "",
+      CDN_ALIAS: `luna-limon--${stage}.grupovisual.org`,
     },
-    link: [buildQueue],
+    // Allow the function to list distributions and create invalidations
+    permissions: [
+      sst.aws.permission({
+        actions: [
+          "cloudfront:ListDistributions",
+          "cloudfront:CreateInvalidation",
+        ],
+        resources: ["*"]
+      })
+    ]
   });
 
   /* ───────────────── exports ──────────────────────────────── */

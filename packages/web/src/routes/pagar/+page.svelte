@@ -22,6 +22,6 @@
 
 <h1 class="text-2xl font-bold mb-4">Checkout</h1>
 <input class="mb-2 w-full rounded border p-2" bind:value={phone} placeholder="WhatsApp number" />
-<button class="rounded bg-green-600 text-white py-2 px-4" on:click={placeOrder}>
+<button class="rounded bg-green-600 text-white py-2 px-4" onclick={placeOrder}>
 	Place order
 </button>

@@ -1,5 +1,12 @@
 import { writable } from 'svelte/store';
-import type { Product } from './server/catalog';
+
+export type Product = {
+  id: string;
+  nombre: { es?: string; en?: string };
+  descripción: { es?: string; en?: string };
+  precio: number;
+  imagen?: string;
+};
 
 export interface CartItem {
 	product: Product;

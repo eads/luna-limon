@@ -2,14 +2,29 @@
 	import '../app.css';
 	import FloatyCart from '$lib/FloatyCart.svelte';
 	// @ts-expect-error - runtime types not generated yet
-	import { locales, getLocale, setLocale } from '$lib/paraglide/runtime.js';
+	import { locales, getLocale, setLocale, localizeHref } from '$lib/paraglide/runtime.js';
+	import { setupI18n } from '$lib/i18n/context';
+  import { goto } from '$app/navigation';
 
-	let { children } = $props();
-	let selected = getLocale();
-	const switchLang = (e: Event) => {
+	let { children, data } = $props<{ children: any; data: { locale: string; messages: any } }>();
+	let selected = $state(getLocale());
+
+	// Seed per-request i18n context for SSR/CSR
+	setupI18n(data.messages);
+
+	$effect(() => {
+		setLocale(selected);
+	});
+
+	function onLangChange(e: Event) {
 		const target = e.target as HTMLSelectElement;
-		setLocale(target.value);
-	};
+		const next = target.value;
+		selected = next;
+		// navigate to the localized version of current path to fetch fresh SSR HTML
+		goto(localizeHref(location.pathname));
+	}
+
+  
 </script>
 
 <nav class="bg-white/90 backdrop-blur border-b p-4 flex justify-between items-center shadow">
@@ -18,7 +33,7 @@
 		<select
 			class="border rounded p-1 pr-6 text-sm w-13 appearance-none"
 			bind:value={selected}
-			onchange={switchLang}
+			onchange={onLangChange}
 		>
 			{#each locales as l (l)}
 				<option value={l}>{l.toUpperCase()}</option>
