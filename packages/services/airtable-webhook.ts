@@ -74,19 +74,30 @@ export const handler = async (
 
   console.log("Airtable webhook payload:", event.body);
 
-  const distId = await resolveDistributionId();
+  let distId: string;
+  try {
+    distId = await resolveDistributionId();
+  } catch (e) {
+    console.error("Failed to resolve distribution ID for alias", CDN_ALIAS, e);
+    return { statusCode: 500, body: `no-distribution-for-alias:${CDN_ALIAS}` };
+  }
   const paths = inferPathsFromAirtable(event.body);
 
-  console.log("Invalidating CloudFront:", distId, paths);
-  await cf.send(
-    new CreateInvalidationCommand({
-      DistributionId: distId,
-      InvalidationBatch: {
-        CallerReference: `${Date.now()}`,
-        Paths: { Quantity: paths.length, Items: paths },
-      },
-    }),
-  );
+  console.log("Invalidating CloudFront:", { distId, paths });
+  try {
+    await cf.send(
+      new CreateInvalidationCommand({
+        DistributionId: distId,
+        InvalidationBatch: {
+          CallerReference: `${Date.now()}`,
+          Paths: { Quantity: paths.length, Items: paths },
+        },
+      }),
+    );
+  } catch (e) {
+    console.error("CreateInvalidation failed", e);
+    return { statusCode: 500, body: "invalidation-failed" };
+  }
 
   // Optional: warm the common pages to repopulate edge caches
   const aliasUrl = `https://${CDN_ALIAS}`;
@@ -96,5 +107,5 @@ export const handler = async (
     "/en",
   ]);
 
-  return { statusCode: 200, body: "invalidated" };
+  return { statusCode: 200, body: `invalidated:${distId}` };
 };

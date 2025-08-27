@@ -10,6 +10,7 @@ export function Web({ resizer }: ServicesCtx = {}) {
     // link: [resizer],                        // grants IAM + generates SDK types
     environment: {
       RESIZER_URL: resizer.url,             // build-time constant
+      SST_STAGE: $app.stage,                // expose stage to SvelteKit SSR
     },
     domain: `luna-limon--${$app.stage}.grupovisual.org`,
   });

@@ -8,9 +8,11 @@ const COPY_TABLE = process.env.AIRTABLE_COPY_TABLE || process.env.AIRTABLE_TABLE
 
 export const load: LayoutServerLoad = async ({ setHeaders }) => {
   const locale: 'en' | 'es' = getLocale();
+  const stage = process.env.SST_STAGE ?? 'staging';
+  const ttl = stage === 'production' ? 3600 : 60;
 
-  // Cache the HTML at the edge; allow SWR for 60s
-  setHeaders({ 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=60' });
+  // Cache the HTML at the edge; stage-based TTL
+  setHeaders({ 'Cache-Control': `public, s-maxage=${ttl}, stale-while-revalidate=60` });
 
   // messages from texto table
   const textoRecords = await base(COPY_TABLE).select().all();
