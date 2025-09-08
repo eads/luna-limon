@@ -10,10 +10,6 @@ declare module "sst" {
       "type": "sst.aws.Function"
       "url": string
     }
-    "BuildQueue": {
-      "type": "sst.aws.Queue"
-      "url": string
-    }
     "ImageResizer": {
       "type": "sst.sst.Linkable"
       "url": string
@@ -21,6 +17,10 @@ declare module "sst" {
     "ImageResizerFn": {
       "name": string
       "type": "sst.aws.Function"
+      "url": string
+    }
+    "InvalidateQueue": {
+      "type": "sst.aws.Queue"
       "url": string
     }
     "Web": {

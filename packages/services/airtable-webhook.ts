@@ -1,62 +1,25 @@
-// services/airtable-webhook.ts
+// services/airtable-webhook.ts (enqueue-only)
 import {
   APIGatewayProxyEventV2,
   APIGatewayProxyResult,
   Context,
-} from "aws-lambda";
-import {
-  CloudFrontClient,
-  CreateInvalidationCommand,
-  ListDistributionsCommand,
-} from "@aws-sdk/client-cloudfront";
+} from 'aws-lambda';
+import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 
-// Optional security: shared secret check (set in webhook URL as ?secret=...)
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+const INVALIDATE_QUEUE_URL = process.env.INVALIDATE_QUEUE_URL!;
+const STAGE = process.env.SST_STAGE || 'staging';
 
-// Prefer explicit distribution ID; fallback to lookup by alias
-const CLOUDFRONT_DISTRIBUTION_ID = process.env.CLOUDFRONT_DISTRIBUTION_ID;
-const CDN_ALIAS = process.env.CDN_ALIAS || `luna-limon--${process.env.SST_STAGE}.grupovisual.org`;
-
-const cf = new CloudFrontClient({});
-
-async function resolveDistributionId(): Promise<string> {
-  if (CLOUDFRONT_DISTRIBUTION_ID) return CLOUDFRONT_DISTRIBUTION_ID;
-
-  // Fallback: find by alias (domain)
-  const dists = await cf.send(new ListDistributionsCommand({}));
-  const items = dists.DistributionList?.Items ?? [];
-  const found = items.find((d) => d.Aliases?.Items?.includes(CDN_ALIAS));
-  if (!found?.Id) throw new Error(`CloudFront distribution not found for alias ${CDN_ALIAS}`);
-  return found.Id;
-}
+const sqs = new SQSClient({});
 
 function inferPathsFromAirtable(body?: string | null): string[] {
-  // Basic default: invalidate everything if unknown
-  if (!body) return ["/*"];
+  if (!body) return ['/', '/es', '/en', '/index.html'];
   try {
     const payload = JSON.parse(body);
-    // Airtable payload shapes vary. If we can detect a table, narrow paths.
     const table = payload?.change?.tableId || payload?.payload?.record?.tableId || payload?.tableId;
-    if (table) {
-      // For product changes, invalidate home pages in both locales
-      return ["/", "/es", "/en", "/index.html"].map((p) => (p.startsWith("/") ? p : `/${p}`));
-    }
-  } catch {
-    // ignore parse errors
-  }
-  return ["/*"];
-}
-
-async function warmPaths(baseUrl: string, paths: string[]) {
-  for (const p of paths) {
-    try {
-      const url = new URL(p, baseUrl).toString();
-      console.log("Warming:", url);
-      await fetch(url, { method: "GET" });
-    } catch (err) {
-      console.warn("Warm failed for", p, err);
-    }
-  }
+    if (table) return ['/', '/es', '/en', '/index.html'];
+  } catch {}
+  return ['/', '/es', '/en', '/index.html'];
 }
 
 export const handler = async (
@@ -68,44 +31,29 @@ export const handler = async (
   if (WEBHOOK_SECRET) {
     const got = event.queryStringParameters?.secret;
     if (!got || got !== WEBHOOK_SECRET) {
-      return { statusCode: 401, body: "unauthorized" };
+      return { statusCode: 401, body: 'unauthorized' };
     }
   }
 
-  console.log("Airtable webhook payload:", event.body);
-
-  let distId: string;
-  try {
-    distId = await resolveDistributionId();
-  } catch (e) {
-    console.error("Failed to resolve distribution ID for alias", CDN_ALIAS, e);
-    return { statusCode: 500, body: `no-distribution-for-alias:${CDN_ALIAS}` };
-  }
   const paths = inferPathsFromAirtable(event.body);
+  // Coalesce to one invalidation every 60 seconds
+  const windowSec = 60;
+  const bucket = Math.floor(Date.now() / (windowSec * 1000));
+  const dedupId = `${STAGE}-${bucket}`;
 
-  console.log("Invalidating CloudFront:", { distId, paths });
-  try {
-    await cf.send(
-      new CreateInvalidationCommand({
-        DistributionId: distId,
-        InvalidationBatch: {
-          CallerReference: `${Date.now()}`,
-          Paths: { Quantity: paths.length, Items: paths },
-        },
-      }),
-    );
-  } catch (e) {
-    console.error("CreateInvalidation failed", e);
-    return { statusCode: 500, body: "invalidation-failed" };
-  }
+  await sqs.send(
+    new SendMessageCommand({
+      QueueUrl: INVALIDATE_QUEUE_URL,
+      MessageBody: JSON.stringify({ paths, bucket }),
+      MessageGroupId: 'invalidation',
+      MessageDeduplicationId: dedupId,
+    })
+  );
 
-  // Optional: warm the common pages to repopulate edge caches
-  const aliasUrl = `https://${CDN_ALIAS}`;
-  await warmPaths(aliasUrl, [
-    "/",
-    "/es",
-    "/en",
-  ]);
-
-  return { statusCode: 200, body: `invalidated:${distId}` };
+  // Airtable expects 200/204 for success
+  return {
+    statusCode: 200,
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ ok: true, queued: true, dedupId, paths }),
+  };
 };

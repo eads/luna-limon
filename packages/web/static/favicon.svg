@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <!-- Subtle radial gradient for lemon pulp -->
+    <radialGradient id="lemonFill" cx="50%" cy="50%" r="55%" fx="45%" fy="40%">
+      <stop offset="0%"  stop-color="#FFF9B8"/>
+      <stop offset="45%" stop-color="#FFE159"/>
+      <stop offset="100%" stop-color="#FFC61A"/>
+    </radialGradient>
+    <!-- Diagonal light texture -->
+    <pattern id="lemonTexture" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="4" fill="transparent" />
+      <path d="M0 4 L4 0" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="0.8" />
+    </pattern>
+    <!-- Single lemon outline path with bulged ends (no overlapping strokes) -->
+    <!-- Symmetric lemon with even larger end bulges -->
+    <path id="lemonPath" d="
+      M4 32
+      C4 26, 18 12, 32 12
+      C46 12, 60 26, 60 32
+      C60 38, 46 52, 32 52
+      C18 52, 4 38, 4 32 Z"/>
+    <clipPath id="lemonClip"><use href="#lemonPath"/></clipPath>
+  </defs>
+
+  <g transform="rotate(-20 32 32)">
+    <!-- Fill with gradient -->
+    <use href="#lemonPath" fill="url(#lemonFill)"/>
+
+    <!-- Texture overlay inside the lemon shape -->
+    <use href="#lemonPath" fill="url(#lemonTexture)" opacity="0.18"/>
+
+    <!-- Outline -->
+    <use href="#lemonPath" fill="none" stroke="#6B7280" stroke-width="3" stroke-linejoin="round"/>
+
+    <!-- Soft highlight across the top -->
+    <path d="M16 26 C22 16, 42 16, 48 26" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,18 +1,4 @@
 // stack/services.ts
-import * as aws from "@pulumi/aws";
-import * as dotenv from "dotenv";
-import * as path from "path";
-
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
-
-const buildEnvKeys = [
-  "AIRTABLE_TOKEN",
-  "AIRTABLE_BASE",
-  "AIRTABLE_COPY_TABLE",
-  "AIRTABLE_PRODUCTS_TABLE",
-  "AIRTABLE_ORDERS_TABLE",
-  "WOMPI_PUBLIC_KEY",
-] as const;
 
 export function Services() {
   const stage = $app.stage;
@@ -36,146 +22,20 @@ export function Services() {
     ],
   });
 
-  const buildQueue = new sst.aws.Queue("BuildQueue", {
+
+  /* ───────────────── Invalidation queue (coalesce 30s) ─────── */
+  const invalidateQueue = new sst.aws.Queue("InvalidateQueue", {
     fifo: true,
     contentBasedDeduplication: true,
-    queueName: "luna-limon-builds.fifo",
-    delay: "10 seconds",
-    visibilityTimeout: "900 seconds",
+    queueName: "luna-limon-invalidations.fifo",
+    visibilityTimeout: "60 seconds",
   });
 
-  /* ───────────────── CodeBuild role & project ──────────────── */
-  const buildRole = new aws.iam.Role("CodeBuildRole", {
-    assumeRolePolicy: aws.iam.getPolicyDocumentOutput({
-      statements: [
-        {
-          effect: "Allow",
-          principals: [{ type: "Service", identifiers: ["codebuild.amazonaws.com"] }],
-          actions: ["sts:AssumeRole"],
-        },
-      ],
-    }).json,
-  });
-
-  // Turnkey policy with S3/Logs/S3-artifacts perms (trim later if you like)
-  new aws.iam.RolePolicyAttachment("CodeBuildRoleAttach", {
-    role: buildRole.name,
-    policyArn: aws.iam.ManagedPolicy.AWSCodeBuildDeveloperAccess,
-  });
-
-  new aws.iam.RolePolicyAttachment("codebuild-ssm-readonly", {
-    role: buildRole.name,
-    policyArn: "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess",
-  });
-
-  new aws.iam.RolePolicy("CodeBuildLogsWrite", {
-    role: buildRole.id,
-    policy: JSON.stringify({
-      Version: "2012-10-17",
-      Statement: [
-        {
-          Effect: "Allow",
-          Action: [
-            "logs:CreateLogGroup",
-            "logs:CreateLogStream",
-            "logs:PutLogEvents"
-          ],
-          Resource: "arn:aws:logs:*:*:log-group:/aws/codebuild/*"
-        }
-      ]
-    }),
-  });
-
-  const sstStatePolicy = new aws.iam.Policy("codebuild-sst-state-s3", {
-    description: "Let CodeBuild read/write SST state bucket",
-    policy: JSON.stringify({
-      Version: "2012-10-17",
-      Statement: [
-        {
-          Effect: "Allow",
-          Action: [
-            "s3:ListBucket",
-            "s3:GetObject",
-            "s3:PutObject",
-            "s3:DeleteObject"
-          ],
-          Resource: [
-            // bucket itself
-            "arn:aws:s3:::sst-state-*",
-            // and everything inside
-            "arn:aws:s3:::sst-state-*/*"
-          ]
-        }
-      ]
-    })
-  });
-
-  new aws.iam.RolePolicyAttachment("attach-sst-state-s3", {
-    role: buildRole.name,
-    policyArn: sstStatePolicy.arn,
-  });
-
-
-  const buildProject = new aws.codebuild.Project("WebDeployProject", {
-    name: `${stage}-web-deploy`,
-    serviceRole: buildRole.arn,
-    source: {
-      type: "GITHUB",
-      location: "https://github.com/eads/luna-limon.git",
-      buildspec: "buildspec.yml",   // now it can read the file from the repo
-    },
-    artifacts: { type: "NO_ARTIFACTS" },
-    environment: {
-      type: "LINUX_CONTAINER",
-      computeType: "BUILD_GENERAL1_SMALL",
-      image: "aws/codebuild/standard:7.0",      // Node 20+ is baked in  :contentReference[oaicite:0]{index=0}
-      environmentVariables: [
-        { name: "STAGE", value: stage },
-        ...buildEnvKeys.map((key) => ({
-          name: key,
-          value: process.env[key] ?? "",        // crash-safe if a var is missing
-          type: "PLAINTEXT",
-        })),
-      ],
-    },
-    cache: {
-      type: "LOCAL",
-      modes: ["LOCAL_SOURCE_CACHE", "LOCAL_DOCKER_LAYER_CACHE"],
-    },
-    timeoutInMinutes: 45,
-  });
-
-  /* ───────────────── Lambda that triggers builds ───────────── */
-  buildQueue.subscribe({
-    handler: "packages/services/airtable-build-invoker.handler",
-    functionName: "BuildQueueConsumerFunction",
-    nodejs: { install: ["@aws-sdk/client-codebuild"] },
-    environment: {
-      CODEBUILD_PROJECT: buildProject.name,   // << now wired in
-      SST_STAGE: stage,
-    },
-    // 👉 Fix: use SST’s permission helper
-    permissions: [
-      sst.aws.permission({
-        actions: ["codebuild:StartBuild", "codebuild:BatchGetBuilds"],
-        resources: [buildProject.arn],
-      }),
-    ],
-  });
-
-  /* ───────────────── Airtable webhook → CDN invalidate ────── */
-  const airtableWebhook = new sst.aws.Function("AirtableWebhookFn", {
-    handler: "packages/services/airtable-webhook.handler",
+  invalidateQueue.subscribe({
+    handler: "packages/services/cdn-invalidator.handler",
     nodejs: { install: ["@aws-sdk/client-cloudfront"] },
-    url: true,
-    environment: {
-      SST_STAGE: stage,
-      WEBHOOK_SECRET: process.env.WEBHOOK_SECRET ?? "",
-      // Optionally set explicitly if lookup-by-alias isn't desired
-      CLOUDFRONT_DISTRIBUTION_ID: process.env.CLOUDFRONT_DISTRIBUTION_ID ?? "",
-      CDN_ALIAS: `luna-limon--${stage}.grupovisual.org`,
-    },
-    // Allow the function to list distributions and create invalidations
+    batchSize: 1,
+    batchingWindow: "1 second",
     permissions: [
       sst.aws.permission({
         actions: [
@@ -184,14 +44,31 @@ export function Services() {
         ],
         resources: ["*"]
       })
-    ]
+    ],
+    environment: {
+      SST_STAGE: stage,
+      CLOUDFRONT_DISTRIBUTION_ID: process.env.CLOUDFRONT_DISTRIBUTION_ID ?? "",
+      CDN_ALIAS: `luna-limon--${stage}.grupovisual.org`,
+    },
+  });
+
+  /* ───────────────── Airtable webhook → enqueue ─────────────── */
+  const airtableWebhook = new sst.aws.Function("AirtableWebhookFn", {
+    handler: "packages/services/airtable-webhook.handler",
+    nodejs: { install: ["@aws-sdk/client-sqs"] },
+    url: { auth: "none", cors: true },
+    environment: {
+      SST_STAGE: stage,
+      WEBHOOK_SECRET: process.env.WEBHOOK_SECRET ?? "",
+      INVALIDATE_QUEUE_URL: invalidateQueue.url,
+    },
+    link: [invalidateQueue],
   });
 
   /* ───────────────── exports ──────────────────────────────── */
   return {
     resizer,
-    buildQueue,
+    invalidateQueue,
     airtableWebhook,
-    buildProject,       // handy if other stacks ever need the ARN
   };
 }

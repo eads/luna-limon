@@ -9,7 +9,7 @@ const COPY_TABLE = process.env.AIRTABLE_COPY_TABLE || process.env.AIRTABLE_TABLE
 export const load: LayoutServerLoad = async ({ setHeaders }) => {
   const locale: 'en' | 'es' = getLocale();
   const stage = process.env.SST_STAGE ?? 'staging';
-  const ttl = stage === 'production' ? 3600 : 60;
+  const ttl = stage === 'production' ? 3600 : 300; // staging: 5m, production: 1h
 
   // Cache the HTML at the edge; stage-based TTL
   setHeaders({ 'Cache-Control': `public, s-maxage=${ttl}, stale-while-revalidate=60` });
