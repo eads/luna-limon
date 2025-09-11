@@ -11,8 +11,10 @@ export const load: LayoutServerLoad = async ({ setHeaders }) => {
   const stage = process.env.SST_STAGE ?? 'staging';
   const ttl = stage === 'production' ? 3600 : 300; // staging: 5m, production: 1h
 
-  // Cache the HTML at the edge; stage-based TTL
-  setHeaders({ 'Cache-Control': `public, s-maxage=${ttl}, stale-while-revalidate=60` });
+  // Cache the HTML at the edge; stage-based TTL (avoid duplicate header errors in dev)
+  try {
+    setHeaders({ 'Cache-Control': `public, s-maxage=${ttl}, stale-while-revalidate=60` });
+  } catch {}
 
   // messages from texto table (tolerate Airtable outages)
   const messages: Record<string, { text: string }> = {};

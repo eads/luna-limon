@@ -1,24 +1,92 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#fff6e7"/>
-      <stop offset="100%" stop-color="#ffe8bb"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff8ee"/>
+      <stop offset="100%" stop-color="#ffe8c6"/>
     </linearGradient>
-    <linearGradient id="a" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#FFB703"/>
-      <stop offset="100%" stop-color="#FB8500"/>
+    <linearGradient id="shadow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
     </linearGradient>
   </defs>
-  <rect width="100%" height="100%" fill="url(#g)"/>
-  <g opacity="0.25">
-    <circle cx="200" cy="150" r="140" fill="url(#a)"/>
-    <circle cx="1450" cy="250" r="220" fill="#ffd166"/>
-    <circle cx="1200" cy="750" r="180" fill="#ffadad"/>
-    <circle cx="300" cy="700" r="220" fill="#90e0ef"/>
+  <rect width="100%" height="100%" fill="url(#bg)"/>
+
+  <!-- Desk surface -->
+  <rect x="-50" y="620" width="1700" height="400" fill="#f0e7dc"/>
+  <rect x="-50" y="620" width="1700" height="60" fill="#e7dccf"/>
+
+  <!-- Triangular standing calendar -->
+  <g transform="translate(800,520)">
+    <!-- base shadow -->
+    <ellipse cx="0" cy="210" rx="360" ry="40" fill="#000" opacity="0.08"/>
+    <!-- back panel -->
+    <path d="M -420 210 L -60 -80 L 360 210 Z" fill="#e8e8ea"/>
+    <!-- front panel -->
+    <path d="M -420 210 L 0 -60 L 360 210 Z" fill="#ffffff"/>
+    <!-- rings -->
+    <g transform="translate(-240,-30)">
+      <rect x="0" y="-8" width="480" height="16" rx="8" fill="#eaeaea"/>
+      <g fill="#c8c8c8">
+        <circle cx="20" cy="0" r="6"/>
+        <circle cx="60" cy="0" r="6"/>
+        <circle cx="100" cy="0" r="6"/>
+        <circle cx="140" cy="0" r="6"/>
+        <circle cx="180" cy="0" r="6"/>
+        <circle cx="220" cy="0" r="6"/>
+        <circle cx="260" cy="0" r="6"/>
+        <circle cx="300" cy="0" r="6"/>
+        <circle cx="340" cy="0" r="6"/>
+        <circle cx="380" cy="0" r="6"/>
+        <circle cx="420" cy="0" r="6"/>
+        <circle cx="460" cy="0" r="6"/>
+      </g>
+    </g>
+    <!-- page grid -->
+    <g transform="translate(-300,20)">
+      <rect x="0" y="0" width="260" height="160" rx="8" fill="#fff9f2" stroke="#f1e6d8"/>
+      <g transform="translate(16,18)" fill="#e1d6c9">
+        <rect x="0" y="0" width="32" height="6" rx="3"/>
+        <rect x="44" y="0" width="32" height="6" rx="3"/>
+        <rect x="88" y="0" width="32" height="6" rx="3"/>
+        <rect x="132" y="0" width="32" height="6" rx="3"/>
+        <rect x="176" y="0" width="32" height="6" rx="3"/>
+      </g>
+      <g transform="translate(16,40)" fill="#eadfcd">
+        <rect x="0" y="0" width="24" height="20" rx="3"/>
+        <rect x="32" y="0" width="24" height="20" rx="3"/>
+        <rect x="64" y="0" width="24" height="20" rx="3"/>
+        <rect x="96" y="0" width="24" height="20" rx="3"/>
+        <rect x="128" y="0" width="24" height="20" rx="3"/>
+        <rect x="160" y="0" width="24" height="20" rx="3"/>
+      </g>
+      <g transform="translate(16,68)" fill="#eadfcd">
+        <rect x="0" y="0" width="24" height="20" rx="3"/>
+        <rect x="32" y="0" width="24" height="20" rx="3"/>
+        <rect x="64" y="0" width="24" height="20" rx="3"/>
+        <rect x="96" y="0" width="24" height="20" rx="3"/>
+        <rect x="128" y="0" width="24" height="20" rx="3"/>
+        <rect x="160" y="0" width="24" height="20" rx="3"/>
+      </g>
+      <g transform="translate(16,96)" fill="#eadfcd">
+        <rect x="0" y="0" width="24" height="20" rx="3"/>
+        <rect x="32" y="0" width="24" height="20" rx="3"/>
+        <rect x="64" y="0" width="24" height="20" rx="3"/>
+        <rect x="96" y="0" width="24" height="20" rx="3"/>
+        <rect x="128" y="0" width="24" height="20" rx="3"/>
+        <rect x="160" y="0" width="24" height="20" rx="3"/>
+      </g>
+    </g>
   </g>
-  <g opacity="0.1">
-    <rect x="-50" y="400" width="800" height="300" rx="40" fill="#219ebc"/>
-    <rect x="900" y="120" width="600" height="260" rx="40" fill="#ef476f"/>
+
+  <!-- Props: mug and plant for desk vibe -->
+  <g opacity="0.9">
+    <rect x="250" y="560" width="120" height="80" rx="12" fill="#dff0ff"/>
+    <rect x="260" y="540" width="100" height="20" rx="10" fill="#bfe1ff"/>
+  </g>
+  <g>
+    <rect x="1280" y="520" width="30" height="120" rx="6" fill="#9bd59b"/>
+    <rect x="1310" y="500" width="28" height="140" rx="6" fill="#b9e6b9"/>
+    <rect x="1340" y="540" width="30" height="100" rx="6" fill="#8fd18f"/>
+    <rect x="1250" y="630" width="150" height="14" rx="7" fill="#b6a999" opacity="0.7"/>
   </g>
 </svg>
-

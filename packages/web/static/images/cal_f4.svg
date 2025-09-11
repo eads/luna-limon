@@ -1,8 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
   <rect width="100%" height="100%" fill="#fdf7ff"/>
-  <g opacity="0.25">
-    <circle cx="220" cy="620" r="180" fill="#cdb4db"/>
-    <circle cx="980" cy="220" r="160" fill="#ffc8dd"/>
+  <!-- desk -->
+  <rect x="-40" y="560" width="1280" height="260" fill="#f6eef8"/>
+  <!-- calendar + gift ribbon -->
+  <g transform="translate(600,470)">
+    <ellipse cx="0" cy="170" rx="260" ry="26" fill="#000" opacity="0.05"/>
+    <path d="M -220 170 L 0 -10 L 240 170 Z" fill="#ffffff"/>
+    <g transform="translate(-150,20)">
+      <rect x="0" y="0" width="240" height="140" rx="10" fill="#fff9f2" stroke="#e8dfd2"/>
+      <rect x="100" y="0" width="40" height="140" fill="#ffc8dd" opacity="0.7"/>
+      <rect x="0" y="60" width="240" height="20" fill="#ffc8dd" opacity="0.7"/>
+    </g>
   </g>
 </svg>
-

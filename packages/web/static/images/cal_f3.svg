@@ -1,8 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
-  <rect width="100%" height="100%" fill="#f9fbf7"/>
-  <g opacity="0.25">
-    <circle cx="250" cy="300" r="150" fill="#b7e4c7"/>
-    <circle cx="950" cy="550" r="200" fill="#74c69d"/>
+  <rect width="100%" height="100%" fill="#f7fbf7"/>
+  <!-- desk -->
+  <rect x="-40" y="560" width="1280" height="260" fill="#edf5ed"/>
+  <!-- calendar + plant -->
+  <g transform="translate(600,470)">
+    <ellipse cx="0" cy="170" rx="260" ry="26" fill="#000" opacity="0.05"/>
+    <path d="M -220 170 L -10 -10 L 240 170 Z" fill="#ffffff"/>
+    <g transform="translate(-140,20)">
+      <rect x="0" y="0" width="220" height="140" rx="10" fill="#fff9f2" stroke="#e8dfd2"/>
+    </g>
+  </g>
+  <g transform="translate(940,460)">
+    <rect x="0" y="60" width="140" height="120" rx="14" fill="#d8eedd"/>
+    <circle cx="60" cy="0" r="40" fill="#b7e4c7"/>
+    <circle cx="110" cy="20" r="30" fill="#99d6ae"/>
+    <rect x="20" y="180" width="120" height="14" rx="7" fill="#c8c8c8" opacity="0.6"/>
   </g>
 </svg>
-

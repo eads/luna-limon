@@ -1,14 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#fff"/>
-      <stop offset="100%" stop-color="#faf8f5"/>
-    </linearGradient>
-  </defs>
-  <rect width="100%" height="100%" fill="url(#g)"/>
-  <g opacity="0.25">
-    <circle cx="200" cy="200" r="140" fill="#ffd166"/>
-    <circle cx="900" cy="600" r="180" fill="#ffcad4"/>
+  <rect width="100%" height="100%" fill="#fffdf8"/>
+  <!-- desk -->
+  <rect x="-40" y="560" width="1280" height="260" fill="#f0e7dc"/>
+  <!-- mini calendar on desk -->
+  <g transform="translate(600,460)">
+    <ellipse cx="0" cy="180" rx="220" ry="24" fill="#000" opacity="0.06"/>
+    <path d="M -260 180 L -40 0 L 200 180 Z" fill="#ffffff"/>
+    <path d="M -210 145 L -30 10 L 160 145 Z" fill="#fff6ec"/>
+    <g transform="translate(-160,20)">
+      <rect x="0" y="0" width="160" height="110" rx="8" fill="#fff9f2" stroke="#f1e6d8"/>
+      <g transform="translate(12,14)" fill="#e1d6c9">
+        <rect x="0" y="0" width="24" height="5" rx="2"/>
+        <rect x="30" y="0" width="24" height="5" rx="2"/>
+        <rect x="60" y="0" width="24" height="5" rx="2"/>
+        <rect x="90" y="0" width="24" height="5" rx="2"/>
+      </g>
+    </g>
   </g>
 </svg>
-

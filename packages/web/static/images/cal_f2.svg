@@ -1,8 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
-  <rect width="100%" height="100%" fill="#fbfbfb"/>
-  <g opacity="0.25">
-    <circle cx="300" cy="500" r="190" fill="#90e0ef"/>
-    <circle cx="1000" cy="200" r="160" fill="#ffd6a5"/>
+  <rect width="100%" height="100%" fill="#f9fbff"/>
+  <!-- desk -->
+  <rect x="-40" y="560" width="1280" height="260" fill="#eef3f8"/>
+  <!-- calendar + mug -->
+  <g transform="translate(520,470)">
+    <ellipse cx="80" cy="170" rx="260" ry="26" fill="#000" opacity="0.05"/>
+    <path d="M -200 170 L 0 -10 L 280 170 Z" fill="#ffffff"/>
+    <g transform="translate(-120,20)">
+      <rect x="0" y="0" width="200" height="140" rx="10" fill="#fff9f2" stroke="#e8dfd2"/>
+      <g transform="translate(16,18)" fill="#e1d6c9">
+        <rect x="0" y="0" width="28" height="6" rx="3"/>
+        <rect x="36" y="0" width="28" height="6" rx="3"/>
+        <rect x="72" y="0" width="28" height="6" rx="3"/>
+        <rect x="108" y="0" width="28" height="6" rx="3"/>
+        <rect x="144" y="0" width="28" height="6" rx="3"/>
+      </g>
+    </g>
+  </g>
+  <g transform="translate(870,560)">
+    <rect x="0" y="0" width="80" height="70" rx="12" fill="#dff0ff"/>
+    <rect x="8" y="-20" width="64" height="20" rx="10" fill="#bfe1ff"/>
   </g>
 </svg>
-
