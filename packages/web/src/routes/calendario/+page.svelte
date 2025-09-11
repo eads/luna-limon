@@ -24,6 +24,7 @@
   import { browser } from '$app/environment';
   let scrollY = $state(0);
   let raf = 0;
+  let reducedMotion = $state(false);
   function onScroll() {
     if (!browser) return;
     if (raf) return;
@@ -35,10 +36,16 @@
   }
   import { onMount, onDestroy } from 'svelte';
   onMount(() => {
-    if (browser) window.addEventListener('scroll', onScroll, { passive: true });
+    if (browser) {
+      window.addEventListener('scroll', onScroll, { passive: true });
+      const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+      reducedMotion = !!mql.matches;
+      const listener = () => { reducedMotion = !!mql.matches; };
+      mql.addEventListener?.('change', listener);
+    }
   });
   onDestroy(() => { if (browser) window.removeEventListener('scroll', onScroll); });
-  const y = (speed: number) => `transform: translateY(${Math.round(scrollY * speed)}px); will-change: transform;`;
+  const y = (speed: number) => reducedMotion ? '' : `transform: translateY(${Math.round(scrollY * speed)}px); will-change: transform;`;
 
   function addNow() {
     if (!calendar) return;
@@ -73,6 +80,38 @@
     io.observe(topCtaEl);
     return () => io.disconnect();
   });
+
+  // Panel reveals
+  let p1El: HTMLElement | null = null;
+  let p2El: HTMLElement | null = null;
+  let p3El: HTMLElement | null = null;
+  let p4El: HTMLElement | null = null;
+  let p1Shown = $state(false);
+  let p2Shown = $state(false);
+  let p3Shown = $state(false);
+  let p4Shown = $state(false);
+  onMount(() => {
+    if (!browser) {
+      p1Shown = p2Shown = p3Shown = p4Shown = true;
+      return;
+    }
+    if (reducedMotion) {
+      p1Shown = p2Shown = p3Shown = p4Shown = true;
+      return;
+    }
+    const opts = { threshold: 0.15 };
+    const mk = (setter: (v: boolean) => void) => new IntersectionObserver((entries, obs) => {
+      const entry = entries[0];
+      if (entry?.isIntersecting) {
+        setter(true);
+        obs.disconnect();
+      }
+    }, opts);
+    if (p1El) mk((v)=> p1Shown = v).observe(p1El);
+    if (p2El) mk((v)=> p2Shown = v).observe(p2El);
+    if (p3El) mk((v)=> p3Shown = v).observe(p3El);
+    if (p4El) mk((v)=> p4Shown = v).observe(p4El);
+  });
 </script>
 
 <style>
@@ -95,6 +134,9 @@
   @media (min-width: 768px) {
     .content-wrap { padding-left: 2rem; padding-right: 2rem; }
   }
+
+  .reveal { opacity: 0; transform: translateY(12px); transition: opacity 400ms ease, transform 400ms ease; }
+  .reveal.show { opacity: 1; transform: translateY(0); }
 </style>
 
 {#if !calendar}
@@ -129,52 +171,52 @@
   <!-- Full-bleed feature panels, text above centered image -->
   <section class="space-y-8">
     <!-- Panel 1 -->
-    <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f5f2ee;">
+    <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f5f2ee;" bind:this={p1El}>
       <div class="content-wrap">
-        <div class="text-center mb-6">
+        <div class="text-center mb-6 reveal" class:show={p1Shown}>
           <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f1_title','Arte que inspira cada mes')}</h2>
           <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f1_body','Ilustraciones originales impresas con tintas de alta calidad.')}</p>
         </div>
-        <div class="rounded-xl overflow-hidden mx-auto max-w-2xl" style={y(-0.08)}>
+        <div class="rounded-xl overflow-hidden mx-auto max-w-2xl reveal" class:show={p1Shown} style={y(-0.08)}>
           <img src={'/images/cal_f1_fg.png'} onerror={(e) => fgFallback(e, 'cal_f1_fg')} alt={nameOf(calendar)} class="w-full" />
         </div>
       </div>
     </div>
 
     <!-- Panel 2 -->
-    <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f0f4f8;">
+    <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f0f4f8;" bind:this={p2El}>
       <div class="content-wrap">
-        <div class="text-center mb-6">
+        <div class="text-center mb-6 reveal" class:show={p2Shown}>
           <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f2_title','Recetas estacionales')}</h2>
           <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f2_body','Ideas sencillas y deliciosas para compartir en casa.')}</p>
         </div>
-        <div class="rounded-xl overflow-hidden mx-auto max-w-2xl" style={y(-0.06)}>
+        <div class="rounded-xl overflow-hidden mx-auto max-w-2xl reveal" class:show={p2Shown} style={y(-0.06)}>
           <img src={'/images/cal_f2_fg.png'} onerror={(e) => fgFallback(e, 'cal_f2_fg')} alt={nameOf(calendar)} class="w-full" />
         </div>
       </div>
     </div>
 
     <!-- Panel 3 -->
-    <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#eef5ef;">
+    <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#eef5ef;" bind:this={p3El}>
       <div class="content-wrap">
-        <div class="text-center mb-6">
+        <div class="text-center mb-6 reveal" class:show={p3Shown}>
           <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f3_title','Papel sustentable')}</h2>
           <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f3_body','Hecho con materiales responsables con el planeta.')}</p>
         </div>
-        <div class="rounded-xl overflow-hidden mx-auto max-w-2xl" style={y(-0.05)}>
+        <div class="rounded-xl overflow-hidden mx-auto max-w-2xl reveal" class:show={p3Shown} style={y(-0.05)}>
           <img src={'/images/cal_f3_fg.png'} onerror={(e) => fgFallback(e, 'cal_f3_fg')} alt={nameOf(calendar)} class="w-full" />
         </div>
       </div>
     </div>
 
     <!-- Panel 4 -->
-    <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f7eff9;">
+    <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f7eff9;" bind:this={p4El}>
       <div class="content-wrap">
-        <div class="text-center mb-6">
+        <div class="text-center mb-6 reveal" class:show={p4Shown}>
           <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f4_title','Listo para regalar')}</h2>
           <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f4_body','Empaque hermoso para que llegue con cariño.')}</p>
         </div>
-        <div class="rounded-xl overflow-hidden mx-auto max-w-2xl" style={y(-0.04)}>
+        <div class="rounded-xl overflow-hidden mx-auto max-w-2xl reveal" class:show={p4Shown} style={y(-0.04)}>
           <img src={'/images/cal_f4_fg.png'} onerror={(e) => fgFallback(e, 'cal_f4_fg')} alt={nameOf(calendar)} class="w-full" />
         </div>
       </div>
