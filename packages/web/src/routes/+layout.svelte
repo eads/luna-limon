@@ -31,6 +31,8 @@
 <nav class="bg-white/90 backdrop-blur border-b p-4 flex justify-between items-center shadow">
 	<a href="/" class="text-xl font-semibold">Luna Limón</a>
 	<div class="relative">
+		<a href="/calendario" class="mr-4 underline text-sm">Calendario</a>
+		<a href="/desayunos" class="mr-6 underline text-sm">Desayunos</a>
 		<select
 			class="border rounded p-1 pr-6 text-sm w-13 appearance-none"
 			bind:value={selected}

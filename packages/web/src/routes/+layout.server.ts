@@ -29,36 +29,5 @@ export const load: LayoutServerLoad = async ({ setHeaders }) => {
     console.error('Failed to load i18n messages from Airtable', err);
   }
 
-  // products (bilingual fields)
-  let products: any[] = [];
-  try {
-    const productRecords = await base(AIRTABLE_PRODUCTS_TABLE).select().all();
-    products = productRecords.map((r) => {
-      const raw = r.get('imagen') as unknown;
-      let imagen: string | undefined;
-      if (Array.isArray(raw) && raw.length) {
-        const first = raw[0] as { url?: string } | string;
-        imagen = typeof first === 'string' ? first : first.url;
-      } else if (typeof raw === 'string') {
-        imagen = raw;
-      }
-      return {
-        id: r.id,
-        nombre: {
-          es: (r.get('nombre_es') as string) || '',
-          en: (r.get('nombre_en') as string) || ''
-        },
-      descripción: {
-        es: (r.get('descripción_es') as string) || '',
-        en: (r.get('descripción_en') as string) || ''
-      },
-        precio: Number(r.get('precio') ?? 0),
-        imagen
-      };
-    });
-  } catch (err) {
-    console.error('Failed to load products from Airtable', err);
-  }
-
-  return { locale, messages, products };
+  return { locale, messages };
 };

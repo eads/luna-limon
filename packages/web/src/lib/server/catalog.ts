@@ -10,9 +10,11 @@ export interface Product {
 
 import { AIRTABLE_PRODUCTS_TABLE } from '$env/static/private';
 
-export async function listProducts(locale: string = 'es'): Promise<Product[]> {
-	const records = await base(AIRTABLE_PRODUCTS_TABLE).select().all();
-	return records.map((r) => {
+export async function listProducts(locale: string = 'es', opts?: { tipo?: string }): Promise<Product[]> {
+    const select: any = {};
+    if (opts?.tipo) select.filterByFormula = `{tipo} = '${opts.tipo}'`;
+    const records = await base(AIRTABLE_PRODUCTS_TABLE).select(select).all();
+    return records.map((r) => {
 		const raw = r.get('imagen') as unknown;
 		let imagen: string | undefined;
 		if (Array.isArray(raw) && raw.length) {
