@@ -3,7 +3,8 @@
 	import FloatyCart from '$lib/FloatyCart.svelte';
 	// @ts-expect-error - runtime types not generated yet
 	import { locales, getLocale, setLocale, localizeHref } from '$lib/paraglide/runtime.js';
-	import { setupI18n } from '$lib/i18n/context';
+    import { setupI18n } from '$lib/i18n/context';
+    import { page } from '$app/stores';
   import { goto } from '$app/navigation';
 
 	let { children, data } = $props<{ children: any; data: { locale: string; messages: any } }>();
@@ -46,4 +47,6 @@
 	{@render children()}
 </main>
 
-<FloatyCart />
+{#if !$page.url.pathname.startsWith('/pagar')}
+  <FloatyCart />
+{/if}

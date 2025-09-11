@@ -1,32 +1,30 @@
 <!-- +page.svelte -->
 <script lang="ts">
-    type Product = {
-      id: string;
-      nombre: { es?: string; en?: string };
-      descripción: { es?: string; en?: string };
-      precio: number;
-      imagen?: string;
-    };
+	type Product = {
+		id: string;
+		nombre: { es?: string; en?: string };
+		descripción: { es?: string; en?: string };
+		precio: number;
+		imagen?: string;
+	};
 	import { cart } from '$lib/cart';
 	import { useI18n } from '$lib/i18n/context';
 	const { t } = useI18n();
 	import { getResizedImageUrl } from '$lib/utils/images';
-	import { onMount } from 'svelte';
+import { onMount } from 'svelte';
 	
-    let { data } = $props<{ data: { products: Product[] } }>();
-    // current locale used to pick fields inline
-    // @ts-expect-error - runtime types not generated yet
-    import { getLocale } from '$lib/paraglide/runtime.js';
-    const nameOf = (p: Product) => p.nombre[getLocale() as 'es'|'en'] ?? p.nombre.es ?? p.nombre.en ?? '';
-    const descOf = (p: Product) => p.descripción[getLocale() as 'es'|'en'] ?? p.descripción.es ?? p.descripción.en ?? '';
-	let added = $state(new Set<string>());
-	let quantities: Record<string, number> = {};
-	
-	onMount(() => {
-		for (const p of data.products) {
-			quantities[p.id] = 1;
-		}
-	});
+	let { data } = $props<{ data: { products: Product[] } }>();
+	// current locale used to pick fields inline
+	// @ts-expect-error - runtime types not generated yet
+	import { getLocale } from '$lib/paraglide/runtime.js';
+	const nameOf = (p: Product) => p.nombre[getLocale() as 'es'|'en'] ?? p.nombre.es ?? p.nombre.en ?? '';
+	const descOf = (p: Product) => p.descripción[getLocale() as 'es'|'en'] ?? p.descripción.es ?? p.descripción.en ?? '';
+let added = $state(new Set<string>());
+let quantities: Record<string, number> = {};
+// Initialize default quantities to 1 immediately to avoid SSR/mount mismatch
+for (const p of data.products) {
+  if (quantities[p.id] == null) quantities[p.id] = 1;
+}
 	
 	function handleAdd(product: Product) {
 		const qty = quantities[product.id] ?? 1;

@@ -32,7 +32,7 @@
 	</ul>
 	<p class="mt-4 font-semibold">{t('carrito_total')} ${total}</p>
 	<div class="mt-4 flex gap-4">
-		<a href="/checkout" class="rounded bg-green-600 text-white py-2 px-4">${t('finalizar_compra')}</a>
+		<a href="/pagar" class="rounded bg-green-600 text-white py-2 px-4">{t('finalizar_compra')}</a>
 		<button class="text-red-600 underline text-sm" onclick={() => cart.clear()}>
 			{t('carrito_vacio')}
 		</button>

@@ -9,4 +9,7 @@
   "reiniciar_carrito": "Empty cart\n",
   "sobre_lunalimon": "A spark of magic.\n",
   "finalizar_compra": "Finish ordering\n"
+  , "pedido_exito_titulo": "Thank you for your order!\n"
+  , "pedido_exito_id": "Your order number is:\n"
+  , "volver_catalogo": "Back to catalog\n"
 }
