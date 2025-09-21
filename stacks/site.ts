@@ -19,6 +19,6 @@ export function Web({ resizer }: ServicesCtx = {}) {
       AIRTABLE_PEDIDO_TABLE: process.env.AIRTABLE_PEDIDO_TABLE ?? "pedido",
       AIRTABLE_DETALLE_PEDIDO_TABLE: process.env.AIRTABLE_DETALLE_PEDIDO_TABLE ?? "detalle_pedido",
     },
-    domain: `luna-limon--${$app.stage}.grupovisual.org`,
+    domain: `${$app.stage}.lunalimon.co.com`,
   });
 }

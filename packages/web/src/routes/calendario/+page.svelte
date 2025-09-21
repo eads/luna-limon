@@ -13,9 +13,11 @@
   const tf = (k: string, f: string) => { const v = t(k); return v === k ? f : v; };
   import { getResizedImageUrl } from '$lib/utils/images';
   // @ts-expect-error - runtime types not generated yet
-  import { getLocale } from '$lib/paraglide/runtime.js';
+  import { getLocale, localizeHref } from '$lib/paraglide/runtime.js';
+  import { goto } from '$app/navigation';
   const nameOf = (p: Product) => p.nombre[getLocale() as 'es'|'en'] ?? p.nombre.es ?? p.nombre.en ?? '';
   const descOf = (p: Product) => p.descripción[getLocale() as 'es'|'en'] ?? p.descripción.es ?? p.descripción.en ?? '';
+  const fmtCOP = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
 
   let { data } = $props<{ data: { products: Product[] } }>();
   const calendar = $derived(data.products?.[0]);
@@ -51,6 +53,7 @@
     if (!calendar) return;
     cart.add(calendar, qty || 1);
     flash = true; setTimeout(() => flash = false, 700);
+    goto(localizeHref('/pagar'));
   }
 
   // Foreground image fallback: try .png → .jpg → .svg
@@ -150,13 +153,13 @@
         <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-4" style={y(-0.08)}>{tf('calendario.hero_title','Un calendario para saborear el año')}</h1>
         <p class="text-base md:text-xl text-gray-700/90 mb-6 max-w-2xl mx-auto" style={y(-0.06)}>{tf('calendario.hero_subtitle','12 ilustraciones, recetas y momentos para reunirnos')}</p>
         <div bind:this={topCtaEl} class="flex items-center justify-center gap-3 mb-6" style={y(-0.05)}>
-          <div class="flex items-center rounded-full overflow-hidden bg-white/80 backdrop-blur border">
+          <div class="flex items-center rounded-xl overflow-hidden bg-white/80 backdrop-blur border">
             <button class="px-3 py-2" onclick={() => qty = Math.max(1, qty - 1)}>-</button>
             <input class="w-16 text-center py-2 bg-transparent" type="number" min="1" bind:value={qty} />
             <button class="px-3 py-2" onclick={() => qty = qty + 1}>+</button>
           </div>
-          <button class={`rounded-full bg-black text-white py-2 px-6 ${flash ? 'ring-4 ring-amber-300/40' : ''}`} onclick={addNow}>
-            {tf('calendario.buy','Comprar calendario')} — ${calendar.precio}
+          <button class={`rounded-xl bg-black/90 hover:bg-black text-white py-2 px-6 shadow-lg ${flash ? 'ring-4 ring-amber-300/40' : ''}`} onclick={addNow}>
+            {tf('calendario.buy','Comprar calendario')} — {fmtCOP.format(calendar.precio)}
           </button>
         </div>
       </div>
@@ -225,17 +228,17 @@
 
   <!-- Sticky buy bar: appears only when top CTA is NOT visible, with fade/slide -->
   <div class="fixed bottom-4 inset-x-0 flex justify-center pointer-events-none">
-    <div class="bg-white/80 backdrop-blur rounded-full shadow-xl px-4 py-2 flex items-center gap-3 transition-all duration-200"
+    <div class="bg-white/70 backdrop-blur rounded-xl shadow-2xl px-4 py-3 flex items-center gap-3 transition-all duration-200 pointer-events-auto"
       style={`opacity:${showSticky ? 1 : 0}; transform: translateY(${showSticky ? 0 : 8}px);`}
     >
       <span class="font-medium hidden sm:inline">{nameOf(calendar)}</span>
-      <div class="flex items-center border rounded overflow-hidden">
-        <button class="px-3 py-1" onclick={() => qty = Math.max(1, qty - 1)}>-</button>
-        <input class="w-12 text-center py-1" type="number" min="1" bind:value={qty} />
-        <button class="px-3 py-1" onclick={() => qty = qty + 1}>+</button>
+      <div class="flex items-center border rounded-xl overflow-hidden bg-white/80">
+        <button class="px-3 py-1.5" onclick={() => qty = Math.max(1, qty - 1)}>-</button>
+        <input class="w-12 text-center py-1.5 bg-transparent" type="number" min="1" bind:value={qty} />
+        <button class="px-3 py-1.5" onclick={() => qty = qty + 1}>+</button>
       </div>
-      <button class={`rounded-full bg-black text-white py-1.5 px-4 ${flash ? 'ring-4 ring-amber-300/40' : ''}`} onclick={addNow}>
-        {tf('calendario.buy','Comprar calendario')} — ${calendar.precio}
+      <button class={`rounded-xl bg-black/90 hover:bg-black text-white py-2 px-5 shadow-lg ${flash ? 'ring-4 ring-amber-300/40' : ''}`} onclick={addNow}>
+        {tf('calendario.buy','Comprar calendario')} — {fmtCOP.format(calendar.precio)}
       </button>
     </div>
   </div>

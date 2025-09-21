@@ -1,5 +1,5 @@
 {
-  "$schema": "https://inlang.com/schema/message",
+  "$schema": "https://inlang.com/schema/inlang-message-format",
   "agrega_label": "Agrega\n",
   "carrito_total": "Total\n",
   "carrito_label": "Carrito\n\n",
@@ -8,8 +8,8 @@
   "agregado_label": "Agregado\n",
   "reiniciar_carrito": "Reiniciar carrito\n",
   "sobre_lunalimon": "Una chispa de magia.\n",
-  "finalizar_compra": "Finalizar compra\n"
-  , "pedido_exito_titulo": "¡Gracias por tu pedido!\n"
-  , "pedido_exito_id": "Tu número de pedido es:\n"
-  , "volver_catalogo": "Volver al catálogo\n"
+  "finalizar_compra": "Finalizar compra\n",
+  "pedido_exito_titulo": "¡Gracias por tu pedido!\n",
+  "pedido_exito_id": "Tu número de pedido es:\n",
+  "volver_catalogo": "Volver al catálogo\n"
 }

@@ -1,0 +1,7 @@
+.svelte-kit/
+.svelte-kit-sst/
+node_modules/
+dist/
+build/
+.vite/
+project.inlang/

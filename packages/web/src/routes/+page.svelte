@@ -19,6 +19,7 @@ import { onMount } from 'svelte';
 	import { getLocale } from '$lib/paraglide/runtime.js';
 	const nameOf = (p: Product) => p.nombre[getLocale() as 'es'|'en'] ?? p.nombre.es ?? p.nombre.en ?? '';
 	const descOf = (p: Product) => p.descripción[getLocale() as 'es'|'en'] ?? p.descripción.es ?? p.descripción.en ?? '';
+  const fmtCOP = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
 let added = $state(new Set<string>());
 let quantities: Record<string, number> = {};
 // Initialize default quantities to 1 immediately to avoid SSR/mount mismatch
@@ -52,7 +53,7 @@ for (const p of data.products) {
 			{/if}
             <h2 class="font-semibold text-lg">{nameOf(product)}</h2>
             <p class="text-sm text-gray-700">{descOf(product)}</p>
-			<p class="font-medium">${product.precio}</p>
+			<p class="font-medium">{fmtCOP.format(product.precio)}</p>
 			<input
 				type="number"
 				min="1"
