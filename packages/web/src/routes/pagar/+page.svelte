@@ -26,13 +26,14 @@
     return '';
   };
   import { getResizedImageUrl } from '$lib/utils/images';
-  type SrvProduct = { id: string; nombre: string; descripción: string; precio: number; imagen?: string };
+  type SrvProduct = { id: string; nombre: string; descripción: string; precio: number; imagen?: any };
   let { data } = $props<{ data: { calendar?: SrvProduct } }>();
   // translation with fallback helper
   const tf = (key: string, fallback: string) => {
     const v = t(key);
     return v === key ? fallback : v;
   };
+  const lf = (es: string, en: string) => (getLocale() === 'es' ? es : en);
   
   // Currency formatter for Colombian pesos
   const fmtCOP = new Intl.NumberFormat('es-CO', {
@@ -52,21 +53,16 @@
   let submitting = $state(false);
   let errorMsg = $state('');
   const items = $derived($cart as unknown as { product: CartProduct; quantity: number }[]);
+  const calendarAsCart = $derived(data.calendar ? ({
+    id: data.calendar.id,
+    nombre: { es: data.calendar.nombre, en: data.calendar.nombre },
+    descripción: { es: data.calendar.descripción, en: data.calendar.descripción },
+    precio: data.calendar.precio,
+    imagen: data.calendar.imagen
+  } satisfies CartProduct) : null);
+  const renderItems = $derived(items.length ? items : (calendarAsCart ? [{ product: calendarAsCart, quantity: 0 }] : []));
   const total = $derived(items.reduce((sum, i) => sum + i.product.precio * i.quantity, 0));
-  import { onMount } from 'svelte';
-  onMount(() => {
-    if ($cart.length === 0 && data?.calendar) {
-      const c = data.calendar;
-      const adapted: CartProduct = {
-        id: c.id,
-        nombre: { es: c.nombre, en: c.nombre },
-        descripción: { es: c.descripción, en: c.descripción },
-        precio: c.precio,
-        imagen: c.imagen
-      };
-      cart.add(adapted, 1);
-    }
-  });
+  // No auto-add; we show a zero-qty preview when cart is empty
 
   async function placeOrder() {
     if ($cart.length === 0) return;
@@ -105,7 +101,7 @@
 <div class="max-w-md mx-auto pt-6">
 <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">{tf('checkout.title', 'Finalizar pedido')}</h1>
 
-{#if items.length}
+{#if renderItems.length}
   <!-- Order summary first with warm backdrop and fewer lines -->
   <style>
     .full-bleed { position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; width: 100vw; }
@@ -113,7 +109,7 @@
   <div class="full-bleed mb-8" style="background-color:#edeae6; box-shadow: inset 0 -10px 14px -12px rgba(0,0,0,0.2);">
     <section class="mx-auto max-w-md px-4 pt-8 pb-6">
       <ul class="space-y-3">
-        {#each items as { product, quantity } (product.id)}
+        {#each renderItems as { product } (product.id)}
           <li class="flex items-center justify-between gap-3">
             <div class="flex flex-col items-start gap-2 flex-1 pr-2 min-w-0">
               {#if imageOf(product)}
@@ -132,24 +128,28 @@
                   class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-xl leading-none"
                   aria-label="Restar"
                   onclick={() => {
-                    const current = $cart.find((i) => i.product.id === product.id)?.quantity ?? quantity;
-                    cart.setQuantity(product.id, Math.max(1, current - 1));
+                    const current = $cart.find((i) => i.product.id === product.id)?.quantity ?? 0;
+                    cart.setQuantity(product.id, Math.max(0, current - 1));
                   }}
                 >-</button>
-                <span class="min-w-[2rem] text-xl font-semibold text-gray-900 text-center">{quantity}</span>
+                <span class="min-w-[2rem] text-xl font-semibold text-gray-900 text-center">{$cart.find((i) => i.product.id === product.id)?.quantity ?? 0}</span>
                 <button
                   class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-xl leading-none"
                   aria-label="Sumar"
                   onclick={() => {
-                    const current = $cart.find((i) => i.product.id === product.id)?.quantity ?? quantity;
-                    cart.setQuantity(product.id, current + 1);
+                    const current = $cart.find((i) => i.product.id === product.id)?.quantity ?? 0;
+                    if (current === 0) {
+                      cart.add(product, 1);
+                    } else {
+                      cart.setQuantity(product.id, current + 1);
+                    }
                   }}
                 >+</button>
               </div>
               <div class="text-base text-gray-800">
-                <span class="text-gray-900 font-medium">{quantity}</span>
+                <span class="text-gray-900 font-medium">{$cart.find((i) => i.product.id === product.id)?.quantity ?? 0}</span>
                 × {fmtCOP.format(product.precio)}
-                = <span class="text-gray-900 font-semibold">{fmtCOP.format(product.precio * quantity)}</span>
+                = <span class="text-gray-900 font-semibold">{fmtCOP.format(product.precio * (($cart.find((i) => i.product.id === product.id)?.quantity ?? 0)))}</span>
               </div>
             </div>
           </li>
@@ -163,41 +163,39 @@
   </div>
 {/if}
 
-{#if !items.length}
-  <div class="mt-6 p-6 text-center text-gray-700 bg-white border rounded-xl">
-    <p class="mb-3">{t('carrito_vacio') || 'Tu carrito está vacío'}</p>
-    <a href="/" class="inline-block rounded-full bg-emerald-600 text-white px-5 py-2">{t('volver_catalogo') || 'Volver al catálogo'}</a>
-  </div>
-{:else}
-<div class="grid gap-3 mb-5">
+{#if !$cart.length}
+  <div class="mt-4 p-3 text-center text-gray-700 bg-white/70 border rounded-lg">{t('carrito_vacio') || 'Tu carrito está vacío'}</div>
+{/if}
+
+<div class="grid gap-3 mb-5" class:opacity-60={!$cart.length}>
   <label class="block">
     <span class="text-base text-gray-800">{tf('checkout.name', 'Nombre')}</span>
-    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" bind:value={nombre} placeholder="Tu nombre" />
+    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" bind:value={nombre} placeholder={tf('checkout.placeholder.name', lf('Tu nombre','Your name'))} disabled={!$cart.length} />
   </label>
 
   <label class="block">
     <span class="text-base text-gray-800">{tf('checkout.email', 'Correo electrónico')}</span>
-    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" type="email" bind:value={correo_electronico} placeholder="tu@correo.com" />
+    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" type="email" bind:value={correo_electronico} placeholder={tf('checkout.placeholder.email', lf('tu@correo.com','you@example.com'))} disabled={!$cart.length} />
   </label>
 
   <label class="block">
     <span class="text-base text-gray-800">{tf('checkout.whatsapp', 'Número de WhatsApp')}</span>
-    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" bind:value={numero_whatsapp} placeholder="Ej. +57 300 123 4567" />
+    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" bind:value={numero_whatsapp} placeholder={tf('checkout.placeholder.whatsapp', lf('Ej. +57 300 123 4567','e.g., +57 300 123 4567'))} disabled={!$cart.length} />
   </label>
 
   <label class="block">
     <span class="text-base text-gray-800">{tf('checkout.address', 'Dirección de envío')}</span>
-    <textarea class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" rows="3" bind:value={direccion_envio} placeholder="Dirección completa, barrio, ciudad, CP"></textarea>
+    <textarea class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" rows="3" bind:value={direccion_envio} placeholder={tf('checkout.placeholder.address', lf('Dirección completa, barrio, ciudad, CP','Full address, neighborhood, city, ZIP'))} disabled={!$cart.length}></textarea>
   </label>
 
   <label class="block">
     <span class="text-base text-gray-800">{tf('checkout.delivery_date', 'Fecha de entrega')}</span>
-    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" type="date" bind:value={fecha_entrega} />
+    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" type="date" bind:value={fecha_entrega} placeholder={tf('checkout.placeholder.delivery_date', lf('AAAA-MM-DD','YYYY-MM-DD'))} disabled={!$cart.length} />
   </label>
 
   <label class="block">
     <span class="text-base text-gray-800">{tf('checkout.notes', 'Notas para tu pedido')}</span>
-    <textarea class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" rows="3" bind:value={notas_cliente} placeholder="Instrucciones o comentarios"></textarea>
+    <textarea class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" rows="3" bind:value={notas_cliente} placeholder={tf('checkout.placeholder.notes', lf('Instrucciones o comentarios','Instructions or comments'))} disabled={!$cart.length}></textarea>
   </label>
   {#if errorMsg}
     <p class="text-red-600 mb-1 text-sm">{errorMsg}</p>
@@ -220,6 +218,5 @@
     <span class="ml-2 text-white/80 text-sm">({$cart.length} artículo{ $cart.length !== 1 ? 's' : '' })</span>
   {/if}
 </button>
-{/if}
 
 </div>

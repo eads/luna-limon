@@ -11,6 +11,7 @@
   import { useI18n } from '$lib/i18n/context';
   const { t } = useI18n();
   const tf = (k: string, f: string) => { const v = t(k); return v === k ? f : v; };
+  const l = (es: string, en: string) => (getLocale() === 'es' ? es : en);
   import { getResizedImageUrl } from '$lib/utils/images';
   // @ts-expect-error - runtime types not generated yet
   import { getLocale, localizeHref } from '$lib/paraglide/runtime.js';
@@ -150,17 +151,20 @@
     <div class="absolute inset-0 -z-10" style="background-color:#edeae6;"></div>
     <div class="content-wrap py-10 md:py-20">
       <div class="text-center">
-        <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-4" style={y(-0.08)}>{tf('calendario.hero_title','Un calendario para saborear el año')}</h1>
-        <p class="text-base md:text-xl text-gray-700/90 mb-6 max-w-2xl mx-auto" style={y(-0.06)}>{tf('calendario.hero_subtitle','12 ilustraciones, recetas y momentos para reunirnos')}</p>
-        <div bind:this={topCtaEl} class="flex items-center justify-center gap-3 mb-6" style={y(-0.05)}>
-          <div class="flex items-center rounded-xl overflow-hidden bg-white/80 backdrop-blur border">
-            <button class="px-3 py-2" onclick={() => qty = Math.max(1, qty - 1)}>-</button>
-            <input class="w-16 text-center py-2 bg-transparent" type="number" min="1" bind:value={qty} />
-            <button class="px-3 py-2" onclick={() => qty = qty + 1}>+</button>
+        <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-4" style={y(-0.08)}>{tf('calendario.hero_title', l('Un calendario para saborear el año','A calendar to savor the year'))}</h1>
+        <p class="text-base md:text-xl text-gray-700/90 mb-6 max-w-2xl mx-auto" style={y(-0.06)}>{tf('calendario.hero_subtitle', l('12 ilustraciones, recetas y momentos para reunirnos','12 illustrations, recipes, and moments to gather'))}</p>
+        <div bind:this={topCtaEl} class="flex flex-col items-center justify-center gap-2 mb-6" style={y(-0.05)}>
+          <div class="bg-slate-600/95 text-white backdrop-blur-md rounded-full shadow-2xl ring-1 ring-black/20 px-4 py-2.5 flex items-center gap-3">
+            <div class="flex items-center rounded-full bg-white/10 overflow-hidden">
+              <button class="px-3 py-1.5 hover:bg-white/15" onclick={() => qty = Math.max(1, qty - 1)}>-</button>
+              <input class="w-12 text-center py-1.5 bg-transparent text-white placeholder-white/70 focus:outline-none" type="number" min="1" bind:value={qty} />
+              <button class="px-3 py-1.5 hover:bg-white/15" onclick={() => qty = qty + 1}>+</button>
+            </div>
+            <button class={`rounded-full bg-white text-slate-900 hover:bg-white/90 py-2 px-5 shadow ${flash ? 'ring-4 ring-amber-300/40' : ''}`} onclick={addNow}>
+              {tf('calendario.buy','Comprar calendario')}
+            </button>
           </div>
-          <button class={`rounded-xl bg-black/90 hover:bg-black text-white py-2 px-6 shadow-lg ${flash ? 'ring-4 ring-amber-300/40' : ''}`} onclick={addNow}>
-            {tf('calendario.buy','Comprar calendario')} — {fmtCOP.format(calendar.precio)}
-          </button>
+          <div class="text-base md:text-lg font-semibold text-gray-900">{fmtCOP.format(calendar.precio)}</div>
         </div>
       </div>
       <div class="relative">
@@ -177,8 +181,8 @@
     <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f5f2ee;" bind:this={p1El}>
       <div class="content-wrap">
         <div class="text-center mb-6 reveal" class:show={p1Shown}>
-          <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f1_title','Arte que inspira cada mes')}</h2>
-          <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f1_body','Ilustraciones originales impresas con tintas de alta calidad.')}</p>
+          <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f1_title', l('Arte que inspira cada mes','Art that inspires each month'))}</h2>
+          <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f1_body', l('Ilustraciones originales impresas con tintas de alta calidad.','Original illustrations printed with high-quality inks.'))}</p>
         </div>
         <div class="rounded-xl overflow-hidden mx-auto max-w-2xl reveal" class:show={p1Shown} style={y(-0.08)}>
           <img src={'/images/cal_f1_fg.png'} onerror={(e) => fgFallback(e, 'cal_f1_fg')} alt={nameOf(calendar)} class="w-full" />
@@ -190,8 +194,8 @@
     <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f0f4f8;" bind:this={p2El}>
       <div class="content-wrap">
         <div class="text-center mb-6 reveal" class:show={p2Shown}>
-          <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f2_title','Recetas estacionales')}</h2>
-          <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f2_body','Ideas sencillas y deliciosas para compartir en casa.')}</p>
+          <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f2_title', l('Recetas estacionales','Seasonal recipes'))}</h2>
+          <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f2_body', l('Ideas sencillas y deliciosas para compartir en casa.','Simple, delicious ideas to share at home.'))}</p>
         </div>
         <div class="rounded-xl overflow-hidden mx-auto max-w-2xl reveal" class:show={p2Shown} style={y(-0.06)}>
           <img src={'/images/cal_f2_fg.png'} onerror={(e) => fgFallback(e, 'cal_f2_fg')} alt={nameOf(calendar)} class="w-full" />
@@ -203,8 +207,8 @@
     <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#eef5ef;" bind:this={p3El}>
       <div class="content-wrap">
         <div class="text-center mb-6 reveal" class:show={p3Shown}>
-          <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f3_title','Papel sustentable')}</h2>
-          <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f3_body','Hecho con materiales responsables con el planeta.')}</p>
+          <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f3_title', l('Papel sustentable','Sustainable paper'))}</h2>
+          <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f3_body', l('Hecho con materiales responsables con el planeta.','Made with materials that care for the planet.'))}</p>
         </div>
         <div class="rounded-xl overflow-hidden mx-auto max-w-2xl reveal" class:show={p3Shown} style={y(-0.05)}>
           <img src={'/images/cal_f3_fg.png'} onerror={(e) => fgFallback(e, 'cal_f3_fg')} alt={nameOf(calendar)} class="w-full" />
@@ -216,8 +220,8 @@
     <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f7eff9;" bind:this={p4El}>
       <div class="content-wrap">
         <div class="text-center mb-6 reveal" class:show={p4Shown}>
-          <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f4_title','Listo para regalar')}</h2>
-          <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f4_body','Empaque hermoso para que llegue con cariño.')}</p>
+          <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f4_title', l('Listo para regalar','Ready to gift'))}</h2>
+          <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f4_body', l('Empaque hermoso para que llegue con cariño.','Beautiful packaging so it arrives with love.'))}</p>
         </div>
         <div class="rounded-xl overflow-hidden mx-auto max-w-2xl reveal" class:show={p4Shown} style={y(-0.04)}>
           <img src={'/images/cal_f4_fg.png'} onerror={(e) => fgFallback(e, 'cal_f4_fg')} alt={nameOf(calendar)} class="w-full" />
@@ -228,17 +232,17 @@
 
   <!-- Sticky buy bar: appears only when top CTA is NOT visible, with fade/slide -->
   <div class="fixed bottom-4 inset-x-0 flex justify-center pointer-events-none">
-    <div class="bg-white/70 backdrop-blur rounded-xl shadow-2xl px-4 py-3 flex items-center gap-3 transition-all duration-200 pointer-events-auto"
+    <div class="bg-slate-600/95 text-white backdrop-blur-md rounded-full shadow-2xl ring-1 ring-black/20 px-4 py-2.5 flex items-center gap-3 transition-all duration-200 pointer-events-auto"
       style={`opacity:${showSticky ? 1 : 0}; transform: translateY(${showSticky ? 0 : 8}px);`}
     >
       <span class="font-medium hidden sm:inline">{nameOf(calendar)}</span>
-      <div class="flex items-center border rounded-xl overflow-hidden bg-white/80">
-        <button class="px-3 py-1.5" onclick={() => qty = Math.max(1, qty - 1)}>-</button>
-        <input class="w-12 text-center py-1.5 bg-transparent" type="number" min="1" bind:value={qty} />
-        <button class="px-3 py-1.5" onclick={() => qty = qty + 1}>+</button>
+      <div class="flex items-center rounded-full bg-white/10 overflow-hidden">
+        <button class="px-3 py-1.5 hover:bg-white/15" onclick={() => qty = Math.max(1, qty - 1)}>-</button>
+        <input class="w-12 text-center py-1.5 bg-transparent text-white placeholder-white/70 focus:outline-none" type="number" min="1" bind:value={qty} />
+        <button class="px-3 py-1.5 hover:bg-white/15" onclick={() => qty = qty + 1}>+</button>
       </div>
-      <button class={`rounded-xl bg-black/90 hover:bg-black text-white py-2 px-5 shadow-lg ${flash ? 'ring-4 ring-amber-300/40' : ''}`} onclick={addNow}>
-        {tf('calendario.buy','Comprar calendario')} — {fmtCOP.format(calendar.precio)}
+      <button class={`rounded-full bg-white text-slate-900 hover:bg-white/90 py-2 px-5 shadow ${flash ? 'ring-4 ring-amber-300/40' : ''}`} onclick={addNow}>
+        {tf('calendario.buy','Comprar calendario')}
       </button>
     </div>
   </div>

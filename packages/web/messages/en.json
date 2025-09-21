@@ -11,5 +11,29 @@
   "finalizar_compra": "Finish ordering\n",
   "pedido_exito_titulo": "Thank you for your order!\n",
   "pedido_exito_id": "Your order number is:\n",
-  "volver_catalogo": "Back to catalog\n"
+  "volver_catalogo": "Back to catalog\n",
+  "calendario": {
+    "buy": "Buy calendar\n",
+    "hero_title": "A calendar to savor the year\n",
+    "hero_subtitle": "12 illustrations, recipes, and moments to gather\n",
+    "f1_title": "Art that inspires each month\n",
+    "f1_body": "Original illustrations printed with high-quality inks.\n",
+    "f2_title": "Seasonal recipes\n",
+    "f2_body": "Simple, delicious ideas to share at home.\n",
+    "f3_title": "Sustainable paper\n",
+    "f3_body": "Made with materials that care for the planet.\n",
+    "f4_title": "Ready to gift\n",
+    "f4_body": "Beautiful packaging so it arrives with love.\n",
+    "vacio": "No calendar products available.\n"
+  },
+  "checkout": {
+    "placeholder": {
+      "name": "Your name\n",
+      "email": "you@example.com\n",
+      "whatsapp": "e.g., +57 300 123 4567\n",
+      "address": "Full address, neighborhood, city, ZIP\n",
+      "delivery_date": "YYYY-MM-DD\n",
+      "notes": "Instructions or comments\n"
+    }
+  }
 }
