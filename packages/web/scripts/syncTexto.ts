@@ -36,10 +36,30 @@ async function withRetry<T>(fn: () => Promise<T>, label = 'op', tries = 4): Prom
 async function run() {
   console.log(`Syncing '${COPY_TABLE}' from Airtable → messages/*.json`);
   const recs = await withRetry(() => base(COPY_TABLE).select().all(), 'select texto');
-  // Shape: one-level namespaces with flat keys inside (no nested objects beyond namespace)
-  // { carrito: { "checkout.place_order": "…" }, calendario: { "hero_title": "…" } }
+  // Desired output: nested under top-level namespace, splitting dots within clave
+  // {
+  //   carrito: { checkout: { placeholder: { name: "Your name" } } },
+  //   calendario: { hero_title: "…" }
+  // }
   const es: Record<string, any> = { "$schema": "https://inlang.com/schema/inlang-message-format" };
   const en: Record<string, any> = { "$schema": "https://inlang.com/schema/inlang-message-format" };
+
+  const setNested = (root: any, ns: string, slug: string, value: string) => {
+    if (!ns) {
+      // If no namespace, write at root (rare)
+      root[slug] = value;
+      return;
+    }
+    root[ns] ??= {};
+    const parts = slug.split('.');
+    let cur = root[ns];
+    for (let i = 0; i < parts.length - 1; i++) {
+      const p = parts[i];
+      cur[p] ??= {};
+      cur = cur[p];
+    }
+    cur[parts[parts.length - 1]] = value;
+  };
 
   for (const r of recs) {
     const ns = (r.get('namespace') as string) || (r.get('ns') as string) || '';
@@ -47,16 +67,8 @@ async function run() {
     if (!key) continue;
     const textEs = ((r.get('texto_es') as string) || (r.get('es') as string) || '').trimEnd();
     const textEn = ((r.get('texto_en') as string) || (r.get('en') as string) || '').trimEnd();
-    if (ns) {
-      es[ns] ??= {};
-      en[ns] ??= {};
-      if (textEs) es[ns][key] = textEs;
-      if (textEn) en[ns][key] = textEn;
-    } else {
-      // No namespace present: write at root using the key verbatim
-      if (textEs) (es as any)[key] = textEs;
-      if (textEn) (en as any)[key] = textEn;
-    }
+    if (textEs) setNested(es, ns, key, textEs);
+    if (textEn) setNested(en, ns, key, textEn);
   }
 
   const outDir = join(process.cwd(), 'messages');

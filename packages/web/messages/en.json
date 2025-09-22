@@ -21,25 +21,37 @@
   },
   "carrito": {
     "carrito_total": "Total",
-    "checkout.delivery_date": "Delivery date",
+    "checkout": {
+      "delivery_date": "Delivery date",
+      "name": "Name",
+      "title": "Finish your order",
+      "processing": "Processing…",
+      "error": "Couldn't process the order. Please try again.",
+      "address": "Shipping address",
+      "notes": "Notes for your order",
+      "email": "Email",
+      "whatsapp": "WhatsApp number",
+      "summary": "Summary",
+      "place_order": "Place order",
+      "total": "Total",
+      "placeholder": {
+        "name": "Your name",
+        "email": "you@example.com",
+        "whatsapp": "e.g., +57 300 123 4567",
+        "address": "Full address, neighborhood, city, ZIP",
+        "delivery_date": "YYYY-MM-DD",
+        "notes": "Instructions or comments"
+      }
+    },
     "carrito_label": "Cart",
-    "checkout.name": "Name",
     "carrito_vacio": "Cart is empty",
-    "checkout.title": "Finish your order",
-    "success.back_to_catalog": "Back to catalog",
-    "checkout.processing": "Processing…",
-    "success.order_number": "Your order number is:",
-    "checkout.error": "Couldn't process the order. Please try again.",
-    "checkout.address": "Shipping address",
-    "checkout.notes": "Notes for your order",
-    "checkout.email": "Email",
-    "checkout.whatsapp": "WhatsApp number",
+    "success": {
+      "back_to_catalog": "Back to catalog",
+      "order_number": "Your order number is:",
+      "title": "Thank you for your order!"
+    },
     "agregado_label": "Added to cart",
-    "checkout.summary": "Summary",
     "reiniciar_carrito": "Empty cart",
-    "success.title": "Thank you for your order!",
-    "checkout.place_order": "Place order",
-    "checkout.total": "Total",
     "finalizar_compra": "Finish ordering"
   },
   "desayuno": {

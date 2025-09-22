@@ -1,12 +1,14 @@
 #!/usr/bin/env tsx
 import 'dotenv/config';
 /**
- * Seed/update texto (i18n) rows in Airtable.
+ * Seed/update texto (i18n) rows in Airtable from local messages JSON.
  * - Uses env: AIRTABLE_TOKEN, AIRTABLE_BASE, AIRTABLE_COPY_TABLE (default: 'texto')
  * - Upserts by (namespace, clave)
  * - Batches create/update in chunks of 10
  */
 import Airtable from 'airtable';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 
 const { AIRTABLE_TOKEN, AIRTABLE_BASE } = process.env as Record<string, string>;
 const COPY_TABLE = process.env.AIRTABLE_COPY_TABLE || process.env.AIRTABLE_TABLE || 'texto';
@@ -18,64 +20,49 @@ if (!AIRTABLE_TOKEN || !AIRTABLE_BASE) {
 
 const base = new Airtable({ apiKey: AIRTABLE_TOKEN, requestTimeout: 30000 as any }).base(AIRTABLE_BASE);
 
-type Entry = {
-  namespace: string;
-  clave: string;
-  texto_es: string;
-  texto_en: string;
-};
+type Entry = { namespace: string; clave: string; texto_es: string; texto_en: string };
 
-const entries: Entry[] = [
-  // carrito / checkout flow
-  { namespace: 'carrito', clave: 'checkout.title', texto_es: 'Finalizar pedido', texto_en: 'Finish your order' },
-  { namespace: 'carrito', clave: 'checkout.name', texto_es: 'Nombre', texto_en: 'Name' },
-  { namespace: 'carrito', clave: 'checkout.email', texto_es: 'Correo electrónico', texto_en: 'Email' },
-  { namespace: 'carrito', clave: 'checkout.whatsapp', texto_es: 'Número de WhatsApp', texto_en: 'WhatsApp number' },
-  { namespace: 'carrito', clave: 'checkout.address', texto_es: 'Dirección de envío', texto_en: 'Shipping address' },
-  { namespace: 'carrito', clave: 'checkout.delivery_date', texto_es: 'Fecha de entrega', texto_en: 'Delivery date' },
-  { namespace: 'carrito', clave: 'checkout.notes', texto_es: 'Notas para tu pedido', texto_en: 'Notes for your order' },
-  { namespace: 'carrito', clave: 'checkout.summary', texto_es: 'Resumen', texto_en: 'Summary' },
-  { namespace: 'carrito', clave: 'checkout.total', texto_es: 'Total', texto_en: 'Total' },
-  { namespace: 'carrito', clave: 'checkout.place_order', texto_es: 'Realizar pedido', texto_en: 'Place order' },
-  { namespace: 'carrito', clave: 'checkout.processing', texto_es: 'Procesando…', texto_en: 'Processing…' },
-  { namespace: 'carrito', clave: 'checkout.error', texto_es: 'No se pudo procesar el pedido. Intente de nuevo.', texto_en: "Couldn't process the order. Please try again." },
-  // placeholders
-  { namespace: 'carrito', clave: 'checkout.placeholder.name', texto_es: 'Tu nombre', texto_en: 'Your name' },
-  { namespace: 'carrito', clave: 'checkout.placeholder.email', texto_es: 'tu@correo.com', texto_en: 'you@example.com' },
-  { namespace: 'carrito', clave: 'checkout.placeholder.whatsapp', texto_es: 'Ej. +57 300 123 4567', texto_en: 'e.g., +57 300 123 4567' },
-  { namespace: 'carrito', clave: 'checkout.placeholder.address', texto_es: 'Dirección completa, barrio, ciudad, CP', texto_en: 'Full address, neighborhood, city, ZIP' },
-  { namespace: 'carrito', clave: 'checkout.placeholder.delivery_date', texto_es: 'AAAA-MM-DD', texto_en: 'YYYY-MM-DD' },
-  { namespace: 'carrito', clave: 'checkout.placeholder.notes', texto_es: 'Instrucciones o comentarios', texto_en: 'Instructions or comments' },
-  { namespace: 'carrito', clave: 'success.title', texto_es: '¡Gracias por tu pedido!', texto_en: 'Thank you for your order!' },
-  { namespace: 'carrito', clave: 'success.order_number', texto_es: 'Tu número de pedido es:', texto_en: 'Your order number is:' },
-  { namespace: 'carrito', clave: 'success.back_to_catalog', texto_es: 'Volver al catálogo', texto_en: 'Back to catalog' },
+function loadMessages(locale: 'es' | 'en') {
+  const p = resolve(process.cwd(), 'packages', 'web', 'messages', `${locale}.json`);
+  return JSON.parse(readFileSync(p, 'utf8')) as any;
+}
 
-  // calendario page
-  { namespace: 'calendario', clave: 'titulo', texto_es: 'Calendario', texto_en: 'Calendar' },
-  { namespace: 'calendario', clave: 'hero_title', texto_es: 'Un calendario para saborear el año', texto_en: 'A calendar to savor the year' },
-  { namespace: 'calendario', clave: 'hero_subtitle', texto_es: '12 ilustraciones, recetas y momentos para reunirnos', texto_en: '12 illustrations, recipes, and moments to gather' },
-  { namespace: 'calendario', clave: 'buy', texto_es: 'Comprar calendario', texto_en: 'Buy calendar' },
-  { namespace: 'calendario', clave: 'vacio', texto_es: 'No hay productos de calendario.', texto_en: 'No calendar products.' },
-  { namespace: 'calendario', clave: 'f1_title', texto_es: 'Arte que inspira cada mes', texto_en: 'Art that inspires every month' },
-  { namespace: 'calendario', clave: 'f1_body', texto_es: 'Ilustraciones originales impresas con tintas de alta calidad.', texto_en: 'Original illustrations printed with high-quality inks.' },
-  { namespace: 'calendario', clave: 'f2_title', texto_es: 'Recetas estacionales', texto_en: 'Seasonal recipes' },
-  { namespace: 'calendario', clave: 'f2_body', texto_es: 'Ideas sencillas y deliciosas para compartir en casa.', texto_en: 'Simple, delicious ideas to share at home.' },
-  { namespace: 'calendario', clave: 'f3_title', texto_es: 'Papel sustentable', texto_en: 'Sustainable paper' },
-  { namespace: 'calendario', clave: 'f3_body', texto_es: 'Hecho con materiales responsables con el planeta.', texto_en: 'Made with materials that care for the planet.' },
-  { namespace: 'calendario', clave: 'f4_title', texto_es: 'Listo para regalar', texto_en: 'Gift-ready' },
-  { namespace: 'calendario', clave: 'f4_body', texto_es: 'Empaque hermoso para que llegue con cariño.', texto_en: 'Beautiful packaging to deliver with care.' },
-];
-
-function key(ns: string, k: string) {
-  return `${ns}::${k}`;
+function flatten(nsObj: any): Record<string, string> {
+  const out: Record<string, string> = {};
+  const walk = (node: any, parts: string[]) => {
+    for (const [k, v] of Object.entries(node)) {
+      if (k === '$schema') continue;
+      const next = [...parts, k];
+      if (typeof v === 'string') out[next.join('.')] = v.trimEnd();
+      else if (v && typeof v === 'object' && !Array.isArray(v)) walk(v, next);
+    }
+  };
+  walk(nsObj, []);
+  return out;
 }
 
 async function run() {
-  console.log(`Upserting ${entries.length} texto rows into '${COPY_TABLE}' (carrito + calendario namespaces)`);
+  console.log(`Seeding '${COPY_TABLE}' from packages/web/messages/{en,es}.json → Airtable`);
+  const es = loadMessages('es');
+  const en = loadMessages('en');
+  const namespaces = new Set<string>([
+    ...Object.keys(es).filter((k) => k !== '$schema'),
+    ...Object.keys(en).filter((k) => k !== '$schema'),
+  ]);
+
+  const entries: Entry[] = [];
+  for (const ns of namespaces) {
+    const esMap = typeof es[ns] === 'object' ? flatten(es[ns]) : {};
+    const enMap = typeof en[ns] === 'object' ? flatten(en[ns]) : {};
+    const claves = new Set<string>([...Object.keys(esMap), ...Object.keys(enMap)]);
+    for (const clave of claves) {
+      entries.push({ namespace: ns, clave, texto_es: esMap[clave] || '', texto_en: enMap[clave] || '' });
+    }
+  }
 
   // Load existing (namespace, clave) -> record
-  const filter = `OR(namespace = 'carrito', namespace = 'calendario')`;
-  const existingRecs = await withRetry(() => base(COPY_TABLE).select({ filterByFormula: filter }).all(), 'select existing');
+  const existingRecs = await withRetry(() => base(COPY_TABLE).select().all(), 'select existing');
+  const key = (ns: string, k: string) => `${ns}::${k}`;
   const byKey = new Map<string, Airtable.Record<any>>();
   for (const r of existingRecs) {
     const ns = (r.get('namespace') as string) || '';
@@ -86,73 +73,37 @@ async function run() {
 
   const toCreate: { fields: any }[] = [];
   const toUpdate: { id: string; fields: any }[] = [];
-  const createdKeys: string[] = [];
-  const updatedKeys: string[] = [];
-
   for (const e of entries) {
+    const fields = { namespace: e.namespace, clave: e.clave, texto_es: e.texto_es, texto_en: e.texto_en };
     const existing = byKey.get(key(e.namespace, e.clave));
-    const fields = {
-      namespace: e.namespace,
-      clave: e.clave,
-      texto_es: e.texto_es,
-      texto_en: e.texto_en,
-    };
-    if (!existing) {
-      toCreate.push({ fields });
-      createdKeys.push(`${e.namespace}.${e.clave}`);
-    } else {
+    if (!existing) toCreate.push({ fields });
+    else {
       const curEs = (existing.get('texto_es') as string) || (existing.get('es') as string) || '';
       const curEn = (existing.get('texto_en') as string) || (existing.get('en') as string) || '';
-      if (curEs !== e.texto_es || curEn !== e.texto_en) {
-        toUpdate.push({ id: existing.id, fields });
-        updatedKeys.push(`${e.namespace}.${e.clave}`);
-      }
+      if (curEs !== e.texto_es || curEn !== e.texto_en) toUpdate.push({ id: existing.id, fields });
     }
   }
 
   const chunk = <T,>(arr: T[], n = 10) => Array.from({ length: Math.ceil(arr.length / n) }, (_, i) => arr.slice(i * n, i * n + n));
-
-  for (const batch of chunk(toCreate)) {
-    await withRetry(() => base(COPY_TABLE).create(batch), `create ${batch.length}`);
-    console.log(`Created ${batch.length}`);
-  }
-  for (const batch of chunk(toUpdate)) {
-    await withRetry(() => base(COPY_TABLE).update(batch), `update ${batch.length}`);
-    console.log(`Updated ${batch.length}`);
-  }
-
-  console.log(`\nDone. Created=${toCreate.length}, Updated=${toUpdate.length}`);
-  if (createdKeys.length) {
-    console.log('Created keys:');
-    for (const k of createdKeys) console.log(`  - ${k}`);
-  }
-  if (updatedKeys.length) {
-    console.log('Updated keys:');
-    for (const k of updatedKeys) console.log(`  - ${k}`);
-  }
+  for (const batch of chunk(toCreate)) await withRetry(() => base(COPY_TABLE).create(batch), `create ${batch.length}`);
+  for (const batch of chunk(toUpdate)) await withRetry(() => base(COPY_TABLE).update(batch), `update ${batch.length}`);
+  console.log(`Done. Created=${toCreate.length}, Updated=${toUpdate.length}`);
 }
 
-run().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+run().catch((err) => { console.error(err); process.exit(1); });
 
 async function withRetry<T>(fn: () => Promise<T>, label = 'op', tries = 4): Promise<T> {
   let attempt = 0;
   let lastErr: any;
   while (attempt < tries) {
-    try {
-      return await fn();
-    } catch (err: any) {
+    try { return await fn(); } catch (err: any) {
       lastErr = err;
       const code = err?.code || err?.statusCode || err?.errno;
-      // Retry on common transient/network errors
-      if (['ETIMEDOUT', 'ECONNRESET', 'EAI_AGAIN'].includes(code) || err?.type === 'system' || (err?.statusCode && err.statusCode >= 500)) {
+      if (['ETIMEDOUT','ECONNRESET','EAI_AGAIN'].includes(code) || err?.type === 'system' || (err?.statusCode && err.statusCode >= 500)) {
         const backoff = Math.min(2000, 300 * Math.pow(2, attempt));
         console.warn(`${label} failed (${code}). Retrying in ${backoff}ms...`);
         await new Promise((r) => setTimeout(r, backoff));
-        attempt++;
-        continue;
+        attempt++; continue;
       }
       throw err;
     }
