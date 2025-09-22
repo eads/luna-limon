@@ -23,7 +23,7 @@ const base = new Airtable({ apiKey: AIRTABLE_TOKEN, requestTimeout: 30000 as any
 type Entry = { namespace: string; clave: string; texto_es: string; texto_en: string };
 
 function loadMessages(locale: 'es' | 'en') {
-  const p = resolve(process.cwd(), 'packages', 'web', 'messages', `${locale}.json`);
+  const p = resolve(process.cwd(), 'messages', `${locale}.json`);
   return JSON.parse(readFileSync(p, 'utf8')) as any;
 }
 

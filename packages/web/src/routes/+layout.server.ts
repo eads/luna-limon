@@ -24,21 +24,22 @@ export const load: LayoutServerLoad = async ({ setHeaders }) => {
   // Seed defaults from local messages JSON (if available), assuming:
   // { carrito: { "checkout.place_order": "..." }, calendario: { ... } } or flat root { "carrito.checkout.place_order": "..." }
   try {
-    const jsonPath = path.resolve(process.cwd(), 'packages', 'web', 'messages', `${locale}.json`);
+    const jsonPath = path.resolve(process.cwd(), 'messages', `${locale}.json`);
     const raw = await fs.readFile(jsonPath, 'utf8');
     const data: any = JSON.parse(raw);
+    const add = (key: string, val: string) => { if (val != null) messages[key] = { text: String(val) }; };
+    const walkNs = (ns: string, node: any, parts: string[] = []) => {
+      for (const [k, v] of Object.entries(node || {})) {
+        if (k === '$schema') continue;
+        const next = [...parts, k];
+        if (typeof v === 'string') add(`${ns}.${next.join('.')}`, v);
+        else if (v && typeof v === 'object' && !Array.isArray(v)) walkNs(ns, v, next);
+      }
+    };
     for (const [k, v] of Object.entries(data)) {
       if (k === '$schema') continue;
-      if (typeof v === 'string') {
-        // flat key at root (already namespaced like "carrito.checkout.place_order")
-        messages[k] = { text: v };
-      } else if (v && typeof v === 'object' && !Array.isArray(v)) {
-        // one-level namespace object: { [slug]: text }
-        const ns = k;
-        for (const [slug, text] of Object.entries(v as Record<string, string>)) {
-          if (typeof text === 'string') messages[`${ns}.${slug}`] = { text };
-        }
-      }
+      if (typeof v === 'string') add(k, v);
+      else if (v && typeof v === 'object' && !Array.isArray(v)) walkNs(k, v as any);
     }
   } catch {}
   try {
