@@ -1,5 +1,7 @@
 import type { LayoutServerLoad } from './$types';
 import { base } from '$lib/server/airtable';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { AIRTABLE_PRODUCTS_TABLE } from '$env/static/private';
 // @ts-expect-error - runtime types not generated yet
 import { getLocale } from '$lib/paraglide/runtime.js';
@@ -16,8 +18,31 @@ export const load: LayoutServerLoad = async ({ setHeaders }) => {
     setHeaders({ 'Cache-Control': `public, s-maxage=${ttl}, stale-while-revalidate=60` });
   } catch {}
 
-  // messages from texto table (tolerate Airtable outages)
+  // messages map (seed from local JSON, overlay from Airtable)
   const messages: Record<string, { text: string }> = {};
+
+  // Flatten nested JSON into dotted keys (e.g. carrito.checkout.placeholder.name)
+  function flatten(prefix: string, value: any) {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      for (const [k, v] of Object.entries(value)) {
+        if (k === '$schema') continue;
+        const next = prefix ? `${prefix}.${k}` : k;
+        flatten(next, v);
+      }
+      return;
+    }
+    if (typeof value === 'string') {
+      messages[prefix] = { text: value };
+    }
+  }
+
+  // Seed defaults from local messages JSON (if available)
+  try {
+    const jsonPath = path.resolve(process.cwd(), 'packages', 'web', 'messages', `${locale}.json`);
+    const raw = await fs.readFile(jsonPath, 'utf8');
+    const data = JSON.parse(raw);
+    flatten('', data);
+  } catch {}
   try {
     const textoRecords = await base(COPY_TABLE).select().all();
     for (const r of textoRecords) {

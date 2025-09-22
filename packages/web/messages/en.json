@@ -14,13 +14,13 @@
   "f2_title": "Seasonal recipes\n",
   "f4_body": "Beautiful packaging to deliver with care.\n",
   "f2_body": "Simple, delicious ideas to share at home.\n",
-  "f1_title": "Rituals you can touch\n",
+  "f1_title": "Art that inspires every month\n",
   "f3_body": "Made with materials that care for the planet.\n",
   "f4_title": "Gift-ready\n",
   "hero_subtitle": "12 illustrations, recipes, and moments to gather\n",
   "vacio": "No calendar products.\n",
   "f1_body": "Original illustrations printed with high-quality inks.\n",
-  "hero_title": "A calendar to live your year with purpose\n",
+  "hero_title": "A calendar to savor the year\n",
   "f3_title": "Sustainable paper\n",
   "carrito": {
     "carrito_label": "Cart\n",
@@ -57,5 +57,24 @@
       "order_number": "Your order number is:\n",
       "back_to_catalog": "Back to catalog\n"
     }
+  },
+  "checkout": {
+    "delivery_date": "Delivery date\n",
+    "name": "Name\n",
+    "title": "Finish your order\n",
+    "processing": "Processing…\n",
+    "error": "Couldn't process the order. Please try again.\n",
+    "address": "Shipping address\n",
+    "notes": "Notes for your order\n",
+    "email": "Email\n",
+    "whatsapp": "WhatsApp number\n",
+    "summary": "Summary\n",
+    "place_order": "Place order\n",
+    "total": "Total\n"
+  },
+  "success": {
+    "back_to_catalog": "Back to catalog\n",
+    "order_number": "Your order number is:\n",
+    "title": "Thank you for your order!\n"
   }
 }
