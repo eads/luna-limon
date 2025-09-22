@@ -117,7 +117,7 @@
 </script>
 
   <div class="max-w-md mx-auto pt-6">
-<h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">{t('checkout.title')}</h1>
+<h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">{t('carrito.checkout.title')}</h1>
 
 {#if renderItems.length}
   <!-- Order summary first with warm backdrop and fewer lines -->
@@ -142,7 +142,7 @@
             <!-- Qty + price (fixed width) -->
             <div class="pl-2 sm:pl-3 text-right flex flex-col items-end shrink-0 ml-auto" style="width: clamp(9.75rem, 34vw, 12.5rem);">
               <!-- Item title above controls -->
-              <div class="text-sm sm:text-base text-gray-900 font-semibold max-w-full mb-1 whitespace-normal break-words leading-snug text-right">{displayName(product)}</div>
+              <div class="text-sm sm:text-base text-gray-900 font-semibold max-w-full pb-1 whitespace-normal break-words leading-snug text-right">{displayName(product)}</div>
               <div class="flex items-center gap-2 mb-1">
                 <button
                   class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gray-100 hover:bg-gray-200 text-xl leading-none"
@@ -172,7 +172,7 @@
         {/each}
       </ul>
       <div class="mt-2 pt-3 border-t border-gray-200 text-right">
-        <div class="text-sm text-gray-700">{t('checkout.total')}</div>
+        <div class="text-sm text-gray-700">{t('carrito.checkout.total')}</div>
         <div class="font-semibold text-gray-900 text-2xl">{fmtCOP.format(total)}</div>
       </div>
     </section>
@@ -183,38 +183,38 @@
   <div class="mt-4 p-3 text-center text-gray-700 bg-white/70 border rounded-lg">{t('carrito_vacio')}</div>
 {/if}
 
-<div class="grid gap-3 mb-5" class:opacity-60={!$cart.length}>
+  <div class="grid gap-3 mb-5" class:opacity-60={!$cart.length}>
   <label class="block">
-    <span class="text-base text-gray-800">{t('checkout.name')}</span>
-    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" bind:value={nombre} placeholder={t('checkout.placeholder.name')} disabled={!$cart.length} />
+    <span class="text-base text-gray-800">{t('carrito.checkout.name')}</span>
+    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" bind:value={nombre} disabled={!$cart.length} />
   </label>
 
   <label class="block">
-    <span class="text-base text-gray-800">{t('checkout.email')}</span>
-    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" type="email" bind:value={correo_electronico} placeholder={t('checkout.placeholder.email')} disabled={!$cart.length} />
+    <span class="text-base text-gray-800">{t('carrito.checkout.email')}</span>
+    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" type="email" bind:value={correo_electronico} disabled={!$cart.length} />
   </label>
 
   <label class="block">
-    <span class="text-base text-gray-800">{t('checkout.whatsapp')}</span>
-    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" bind:value={numero_whatsapp} placeholder={t('checkout.placeholder.whatsapp')} disabled={!$cart.length} />
+    <span class="text-base text-gray-800">{t('carrito.checkout.whatsapp')}</span>
+    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" bind:value={numero_whatsapp} disabled={!$cart.length} />
   </label>
 
   <label class="block">
-    <span class="text-base text-gray-800">{t('checkout.address')}</span>
-    <textarea class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" rows="3" bind:value={direccion_envio} placeholder={t('checkout.placeholder.address')} disabled={!$cart.length}></textarea>
+    <span class="text-base text-gray-800">{t('carrito.checkout.address')}</span>
+    <textarea class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" rows="3" bind:value={direccion_envio} disabled={!$cart.length}></textarea>
   </label>
 
   <label class="block">
-    <span class="text-base text-gray-800">{t('checkout.delivery_date')}</span>
-    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" type="date" bind:value={fecha_entrega} placeholder={t('checkout.placeholder.delivery_date')} disabled={!$cart.length} />
+    <span class="text-base text-gray-800">{t('carrito.checkout.delivery_date')}</span>
+    <input class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" type="date" bind:value={fecha_entrega} disabled={!$cart.length} />
   </label>
 
   <label class="block">
-    <span class="text-base text-gray-800">{t('checkout.notes')}</span>
-    <textarea class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" rows="3" bind:value={notas_cliente} placeholder={t('checkout.placeholder.notes')} disabled={!$cart.length}></textarea>
+    <span class="text-base text-gray-800">{t('carrito.checkout.notes')}</span>
+    <textarea class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" rows="3" bind:value={notas_cliente} disabled={!$cart.length}></textarea>
   </label>
   {#if errorMsg}
-    <p class="text-red-600 mb-1 text-sm">{t('checkout.error')}</p>
+    <p class="text-red-600 mb-1 text-sm">{t('carrito.checkout.error')}</p>
   {/if}
 </div>
 
@@ -229,7 +229,7 @@
   onclick={placeOrder}
   disabled={submitting || $cart.length === 0}
 >
-  {submitting ? t('checkout.processing') : t('checkout.place_order')}
+  {submitting ? t('carrito.checkout.processing') : t('carrito.checkout.place_order')}
 </button>
 
 </div>

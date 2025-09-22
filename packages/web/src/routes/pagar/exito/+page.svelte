@@ -13,9 +13,9 @@
   });
 </script>
 
-<h1 class="text-2xl font-bold mb-2">{t('success.title')}</h1>
+<h1 class="text-2xl font-bold mb-2">{t('carrito.success.title')}</h1>
 {#if pedidoId}
-  <p class="mb-4">{t('success.order_number')} <span class="font-mono">{pedidoId}</span></p>
+  <p class="mb-4">{t('carrito.success.order_number')} <span class="font-mono">{pedidoId}</span></p>
 {/if}
 
-<button class="rounded bg-green-600 text-white py-2 px-4" onclick={() => goto('/')}>{t('success.back_to_catalog')}</button>
+<button class="rounded bg-green-600 text-white py-2 px-4" onclick={() => goto('/')}>{t('carrito.success.back_to_catalog')}</button>
