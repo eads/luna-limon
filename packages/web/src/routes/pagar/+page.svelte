@@ -142,7 +142,7 @@
             <!-- Qty + price (fixed width) -->
             <div class="pl-2 sm:pl-3 text-right flex flex-col items-end shrink-0 ml-auto" style="width: clamp(9.75rem, 34vw, 12.5rem);">
               <!-- Item title above controls -->
-              <div class="text-sm sm:text-base text-gray-900 font-semibold truncate max-w-full mb-1">{displayName(product)}</div>
+              <div class="text-sm sm:text-base text-gray-900 font-semibold max-w-full mb-1 whitespace-normal break-words leading-snug text-right">{displayName(product)}</div>
               <div class="flex items-center gap-2 mb-1">
                 <button
                   class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gray-100 hover:bg-gray-200 text-xl leading-none"
