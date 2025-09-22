@@ -227,7 +227,7 @@
   onclick={placeOrder}
   disabled={submitting || $cart.length === 0}
 >
-  {submitting ? tf('checkout.processing', 'Procesando…') : tf('checkout.place_order', 'Realizar pedido')}
+  {submitting ? t('checkout.processing') : t('checkout.place_order')}
   {#if $cart.length > 0}
     <span class="ml-2 text-white/80 text-sm">({$cart.length} artículo{ $cart.length !== 1 ? 's' : '' })</span>
   {/if}
