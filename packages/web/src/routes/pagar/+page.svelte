@@ -6,7 +6,13 @@
   // locale-based selectors for product fields
   // @ts-expect-error - runtime types not generated yet
   import { getLocale } from '$lib/paraglide/runtime.js';
-  const nameOf = (p: CartProduct) => p.nombre[getLocale() as 'es'|'en'] ?? p.nombre.es ?? p.nombre.en ?? '';
+  const nameOf = (p: CartProduct) => {
+    const n: any = (p as any)?.nombre;
+    if (!n) return '';
+    if (typeof n === 'string') return n;
+    const loc = getLocale() as 'es' | 'en';
+    return n[loc] ?? n.es ?? n.en ?? '';
+  };
   const imageOf = (p: any): string => {
     const raw = p?.imagen;
     if (!raw) return '';
@@ -26,6 +32,16 @@
     return '';
   };
   import { getResizedImageUrl } from '$lib/utils/images';
+  // Prefer a robust image getter that falls back to server-provided calendar image
+  function imageFor(p: any): string {
+    const u = imageOf(p);
+    if (u) return u;
+    const cal = data?.calendar;
+    if (cal && p?.id === cal.id) {
+      return imageOf({ imagen: cal.imagen });
+    }
+    return '';
+  }
   type SrvProduct = { id: string; nombre: string; descripción: string; precio: number; imagen?: any };
   let { data } = $props<{ data: { calendar?: SrvProduct } }>();
   // translation with fallback helper
@@ -103,24 +119,21 @@
 
 {#if renderItems.length}
   <!-- Order summary first with warm backdrop and fewer lines -->
-  <style>
-    .full-bleed { position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; width: 100vw; }
-  </style>
-  <div class="full-bleed mb-8" style="background-color:#edeae6; box-shadow: inset 0 -10px 14px -12px rgba(0,0,0,0.2);">
+  <div class="u-full-bleed mb-8" style="background-color:#edeae6; box-shadow: inset 0 -10px 14px -12px rgba(0,0,0,0.2);">
     <section class="mx-auto max-w-md px-4 pt-8 pb-6">
       <ul class="space-y-3">
         {#each renderItems as { product } (product.id)}
           <li class="flex items-center justify-between gap-3">
-            <div class="flex flex-col items-start gap-2 flex-1 pr-2 min-w-0">
-              {#if imageOf(product)}
+            <div class="flex flex-col items-start gap-2 flex-1 pr-2 min-w-[10rem]">
+              {#if imageFor(product)}
                 <img
-                  src={getResizedImageUrl(imageOf(product), 600)}
+                  src={getResizedImageUrl(imageFor(product), 600)}
                   alt={nameOf(product)}
-                  class="w-40 h-24 rounded-xl object-cover flex-shrink-0"
+                  class="w-40 h-24 rounded-xl object-cover shrink-0"
                   loading="lazy"
                 />
               {/if}
-              <span class="text-xs text-gray-600 truncate">{nameOf(product)}</span>
+              <span class="text-xs text-gray-600 truncate min-w-0 max-w-full">{nameOf(product)}</span>
             </div>
             <div class="pl-3 text-right flex flex-col items-end min-w-[9.5rem]">
               <div class="flex items-center gap-2 mb-1">

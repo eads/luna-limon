@@ -119,26 +119,6 @@
 </script>
 
 <style>
-  /* Full-bleed section helper */
-  .full-bleed {
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    width: 100vw;
-  }
-  .content-wrap {
-    max-width: 72rem; /* ~lg container */
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  @media (min-width: 768px) {
-    .content-wrap { padding-left: 2rem; padding-right: 2rem; }
-  }
-
   .reveal { opacity: 0; transform: translateY(12px); transition: opacity 400ms ease, transform 400ms ease; }
   .reveal.show { opacity: 1; transform: translateY(0); }
 </style>
@@ -147,9 +127,9 @@
   <p class="text-gray-500">{tf('calendario.vacio', 'No hay productos de calendario.')}</p>
 {:else}
   <!-- Full-bleed hero: stacked with centered imagery -->
-  <section class="full-bleed relative overflow-hidden mb-10">
+  <section class="u-full-bleed relative overflow-hidden mb-10">
     <div class="absolute inset-0 -z-10" style="background-color:#edeae6;"></div>
-    <div class="content-wrap py-10 md:py-20">
+    <div class="u-content-wrap py-10 md:py-20">
       <div class="text-center">
         <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-4" style={y(-0.08)}>{tf('calendario.hero_title', l('Un calendario para saborear el año','A calendar to savor the year'))}</h1>
         <p class="text-base md:text-xl text-gray-700/90 mb-6 max-w-2xl mx-auto" style={y(-0.06)}>{tf('calendario.hero_subtitle', l('12 ilustraciones, recetas y momentos para reunirnos','12 illustrations, recipes, and moments to gather'))}</p>
@@ -178,8 +158,8 @@
   <!-- Full-bleed feature panels, text above centered image -->
   <section class="space-y-8">
     <!-- Panel 1 -->
-    <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f5f2ee;" bind:this={p1El}>
-      <div class="content-wrap">
+    <div class="u-full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f5f2ee;" bind:this={p1El}>
+      <div class="u-content-wrap">
         <div class="text-center mb-6 reveal" class:show={p1Shown}>
           <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f1_title', l('Arte que inspira cada mes','Art that inspires each month'))}</h2>
           <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f1_body', l('Ilustraciones originales impresas con tintas de alta calidad.','Original illustrations printed with high-quality inks.'))}</p>
@@ -191,8 +171,8 @@
     </div>
 
     <!-- Panel 2 -->
-    <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f0f4f8;" bind:this={p2El}>
-      <div class="content-wrap">
+    <div class="u-full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f0f4f8;" bind:this={p2El}>
+      <div class="u-content-wrap">
         <div class="text-center mb-6 reveal" class:show={p2Shown}>
           <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f2_title', l('Recetas estacionales','Seasonal recipes'))}</h2>
           <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f2_body', l('Ideas sencillas y deliciosas para compartir en casa.','Simple, delicious ideas to share at home.'))}</p>
@@ -204,8 +184,8 @@
     </div>
 
     <!-- Panel 3 -->
-    <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#eef5ef;" bind:this={p3El}>
-      <div class="content-wrap">
+    <div class="u-full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#eef5ef;" bind:this={p3El}>
+      <div class="u-content-wrap">
         <div class="text-center mb-6 reveal" class:show={p3Shown}>
           <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f3_title', l('Papel sustentable','Sustainable paper'))}</h2>
           <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f3_body', l('Hecho con materiales responsables con el planeta.','Made with materials that care for the planet.'))}</p>
@@ -217,8 +197,8 @@
     </div>
 
     <!-- Panel 4 -->
-    <div class="full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f7eff9;" bind:this={p4El}>
-      <div class="content-wrap">
+    <div class="u-full-bleed bg-cover bg-center py-10 md:py-16" style="background-color:#f7eff9;" bind:this={p4El}>
+      <div class="u-content-wrap">
         <div class="text-center mb-6 reveal" class:show={p4Shown}>
           <h2 class="text-3xl md:text-5xl font-semibold mb-2" style={y(-0.05)}>{tf('calendario.f4_title', l('Listo para regalar','Ready to gift'))}</h2>
           <p class="text-gray-700 md:text-lg max-w-2xl mx-auto" style={y(-0.03)}>{tf('calendario.f4_body', l('Empaque hermoso para que llegue con cariño.','Beautiful packaging so it arrives with love.'))}</p>

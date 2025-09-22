@@ -37,6 +37,7 @@
   }
 </script>
 
+<div class="u-content-wrap">
 <h1 class="text-2xl font-bold mb-4">{t('desayunos.titulo') || 'Desayunos'}</h1>
 <ul class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
   {#each data.products as product (product.id)}
@@ -74,3 +75,4 @@
     <li class="text-gray-500">{t('desayunos.vacio') || 'No hay desayunos.'}</li>
   {/if}
 </ul>
+</div>

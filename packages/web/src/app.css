@@ -1,3 +1,34 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+/*
+  Global layout utilities (grid-based, no negative margins)
+  - l-wrap: page grid wrapper (full + content columns)
+  - u-full-bleed: span across full grid (edge-to-edge)
+  - u-content-wrap: centered max-width wrapper with responsive padding
+*/
+.l-wrap {
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(0, 1fr)
+    [content-start] minmax(0, 72rem)
+    [content-end] minmax(0, 1fr)
+    [full-end];
+}
+.l-wrap > * {
+  grid-column: content-start / content-end;
+}
+
+.u-full-bleed { grid-column: full-start / full-end; }
+
+.u-content-wrap {
+  max-width: 72rem; /* ~lg container */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+@media (min-width: 768px) {
+  .u-content-wrap { padding-left: 2rem; padding-right: 2rem; }
+}

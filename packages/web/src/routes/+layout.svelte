@@ -90,7 +90,7 @@
 		{/if}
 </nav>
 
-<main class="container mx-auto px-4">
+<main class="l-wrap">
 	{@render children()}
 </main>
 

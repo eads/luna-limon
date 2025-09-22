@@ -39,6 +39,7 @@ for (const p of data.products) {
 	}
 </script>
 
+<div class="u-content-wrap">
 <h1 class="text-2xl font-bold mb-4">{t('etiqueta_catalogo')}</h1>
 <ul class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
 	{#each data.products as product (product.id)}
@@ -73,3 +74,4 @@ for (const p of data.products) {
 		</li>
 	{/each}
 </ul>
+</div>
