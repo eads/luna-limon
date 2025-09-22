@@ -10,25 +10,6 @@
   "sobre_lunalimon": "A spark of magic.\n",
   "finalizar_compra": "Finish ordering\n",
   "titulo": "Calendar\n",
-  "checkout": {
-    "delivery_date": "Delivery date\n",
-    "name": "Name\n",
-    "title": "Finish your order\n",
-    "processing": "Processing…\n",
-    "error": "Couldn't process the order. Please try again.\n",
-    "address": "Shipping address\n",
-    "notes": "Notes for your order\n",
-    "email": "Email\n",
-    "whatsapp": "WhatsApp number\n",
-    "summary": "Summary\n",
-    "place_order": "Place order\n",
-    "total": "Total\n"
-  },
-  "success": {
-    "back_to_catalog": "Back to catalog\n",
-    "order_number": "Your order number is:\n",
-    "title": "Thank you for your order!\n"
-  },
   "buy": "Buy calendar\n",
   "f2_title": "Seasonal recipes\n",
   "f4_body": "Beautiful packaging to deliver with care.\n",
@@ -40,5 +21,41 @@
   "vacio": "No calendar products.\n",
   "f1_body": "Original illustrations printed with high-quality inks.\n",
   "hero_title": "A calendar to live your year with purpose\n",
-  "f3_title": "Sustainable paper\n"
+  "f3_title": "Sustainable paper\n",
+  "carrito": {
+    "carrito_label": "Cart\n",
+    "carrito_vacio": "Cart is empty\n",
+    "reiniciar_carrito": "Empty cart\n",
+    "finalizar_compra": "Finish ordering\n",
+    "carrito_total": "Total\n",
+    "agregado_label": "Added to cart\n",
+    "agrega_label": "Add to cart\n",
+    "checkout": {
+      "title": "Finish your order\n",
+      "name": "Name\n",
+      "email": "Email\n",
+      "whatsapp": "WhatsApp number\n",
+      "address": "Shipping address\n",
+      "delivery_date": "Delivery date\n",
+      "notes": "Notes for your order\n",
+      "summary": "Summary\n",
+      "total": "Total\n",
+      "place_order": "Place order\n",
+      "processing": "Processing…\n",
+      "error": "Couldn't process the order. Please try again.\n",
+      "placeholder": {
+        "name": "Your name\n",
+        "email": "you@example.com\n",
+        "whatsapp": "e.g., +57 300 123 4567\n",
+        "address": "Full address, neighborhood, city, ZIP\n",
+        "delivery_date": "YYYY-MM-DD\n",
+        "notes": "Instructions or comments\n"
+      }
+    },
+    "success": {
+      "title": "Thank you for your order!\n",
+      "order_number": "Your order number is:\n",
+      "back_to_catalog": "Back to catalog\n"
+    }
+  }
 }

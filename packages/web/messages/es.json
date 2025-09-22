@@ -10,25 +10,6 @@
   "sobre_lunalimon": "Una chispa de magia.\n",
   "finalizar_compra": "Finalizar compra\n",
   "titulo": "Calendario\n",
-  "checkout": {
-    "delivery_date": "Fecha de entrega\n",
-    "name": "Nombre\n",
-    "title": "Finalizar pedido\n",
-    "processing": "Procesando…\n",
-    "error": "No se pudo procesar el pedido. Intente de nuevo.\n",
-    "address": "Dirección de envío\n",
-    "notes": "Notas para tu pedido\n",
-    "email": "Correo electrónico\n",
-    "whatsapp": "Número de WhatsApp\n",
-    "summary": "Resumen\n",
-    "place_order": "Realizar pedido\n",
-    "total": "Total\n"
-  },
-  "success": {
-    "back_to_catalog": "Volver al catálogo\n",
-    "order_number": "Tu número de pedido es:\n",
-    "title": "¡Gracias por tu pedido!\n"
-  },
   "buy": "Comprar calendario\n",
   "f2_title": "Recetas estacionales\n",
   "f4_body": "Empaque hermoso para que llegue con cariño.\n",
@@ -40,5 +21,41 @@
   "vacio": "No hay productos de calendario.\n",
   "f1_body": "Ilustraciones originales impresas con tintas de alta calidad.\n",
   "hero_title": "Un calendario para vivir tu año con intención\n",
-  "f3_title": "Papel sustentable\n"
+  "f3_title": "Papel sustentable\n",
+  "carrito": {
+    "carrito_label": "Carrito\n",
+    "carrito_vacio": "El carrito está vacío\n",
+    "reiniciar_carrito": "Reiniciar carrito\n",
+    "finalizar_compra": "Finalizar compra\n",
+    "carrito_total": "Total\n",
+    "agregado_label": "Agregado\n",
+    "agrega_label": "Agrega\n",
+    "checkout": {
+      "title": "Finalizar pedido\n",
+      "name": "Nombre\n",
+      "email": "Correo electrónico\n",
+      "whatsapp": "Número de WhatsApp\n",
+      "address": "Dirección de envío\n",
+      "delivery_date": "Fecha de entrega\n",
+      "notes": "Notas para tu pedido\n",
+      "summary": "Resumen\n",
+      "total": "Total\n",
+      "place_order": "Realizar pedido\n",
+      "processing": "Procesando…\n",
+      "error": "No se pudo procesar el pedido. Intente de nuevo.\n",
+      "placeholder": {
+        "name": "Tu nombre\n",
+        "email": "tu@correo.com\n",
+        "whatsapp": "Ej. +57 300 123 4567\n",
+        "address": "Dirección completa, barrio, ciudad, CP\n",
+        "delivery_date": "AAAA-MM-DD\n",
+        "notes": "Instrucciones o comentarios\n"
+      }
+    },
+    "success": {
+      "title": "¡Gracias por tu pedido!\n",
+      "order_number": "Tu número de pedido es:\n",
+      "back_to_catalog": "Volver al catálogo\n"
+    }
+  }
 }

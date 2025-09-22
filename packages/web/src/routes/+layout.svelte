@@ -67,8 +67,8 @@
 				<a
 					href={pagarHref}
 					class={`relative inline-flex items-center justify-center rounded-full text-white h-[34px] w-[34px] md:h-[46px] md:w-[46px] transition-transform duration-150 ease-out hover:scale-105 active:scale-95 shadow-lg ${total > 0 ? 'bg-slate-600 hover:bg-slate-700' : 'bg-slate-400 hover:bg-slate-500'}`}
-					aria-label={t('finalizar_compra')}
-					title={t('finalizar_compra')}
+                    aria-label={t('carrito.finalizar_compra')}
+                    title={t('carrito.finalizar_compra')}
 				>
 					<MdiCartOutline class="text-lg md:text-xl" />
 					{#if total > 0}
@@ -80,7 +80,7 @@
 				<button
 					class="relative inline-flex items-center justify-center rounded-full bg-gray-300 text-gray-600 h-[34px] w-[34px] md:h-[46px] md:w-[46px] shadow-lg cursor-not-allowed"
 					aria-disabled="true"
-					title={t('finalizar_compra')}
+                    title={t('carrito.finalizar_compra')}
 				>
 					<MdiCartOutline class="text-lg md:text-xl" />
 					{#if total > 0}
