@@ -4,36 +4,41 @@
   "carrito_total": "Total\n",
   "carrito_label": "Carrito\n\n",
   "carrito_vacio": "El carrito está vacío\n\n",
-  "etiqueta_catalogo": "Elija su desayuno\t\n",
+  "etiqueta_catalogo": "Elija su desayuno\n",
   "agregado_label": "Agregado\n",
   "reiniciar_carrito": "Reiniciar carrito\n",
   "sobre_lunalimon": "Una chispa de magia.\n",
   "finalizar_compra": "Finalizar compra\n",
-  "pedido_exito_titulo": "¡Gracias por tu pedido!\n",
-  "pedido_exito_id": "Tu número de pedido es:\n",
-  "volver_catalogo": "Volver al catálogo\n",
-  "calendario": {
-    "buy": "Comprar calendario\n",
-    "hero_title": "Un calendario para saborear el año\n",
-    "hero_subtitle": "12 ilustraciones, recetas y momentos para reunirnos\n",
-    "f1_title": "Arte que inspira cada mes\n",
-    "f1_body": "Ilustraciones originales impresas con tintas de alta calidad.\n",
-    "f2_title": "Recetas estacionales\n",
-    "f2_body": "Ideas sencillas y deliciosas para compartir en casa.\n",
-    "f3_title": "Papel sustentable\n",
-    "f3_body": "Hecho con materiales responsables con el planeta.\n",
-    "f4_title": "Listo para regalar\n",
-    "f4_body": "Empaque hermoso para que llegue con cariño.\n",
-    "vacio": "No hay productos de calendario.\n"
-  },
+  "titulo": "Calendario\n",
   "checkout": {
-    "placeholder": {
-      "name": "Tu nombre\n",
-      "email": "tu@correo.com\n",
-      "whatsapp": "Ej. +57 300 123 4567\n",
-      "address": "Dirección completa, barrio, ciudad, CP\n",
-      "delivery_date": "AAAA-MM-DD\n",
-      "notes": "Instrucciones o comentarios\n"
-    }
-  }
+    "delivery_date": "Fecha de entrega\n",
+    "name": "Nombre\n",
+    "title": "Finalizar pedido\n",
+    "processing": "Procesando…\n",
+    "error": "No se pudo procesar el pedido. Intente de nuevo.\n",
+    "address": "Dirección de envío\n",
+    "notes": "Notas para tu pedido\n",
+    "email": "Correo electrónico\n",
+    "whatsapp": "Número de WhatsApp\n",
+    "summary": "Resumen\n",
+    "place_order": "Realizar pedido\n",
+    "total": "Total\n"
+  },
+  "success": {
+    "back_to_catalog": "Volver al catálogo\n",
+    "order_number": "Tu número de pedido es:\n",
+    "title": "¡Gracias por tu pedido!\n"
+  },
+  "buy": "Comprar calendario\n",
+  "f2_title": "Recetas estacionales\n",
+  "f4_body": "Empaque hermoso para que llegue con cariño.\n",
+  "f2_body": "Ideas sencillas y deliciosas para compartir en casa.\n",
+  "f1_title": "Rituales que se tocan\n",
+  "f3_body": "Hecho con materiales responsables con el planeta.\n",
+  "f4_title": "Listo para regalar\n",
+  "hero_subtitle": "El Calendario Nuevos Comienzos 2026 es más que fechas: cada mes te ofrece rituales, cristales y reflexiones para vivir con claridad, gratitud y propósito. Una guía práctica y cercana para cuidarte y conectar contigo durante todo el año.\n",
+  "vacio": "No hay productos de calendario.\n",
+  "f1_body": "Ilustraciones originales impresas con tintas de alta calidad.\n",
+  "hero_title": "Un calendario para vivir tu año con intención\n",
+  "f3_title": "Papel sustentable\n"
 }

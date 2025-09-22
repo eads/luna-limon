@@ -42,6 +42,12 @@
     }
     return '';
   }
+  // Prefer server-provided calendar name to avoid stale localStorage cart names
+  function displayName(p: CartProduct): string {
+    const cal = data?.calendar;
+    if (cal && p?.id === cal.id) return cal.nombre;
+    return nameOf(p);
+  }
   type SrvProduct = { id: string; nombre: string; descripción: string; precio: number; imagen?: any };
   let { data } = $props<{ data: { calendar?: SrvProduct } }>();
   // No fallbacks: all strings must exist in the DB
@@ -116,39 +122,39 @@
 {#if renderItems.length}
   <!-- Order summary first with warm backdrop and fewer lines -->
   <div class="u-full-bleed mb-8" style="background-color:#edeae6; box-shadow: inset 0 -10px 14px -12px rgba(0,0,0,0.2);">
-    <section class="mx-auto max-w-md px-4 pt-8 pb-6">
+    <section class="mx-auto max-w-lg px-4 pt-8 pb-6">
       <ul class="space-y-3">
         {#each renderItems as { product } (product.id)}
-          <li class="grid grid-cols-[auto,1fr,11rem] items-center gap-3">
-            <!-- Image -->
-            <div class="shrink-0">
+          <li class="flex items-center gap-2 sm:gap-3 w-full">
+            <!-- Image only; proportional container with generous max-width -->
+            <div class="flex-1 min-w-0 max-w-[30rem] sm:max-w-[38rem] flex flex-col items-start">
               {#if imageFor(product)}
-                <img
-                  src={getResizedImageUrl(imageFor(product), 600)}
-                  alt={nameOf(product)}
-                  class="w-40 h-24 rounded-xl object-cover"
-                  loading="lazy"
-                />
+                <div class="relative w-full aspect-[5/3]">
+                  <img
+                    src={getResizedImageUrl(imageFor(product), 600)}
+                    alt={nameOf(product)}
+                    class="absolute inset-0 w-full h-full object-cover rounded-xl"
+                    loading="lazy"
+                  />
+                </div>
               {/if}
             </div>
-            <!-- Name -->
-            <div class="min-w-0">
-              <span class="text-xs text-gray-600 truncate block">{nameOf(product)}</span>
-            </div>
             <!-- Qty + price (fixed width) -->
-            <div class="pl-3 text-right flex flex-col items-end w-[11rem] shrink-0">
+            <div class="pl-2 sm:pl-3 text-right flex flex-col items-end shrink-0 ml-auto" style="width: clamp(9.75rem, 34vw, 12.5rem);">
+              <!-- Item title above controls -->
+              <div class="text-sm sm:text-base text-gray-900 font-semibold truncate max-w-full mb-1">{displayName(product)}</div>
               <div class="flex items-center gap-2 mb-1">
                 <button
-                  class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-xl leading-none"
+                  class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gray-100 hover:bg-gray-200 text-xl leading-none"
                   aria-label="Restar"
                   onclick={() => {
                     const current = $cart.find((i) => i.product.id === product.id)?.quantity ?? 0;
                     cart.setQuantity(product.id, Math.max(0, current - 1));
                   }}
                 >-</button>
-                <span class="min-w-[2rem] text-xl font-semibold text-gray-900 text-center">{$cart.find((i) => i.product.id === product.id)?.quantity ?? 0}</span>
+                <span class="min-w-[2.25rem] text-xl sm:text-2xl font-bold text-gray-900 text-center">{$cart.find((i) => i.product.id === product.id)?.quantity ?? 0}</span>
                 <button
-                  class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-xl leading-none"
+                  class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gray-100 hover:bg-gray-200 text-xl leading-none"
                   aria-label="Sumar"
                   onclick={() => {
                     const current = $cart.find((i) => i.product.id === product.id)?.quantity ?? 0;
@@ -160,16 +166,12 @@
                   }}
                 >+</button>
               </div>
-              <div class="text-base text-gray-800">
-                <span class="text-gray-900 font-medium">{$cart.find((i) => i.product.id === product.id)?.quantity ?? 0}</span>
-                × {fmtCOP.format(product.precio)}
-                = <span class="text-gray-900 font-semibold">{fmtCOP.format(product.precio * (($cart.find((i) => i.product.id === product.id)?.quantity ?? 0)))}</span>
-              </div>
+              <!-- Per-item pricing removed; overall total is shown below -->
             </div>
           </li>
         {/each}
       </ul>
-      <div class="mt-4 text-right">
+      <div class="mt-2 pt-3 border-t border-gray-200 text-right">
         <div class="text-sm text-gray-700">{t('checkout.total')}</div>
         <div class="font-semibold text-gray-900 text-2xl">{fmtCOP.format(total)}</div>
       </div>
@@ -228,9 +230,6 @@
   disabled={submitting || $cart.length === 0}
 >
   {submitting ? t('checkout.processing') : t('checkout.place_order')}
-  {#if $cart.length > 0}
-    <span class="ml-2 text-white/80 text-sm">({$cart.length} artículo{ $cart.length !== 1 ? 's' : '' })</span>
-  {/if}
 </button>
 
 </div>
