@@ -39,6 +39,13 @@ const entries: Entry[] = [
   { namespace: 'carrito', clave: 'checkout.place_order', texto_es: 'Realizar pedido', texto_en: 'Place order' },
   { namespace: 'carrito', clave: 'checkout.processing', texto_es: 'Procesando…', texto_en: 'Processing…' },
   { namespace: 'carrito', clave: 'checkout.error', texto_es: 'No se pudo procesar el pedido. Intente de nuevo.', texto_en: "Couldn't process the order. Please try again." },
+  // placeholders
+  { namespace: 'carrito', clave: 'checkout.placeholder.name', texto_es: 'Tu nombre', texto_en: 'Your name' },
+  { namespace: 'carrito', clave: 'checkout.placeholder.email', texto_es: 'tu@correo.com', texto_en: 'you@example.com' },
+  { namespace: 'carrito', clave: 'checkout.placeholder.whatsapp', texto_es: 'Ej. +57 300 123 4567', texto_en: 'e.g., +57 300 123 4567' },
+  { namespace: 'carrito', clave: 'checkout.placeholder.address', texto_es: 'Dirección completa, barrio, ciudad, CP', texto_en: 'Full address, neighborhood, city, ZIP' },
+  { namespace: 'carrito', clave: 'checkout.placeholder.delivery_date', texto_es: 'AAAA-MM-DD', texto_en: 'YYYY-MM-DD' },
+  { namespace: 'carrito', clave: 'checkout.placeholder.notes', texto_es: 'Instrucciones o comentarios', texto_en: 'Instructions or comments' },
   { namespace: 'carrito', clave: 'success.title', texto_es: '¡Gracias por tu pedido!', texto_en: 'Thank you for your order!' },
   { namespace: 'carrito', clave: 'success.order_number', texto_es: 'Tu número de pedido es:', texto_en: 'Your order number is:' },
   { namespace: 'carrito', clave: 'success.back_to_catalog', texto_es: 'Volver al catálogo', texto_en: 'Back to catalog' },

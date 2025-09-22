@@ -6,9 +6,9 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "build:i18n": "tsx scripts/buildMessages.ts",
-    "seed:texto": "tsx scripts/seedTexto.ts",
-    "sync:texto": "tsx scripts/syncTexto.ts",
+    
+    "texto:seed": "tsx scripts/seedTexto.ts",
+    "texto:sync": "tsx scripts/syncTexto.ts",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "format": "prettier --write .",

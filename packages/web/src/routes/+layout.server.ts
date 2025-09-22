@@ -21,27 +21,25 @@ export const load: LayoutServerLoad = async ({ setHeaders }) => {
   // messages map (seed from local JSON, overlay from Airtable)
   const messages: Record<string, { text: string }> = {};
 
-  // Flatten nested JSON into dotted keys (e.g. carrito.checkout.placeholder.name)
-  function flatten(prefix: string, value: any) {
-    if (value && typeof value === 'object' && !Array.isArray(value)) {
-      for (const [k, v] of Object.entries(value)) {
-        if (k === '$schema') continue;
-        const next = prefix ? `${prefix}.${k}` : k;
-        flatten(next, v);
-      }
-      return;
-    }
-    if (typeof value === 'string') {
-      messages[prefix] = { text: value };
-    }
-  }
-
-  // Seed defaults from local messages JSON (if available)
+  // Seed defaults from local messages JSON (if available), assuming:
+  // { carrito: { "checkout.place_order": "..." }, calendario: { ... } } or flat root { "carrito.checkout.place_order": "..." }
   try {
     const jsonPath = path.resolve(process.cwd(), 'packages', 'web', 'messages', `${locale}.json`);
     const raw = await fs.readFile(jsonPath, 'utf8');
-    const data = JSON.parse(raw);
-    flatten('', data);
+    const data: any = JSON.parse(raw);
+    for (const [k, v] of Object.entries(data)) {
+      if (k === '$schema') continue;
+      if (typeof v === 'string') {
+        // flat key at root (already namespaced like "carrito.checkout.place_order")
+        messages[k] = { text: v };
+      } else if (v && typeof v === 'object' && !Array.isArray(v)) {
+        // one-level namespace object: { [slug]: text }
+        const ns = k;
+        for (const [slug, text] of Object.entries(v as Record<string, string>)) {
+          if (typeof text === 'string') messages[`${ns}.${slug}`] = { text };
+        }
+      }
+    }
   } catch {}
   try {
     const textoRecords = await base(COPY_TABLE).select().all();

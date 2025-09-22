@@ -36,16 +36,27 @@ async function withRetry<T>(fn: () => Promise<T>, label = 'op', tries = 4): Prom
 async function run() {
   console.log(`Syncing '${COPY_TABLE}' from Airtable → messages/*.json`);
   const recs = await withRetry(() => base(COPY_TABLE).select().all(), 'select texto');
-  const es: Record<string, string> = { "$schema": "https://inlang.com/schema/inlang-message-format" } as any;
-  const en: Record<string, string> = { "$schema": "https://inlang.com/schema/inlang-message-format" } as any;
+  // Shape: one-level namespaces with flat keys inside (no nested objects beyond namespace)
+  // { carrito: { "checkout.place_order": "…" }, calendario: { "hero_title": "…" } }
+  const es: Record<string, any> = { "$schema": "https://inlang.com/schema/inlang-message-format" };
+  const en: Record<string, any> = { "$schema": "https://inlang.com/schema/inlang-message-format" };
 
   for (const r of recs) {
+    const ns = (r.get('namespace') as string) || (r.get('ns') as string) || '';
     const key = (r.get('clave') as string) || (r.get('key') as string);
     if (!key) continue;
-    const textEs = (r.get('texto_es') as string) || (r.get('es') as string) || '';
-    const textEn = (r.get('texto_en') as string) || (r.get('en') as string) || '';
-    if (textEs) es[key] = textEs.endsWith('\n') ? textEs : textEs + '\n';
-    if (textEn) en[key] = textEn.endsWith('\n') ? textEn : textEn + '\n';
+    const textEs = ((r.get('texto_es') as string) || (r.get('es') as string) || '').trimEnd();
+    const textEn = ((r.get('texto_en') as string) || (r.get('en') as string) || '').trimEnd();
+    if (ns) {
+      es[ns] ??= {};
+      en[ns] ??= {};
+      if (textEs) es[ns][key] = textEs;
+      if (textEn) en[ns][key] = textEn;
+    } else {
+      // No namespace present: write at root using the key verbatim
+      if (textEs) (es as any)[key] = textEs;
+      if (textEn) (en as any)[key] = textEn;
+    }
   }
 
   const outDir = join(process.cwd(), 'messages');
@@ -56,4 +67,3 @@ async function run() {
 }
 
 run().catch((err) => { console.error(err); process.exit(1); });
-
