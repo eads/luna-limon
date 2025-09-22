@@ -25,7 +25,19 @@ export const load: LayoutServerLoad = async ({ setHeaders }) => {
       if (!key) continue;
       const raw = (r.get(`texto_${locale}`) as string) || (r.get(locale) as string);
       if (!raw) continue;
+      // Optional namespacing support: if a namespace/scope/page field exists, also expose `${ns}.${key}`
+      const ns =
+        (r.get('namespace') as string) ||
+        (r.get('ns') as string) ||
+        (r.get('scope') as string) ||
+        (r.get('page') as string) ||
+        (r.get('slug') as string) ||
+        '';
       messages[key] = { text: raw };
+      if (ns) {
+        const combined = `${ns}.${key}`;
+        messages[combined] = { text: raw };
+      }
     }
   } catch (err) {
     console.error('Failed to load i18n messages from Airtable', err);
