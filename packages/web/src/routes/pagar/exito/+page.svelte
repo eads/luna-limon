@@ -1,21 +1,30 @@
 <script lang="ts">
-  import { page } from '$app/stores';
-  import { goto } from '$app/navigation';
-  import { useI18n } from '$lib/i18n/context';
-  import { onMount } from 'svelte';
-  import { cart } from '$lib/cart';
-  const { t } = useI18n();
-  const pedidoId = $derived(new URLSearchParams($page.url.search).get('pedidoId') || '');
-
-  onMount(() => {
-    // Clear cart on success page load
-    cart.clear();
-  });
+  export let data: {
+    pedidoId?: string;
+    wompiId?: string;
+    wompiStatus?: string;
+    estado?: 'Pagado' | 'Pago fallido';
+    error?: string;
+  };
 </script>
 
-<h1 class="text-2xl font-bold mb-2">{t('carrito.success.title')}</h1>
-{#if pedidoId}
-  <p class="mb-4">{t('carrito.success.order_number')} <span class="font-mono">{pedidoId}</span></p>
-{/if}
+<div class="max-w-md mx-auto pt-8">
+  {#if data.estado === 'Pagado'}
+    <h1 class="text-2xl font-bold text-emerald-700 mb-2">¡Pago aprobado!</h1>
+    <p class="text-gray-800 mb-4">Gracias por tu compra. Tu pedido se registró correctamente.</p>
+  {:else if data.estado === 'Pago fallido'}
+    <h1 class="text-2xl font-bold text-red-700 mb-2">El pago no se completó</h1>
+    <p class="text-gray-800 mb-4">Tu pedido quedó iniciado. Puedes intentarlo de nuevo.</p>
+  {:else}
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">Estamos verificando tu pago…</h1>
+    <p class="text-gray-700 mb-4">Un momento por favor.</p>
+  {/if}
 
-<button class="rounded bg-green-600 text-white py-2 px-4" onclick={() => goto('/')}>{t('carrito.success.back_to_catalog')}</button>
+  <div class="mt-3 text-sm text-gray-600 space-y-1">
+    {#if data.pedidoId}<div>Pedido: <code>{data.pedidoId}</code></div>{/if}
+    {#if data.wompiId}<div>Transacción: <code>{data.wompiId}</code></div>{/if}
+    {#if data.wompiStatus}<div>Estado Wompi: {data.wompiStatus}</div>{/if}
+    {#if data.error}<div class="text-red-600">{data.error}</div>{/if}
+  </div>
+</div>
+

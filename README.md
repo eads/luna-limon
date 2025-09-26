@@ -1,89 +1,101 @@
 # Luna Limón
 
-This project is a minimal SvelteKit site that uses Airtable for translations and now includes a skeleton cart/checkout flow powered by Airtable, WhatsApp and Wompi.
+SvelteKit storefront with Airtable-backed content/i18n, cart + checkout, and optional Wompi payments. Infrastructure is managed with SST (Lambda, API Gateway, CloudFront).
 
-## Creating a project
+## Project layout
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Root: SST config (`sst.config.ts`), workspace (`pnpm-workspace.yaml`), shared tooling.
+- `packages/web`: SvelteKit app (routes in `src/routes`, UI in `src/lib`, global CSS in `src/app.css`, static assets in `static/`). i18n messages in `messages/`, helper scripts in `scripts/`.
+- `packages/services`: AWS Lambda utilities (e.g., Airtable webhook, image resizer, CDN invalidator).
+- `stacks/`: SST stacks (`site.ts`, `services.ts`) wiring infrastructure and environment.
 
-```bash
-# create a new project in the current directory
-npx sv create
+## Development
 
-# create a new project in my-app
-npx sv create my-app
-```
+- Full stack (SST + web): `pnpm dev`
+- Web only: `pnpm dev:web` or `pnpm -F web dev`
+- Typecheck: `pnpm typecheck` (stacks) and `pnpm -F web check` (Svelte + TS)
+- Lint/format: `pnpm -F web lint` and `pnpm -F web format`
+- Build/preview web: `pnpm -F web build` then `pnpm -F web preview`
 
-## Developing
+## Environment
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Copy `.env.example` to your local env files and fill in Airtable/Wompi keys.
 
-```bash
-npm run dev
+Recommended:
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+- Web-only dev: use `packages/web/.env`.
+- Full-stack dev with SST: set env in stacks and/or root `.env` for local runners.
 
-## Building
+At minimum provide:
 
-To create a production version of your app:
+- `AIRTABLE_TOKEN`, `AIRTABLE_BASE`, and table names (`AIRTABLE_PRODUCTS_TABLE`, `AIRTABLE_PEDIDO_TABLE`, `AIRTABLE_DETALLE_PEDIDO_TABLE`, etc.).
+- Optional payments: `WOMPI_PUBLIC_KEY` (enables Hosted Checkout), `WOMPI_PRIVATE_KEY` (server verification), `WOMPI_ENV` (defaults from key), `WOMPI_REDIRECT_URL` (override; otherwise current origin is used).
 
-```bash
-npm run build
-```
+Only variables prefixed with `PUBLIC_` are exposed to the browser. Payment and Airtable keys are server-side.
 
-You can preview the production build with `npm run preview`.
+## i18n workflow
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
-
-## Styling
-
-This project is configured with [Tailwind CSS](https://tailwindcss.com/) using the `forms` and `typography` plugins. Global styles are loaded from `src/app.css` and Tailwind scans the `src` directory for class names.
-
-## Environment variables
-
-Copy `.env.example` to `.env` and fill in your Airtable and Wompi credentials:
-
-```bash
-cp .env.example .env
-```
-
-At a minimum, `AIRTABLE_TOKEN`, `AIRTABLE_BASE` and table names must be provided. `WOMPI_PUBLIC_KEY` can be left empty to disable card payments.
-
-For automatic deploys from Airtable, set `CODEBUILD_PROJECT` to the AWS
-CodeBuild project that runs your deploy script. The deploy timestamp is stored
-in a DynamoDB table managed by SST; the table name is provided to the webhook
-via the `BUILD_TABLE` environment variable.
+- Source of truth lives in Airtable table `texto` with fields: `namespace`, `clave` (dotted path), `texto_es`, `texto_en`.
+- Dev messages live at `packages/web/messages/{es,en}.json` as nested objects.
+- Commands (run in `packages/web`):
+  - `pnpm texto:sync` → Airtable → messages (overlays rows onto local JSON, nesting by dots).
+  - `pnpm texto:seed` → messages → Airtable (flattens nested leaves into `(namespace, clave)` rows).
 
 ## Catalog and checkout
 
-Products are loaded from the Airtable table defined in `AIRTABLE_PRODUCTS_TABLE`.
-Users can add items to a cart and provide their WhatsApp number during checkout. Orders are logged to Airtable via `/api/order`. When a `WOMPI_PUBLIC_KEY` is present, the API returns a Wompi checkout URL for card payments.
+- Products load from `AIRTABLE_PRODUCTS_TABLE`.
+- Cart and customer details are captured on `/pagar`.
+- An order is created in Airtable (`pedido` + `detalle_pedido` rows) when the user clicks Place Order.
+- If `WOMPI_PUBLIC_KEY` is set, the API returns a Wompi Hosted Checkout URL; otherwise a mock success flow is used.
 
-## SST deployment
+### Wompi (Hosted Checkout)
 
-This project deploys using [SST](https://sst.dev/). Two stages are configured
-with custom domains:
+- The server builds a dynamic `redirect-url` using the current request origin, so local/staging/prod work without changing config. You can override with `WOMPI_REDIRECT_URL`.
+- On click, we create the order with `estado = "Iniciado"`, then redirect to Wompi with `amount-in-cents`, `currency=COP`, and a unique `reference` (`pedido-{pedidoId}`).
+- After payment, Wompi redirects to `/pagar/exito?pedidoId=...&id=...`. The success page verifies the transaction with Wompi (using `WOMPI_PRIVATE_KEY`) and updates `pedido.estado` to “Pagado” or “Pago fallido”.
+- Sandbox testing: use Wompi test keys (`pub_test_...`, `prv_test_...`) and the test card numbers from the Wompi dashboard/docs.
 
-- `staging` → `lunalimon--staging.grupovisual.org`
-- `production` → `lunalimon--production.grupovisual.org`
+### Airtable fields for orders
 
-Edit `sst.config.ts` if you need to adjust these domains.
+In table `pedido` (orders):
+
+- `Estado` (Single select): “Iniciado”, “Pagado”, “Pago fallido”.
+- `Nombre` (Texto): Nombre del cliente.
+- `Correo electrónico` (Texto): Email del cliente.
+- `Número de WhatsApp` (Texto): Contacto del cliente.
+- `Dirección de envío` (Texto largo): Dirección completa.
+- `Fecha de entrega` (Fecha): YYYY-MM-DD.
+- `Notas del cliente` (Texto largo): Comentarios adicionales.
+- Opcional Wompi:
+  - `Wompi: Transacción ID` (Texto)
+  - `Wompi: Estado` (Texto)
+  - `Wompi: Referencia` (Texto)
+  - `Wompi: Moneda` (Texto)
+  - `Wompi: Monto (centavos)` (Número)
+  - `Pagado en` (Fecha/Hora)
+
+In table `detalle_pedido` (order items):
+
+- `Cantidad` (Número), `Precio unitario` (Número), vínculo a `Pedido`, vínculo a `Producto`.
+- Opcional: `Subtotal` (fórmula `Cantidad * Precio unitario`) y un rollup en `Pedido` para totales.
+
+## Styling
+
+Tailwind CSS with `forms` and `typography` plugins. Global styles: `packages/web/src/app.css`.
+
+## Deploy
+
+- Staging: `pnpm deploy:staging`
+- Production: `pnpm deploy`
+- Remove: `pnpm remove`
+
+Domains are configured in `stacks/site.ts`.
 
 ## Airtable → CDN invalidation
 
-The `AirtableWebhookFn` now switches from triggering slow rebuilds to
-invalidating CloudFront and warming the cache. Pages fetch live data from
-Airtable at request time and set `Cache-Control: public, s-maxage=3600, stale-while-revalidate=60`.
+`AirtableWebhookFn` invalidates CloudFront and warms the cache after Airtable changes. Pages fetch live data with sensible `Cache-Control` to keep edge caches fresh.
 
-On each webhook:
+Optional env:
 
-- The function finds the CloudFront distribution (by alias `luna-limon--$STAGE.grupovisual.org` or by `CLOUDFRONT_DISTRIBUTION_ID` if set),
-- Issues a `CreateInvalidation` for common paths (or `/*` as a fallback), and
-- Warms `/, /es, /en` to repopulate edge caches quickly.
-
-Env vars (optional but recommended):
-
-- `WEBHOOK_SECRET`: Require `?secret=...` on the webhook URL.
-- `CLOUDFRONT_DISTRIBUTION_ID`: Set explicitly to skip lookup-by-alias.
+- `WEBHOOK_SECRET`: Require `?secret=...` on webhook URL.
+- `CLOUDFRONT_DISTRIBUTION_ID`: Explicit distribution id to skip alias lookup.

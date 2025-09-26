@@ -35,3 +35,26 @@
 - Required env vars: `AIRTABLE_TOKEN`, `AIRTABLE_BASE`, product/order table names; optional `WOMPI_PUBLIC_KEY`.
 - Webhook: protect `airtable-webhook` with `WEBHOOK_SECRET` when enabled; CloudFront invalidation can use `CLOUDFRONT_DISTRIBUTION_ID`.
 
+## i18n Notes (Important)
+- Source of truth: Airtable table `texto` with fields: `namespace` (e.g., `carrito`, `calendario`), `clave` (flat slug with dots, e.g., `checkout.place_order`), and `texto_es` / `texto_en`.
+- Messages on disk (for dev): nested JSON under a single top-level namespace; dots in `clave` become nested paths. Example:
+  - `{ "carrito": { "checkout": { "place_order": "…", "placeholder": { "name": "…" } } } }`
+- Runtime loader (packages/web/src/routes/+layout.server.ts):
+  - Reads `packages/web/messages/{locale}.json` (via `process.cwd()/messages`) and recursively flattens nested namespace trees into dotted keys (e.g., `carrito.checkout.place_order`).
+  - Overlays Airtable rows on top (authoritative when present) by composing `${namespace}.${clave}`.
+- VS Code Inlang extension: auto-formats messages to nested objects. Keep it enabled; the scripts and loader intentionally support nested-in-files while Airtable stays flat.
+- Dev workflow commands (run in `packages/web`):
+  - `pnpm texto:sync` → Airtable → messages: nests by namespace, splits `clave` by dots, trims newlines.
+  - `pnpm texto:seed` → messages → Airtable: flattens nested leaves into `(namespace, clave)` rows, trims newlines.
+- Placeholders used on checkout live under `carrito.checkout.placeholder.*` and are included in seed/sync.
+
+## Layout Notes
+- Global utilities in `packages/web/src/app.css`:
+  - `.l-wrap` (grid wrapper: full/content columns), `.u-full-bleed` (span full grid), `.u-content-wrap` (max-width + padding).
+- Calendario/pagar use `.u-full-bleed` for full-width sections; this avoids 100vw scrollbar overflow issues and keeps pages consistent.
+- Pagar summary row: flex layout with proportional image container (aspect-ratio box) and right-aligned quantity controls; item title sits above controls, wraps to multiple lines.
+
+## Gotchas
+- If messages “revert” on save: it’s the Inlang extension normalizing to nested objects. This is expected with our setup.
+- The runtime loader reads from `messages/` relative to the web package working dir; keep locale files at `packages/web/messages/{en,es}.json`.
+- When adding new strings during dev, prefer editing messages JSON, then run `pnpm -F web texto:seed` to push to Airtable.

@@ -15,7 +15,7 @@ type IncomingItem = {
   quantity: number;
 };
 
-export async function POST({ request, setHeaders }) {
+export async function POST({ request, setHeaders, url }) {
   // Do not cache order responses
   setHeaders({ 'Cache-Control': 'no-store' });
 
@@ -42,43 +42,7 @@ export async function POST({ request, setHeaders }) {
   // Basic input normalization
   const numero_whatsapp = phone || payload?.numero_whatsapp || '';
 
-  // 1) Mock payment approval (stub)
-  // If a real processor key is present, we could redirect, but user asked to stub for now.
-  // Keep the option to return a Wompi checkout URL only if explicitly configured.
-  if (false && WOMPI_PUBLIC_KEY) {
-    const checkoutUrl = `https://checkout.wompi.co/p/?public-key=${WOMPI_PUBLIC_KEY}&redirect-url=${encodeURIComponent(
-      WOMPI_REDIRECT_URL ?? ''
-    )}`;
-    return json({ checkoutUrl });
-  }
-
-  const payment = { ok: true, status: 'success', id: `mock_${Date.now()}` };
-
-  // 2) Create pedido
-  // Build only provided fields to avoid violating Airtable constraints (eg. single selects, created time)
-  const pedidoFields: Record<string, any> = {};
-  if (nombre) pedidoFields.nombre = nombre;
-  if (correo_electronico) pedidoFields["correo_electrónico"] = correo_electronico;
-  if (numero_whatsapp) pedidoFields["número_whatsapp"] = numero_whatsapp;
-  if (direccion_envio) pedidoFields["dirección_envio"] = direccion_envio;
-  if (fecha_entrega) pedidoFields.fecha_entrega = fecha_entrega; // Expecting YYYY-MM-DD from UI
-  if (notas_cliente) pedidoFields.notas_cliente = notas_cliente;
-  if (estado) pedidoFields.estado = estado; // Omit if not provided to respect table defaults
-
-  let pedidoId: string;
-  try {
-    const pedidoRecord = await base(PEDIDO_TABLE).create(pedidoFields);
-    pedidoId = pedidoRecord.id;
-  } catch (e: any) {
-    const detail = e?.error || e?.message || e;
-    console.error('Airtable pedido create failed', e?.statusCode || e?.code, detail);
-    return json(
-      { ok: false, code: 'airtable_pedido_failed', message: 'No se pudo guardar el pedido', detail },
-      { status: 502 }
-    );
-  }
-
-  // 3) Recalculate item prices from Airtable to avoid trusting client
+  // 1) Recalculate item prices from Airtable to avoid trusting client
   const itemsIn: IncomingItem[] = items as IncomingItem[];
   const productIds = [...new Set(itemsIn.map((i) => i.product?.id).filter(Boolean))] as string[];
   const priceMap = new Map<string, number>();
@@ -93,21 +57,48 @@ export async function POST({ request, setHeaders }) {
     }
   }
 
-  // 4) Create detalle_pedido rows linked to pedido
-  const detalleRecords = itemsIn.map((i) => {
+  // 2) Prepare detalle records and compute total
+  const detalleRecordsInput = itemsIn.map((i) => {
     const pid = i.product?.id;
     const cantidad = Number(i.quantity ?? 0) || 0;
     const precio = (priceMap.get(pid!) ?? Number(i.product?.precio ?? 0)) || 0;
-    return {
-      fields: {
-        cantidad,
-        precio_cada_uno: precio,
-        // Link fields expect arrays of record IDs
-        pedido: [pedidoId],
-        producto: pid ? [pid] : [],
-      },
-    };
+    return { pid, cantidad, precio };
   });
+
+  const totalInCents = detalleRecordsInput.reduce((sum, r) => sum + r.cantidad * r.precio * 100, 0);
+
+  // 3) Create pedido with status "Iniciado" (or provided override)
+  const pedidoFields: Record<string, any> = {};
+  if (nombre) pedidoFields["Nombre"] = nombre;
+  if (correo_electronico) pedidoFields["Correo electrónico"] = correo_electronico;
+  if (numero_whatsapp) pedidoFields["Número de WhatsApp"] = numero_whatsapp;
+  if (direccion_envio) pedidoFields["Dirección de envío"] = direccion_envio;
+  if (fecha_entrega) pedidoFields["Fecha de entrega"] = fecha_entrega; // Expecting YYYY-MM-DD from UI
+  if (notas_cliente) pedidoFields["Notas del cliente"] = notas_cliente;
+  pedidoFields["Estado"] = estado || 'Iniciado';
+
+  let pedidoId: string;
+  try {
+    const pedidoRecord = await base(PEDIDO_TABLE).create(pedidoFields);
+    pedidoId = pedidoRecord.id;
+  } catch (e: any) {
+    const detail = e?.error || e?.message || e;
+    console.error('Airtable pedido create failed', e?.statusCode || e?.code, detail);
+    return json(
+      { ok: false, code: 'airtable_pedido_failed', message: 'No se pudo guardar el pedido', detail },
+      { status: 502 }
+    );
+  }
+
+  // 4) Create detalle_pedido rows linked to pedido
+  const detalleRecords = detalleRecordsInput.map((r) => ({
+    fields: {
+      "Cantidad": r.cantidad,
+      "Precio unitario": r.precio,
+      "Pedido": [pedidoId],
+      "Producto": r.pid ? [r.pid] : [],
+    },
+  }));
 
   // Airtable allows up to 10 per batch create
   try {
@@ -123,5 +114,41 @@ export async function POST({ request, setHeaders }) {
     );
   }
 
+  // 5) If Wompi is configured, build Hosted Checkout URL and return it
+  if (WOMPI_PUBLIC_KEY) {
+    const reference = `pedido-${pedidoId}`;
+    const redirect = (() => {
+      if (WOMPI_REDIRECT_URL) return WOMPI_REDIRECT_URL;
+      // Use current origin; include pedidoId so the success page can update status
+      const u = new URL('/pagar/exito', url);
+      u.searchParams.set('pedidoId', pedidoId);
+      return u.toString();
+    })();
+
+    const params = new URLSearchParams({
+      'public-key': WOMPI_PUBLIC_KEY,
+      currency: 'COP',
+      'amount-in-cents': String(totalInCents),
+      reference,
+      'redirect-url': redirect,
+    });
+
+    const checkoutUrl = `https://checkout.wompi.co/p/?${params.toString()}`;
+
+    // Best-effort: store Wompi metadata on the pedido for reconciliation
+    try {
+      await base(PEDIDO_TABLE).update(pedidoId, {
+        'Wompi: Referencia': reference,
+        'Wompi: Moneda': 'COP',
+        'Wompi: Monto (centavos)': totalInCents,
+      } as any);
+    } catch (e) {
+      // ignore non-fatal errors
+    }
+    return json({ checkoutUrl, pedidoId });
+  }
+
+  // 6) Fallback: mock payment success when Wompi is not configured
+  const payment = { ok: true, status: 'success', id: `mock_${Date.now()}` };
   return json({ ok: true, payment, pedidoId });
 }
