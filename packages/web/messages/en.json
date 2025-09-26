@@ -41,6 +41,12 @@
         "address": "Full address, neighborhood, city, ZIP",
         "delivery_date": "YYYY-MM-DD",
         "notes": "Instructions or comments"
+      },
+      "validation": {
+        "required": "Required",
+        "invalid_email": "Invalid email",
+        "invalid_phone": "Invalid phone number",
+        "invalid_date": "Invalid date"
       }
     },
     "carrito_label": "Cart",

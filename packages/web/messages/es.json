@@ -33,7 +33,21 @@
       "whatsapp": "Número de WhatsApp",
       "summary": "Resumen",
       "place_order": "Realizar pedido",
-      "total": "Total"
+      "total": "Total",
+      "placeholder": {
+        "name": "Tu nombre",
+        "email": "tu@ejemplo.com",
+        "whatsapp": "ej.: +57 300 123 4567",
+        "address": "Dirección completa, barrio, ciudad, código postal",
+        "delivery_date": "AAAA-MM-DD",
+        "notes": "Instrucciones o comentarios"
+      },
+      "validation": {
+        "required": "Requerido",
+        "invalid_email": "Correo inválido",
+        "invalid_phone": "Número inválido",
+        "invalid_date": "Fecha inválida"
+      }
     },
     "carrito_label": "Carrito",
     "carrito_vacio": "El carrito está vacío",
