@@ -57,37 +57,40 @@
     onDestroy(() => { if (browser) window.removeEventListener('scroll', handleScroll); });
 </script>
 
-<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-black/5 py-4 pl-4 pr-4 shadow-[0_6px_20px_-12px_rgba(0,0,0,0.3)] relative flex items-center justify-between">
-	<!-- Left: brand logo (embiggened) -->
-	<a href={logoHref} class="inline-block" aria-label="Luna Limón">
-		<img src="/logo.svg" alt="Luna Limón" class="h-[34px] md:h-[46px] mt-[1px]" />
-	</a>
-
-	{#if !$page.url.pathname.includes('/pagar')}
-				<a
-					href={pagarHref}
-					class={`relative inline-flex items-center justify-center rounded-full text-white h-[34px] w-[34px] md:h-[46px] md:w-[46px] transition-transform duration-150 ease-out hover:scale-105 active:scale-95 shadow-lg ${total > 0 ? 'bg-slate-600 hover:bg-slate-700' : 'bg-slate-400 hover:bg-slate-500'}`}
-                    aria-label={t('carrito.finalizar_compra')}
-                    title={t('carrito.finalizar_compra')}
-				>
-					<MdiCartOutline class="text-lg md:text-xl" />
-					{#if total > 0}
-						<span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">{total}</span>
-					{/if}
-				</a>
-		{:else}
-			<!-- Disabled cart on checkout page, inline and aligned with logo -->
-				<button
-					class="relative inline-flex items-center justify-center rounded-full bg-gray-300 text-gray-600 h-[34px] w-[34px] md:h-[46px] md:w-[46px] shadow-lg cursor-not-allowed"
-					aria-disabled="true"
-                    title={t('carrito.finalizar_compra')}
-				>
-					<MdiCartOutline class="text-lg md:text-xl" />
-					{#if total > 0}
-						<span class="absolute -top-1 -right-1 bg-gray-400 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">{total}</span>
-					{/if}
-				</button>
-		{/if}
+<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-black/5 py-4 px-4 shadow-[0_6px_20px_-12px_rgba(0,0,0,0.3)] relative grid grid-cols-[1fr_auto_1fr] items-center">
+  <!-- Left spacer -->
+  <div></div>
+  <!-- Centered brand logo -->
+  <a href={logoHref} class="justify-self-center" aria-label="Luna Limón">
+    <img src="/logo.svg" alt="Luna Limón" class="h-[34px] md:h-[46px] mt-[1px]" />
+  </a>
+  <!-- Right: cart button or disabled icon (checkout) -->
+  <div class="justify-self-end">
+    {#if !$page.url.pathname.includes('/pagar')}
+      <a
+        href={pagarHref}
+        class={`relative inline-flex items-center justify-center rounded-full text-white h-[34px] w-[34px] md:h-[46px] md:w-[46px] transition-transform duration-150 ease-out hover:scale-105 active:scale-95 shadow-lg ${total > 0 ? 'bg-slate-600 hover:bg-slate-700' : 'bg-slate-400 hover:bg-slate-500'}`}
+        aria-label={t('carrito.finalizar_compra')}
+        title={t('carrito.finalizar_compra')}
+      >
+        <MdiCartOutline class="text-lg md:text-xl" />
+        {#if total > 0}
+          <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">{total}</span>
+        {/if}
+      </a>
+    {:else}
+      <button
+        class="relative inline-flex items-center justify-center rounded-full bg-gray-300 text-gray-600 h-[34px] w-[34px] md:h-[46px] md:w-[46px] shadow-lg cursor-not-allowed"
+        aria-disabled="true"
+        title={t('carrito.finalizar_compra')}
+      >
+        <MdiCartOutline class="text-lg md:text-xl" />
+        {#if total > 0}
+          <span class="absolute -top-1 -right-1 bg-gray-400 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">{total}</span>
+        {/if}
+      </button>
+    {/if}
+  </div>
 </nav>
 
 <main class="l-wrap">

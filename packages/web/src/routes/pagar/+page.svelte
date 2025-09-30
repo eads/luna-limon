@@ -288,7 +288,7 @@
   <div class="grid gap-3 mb-5" class:opacity-60={!$cart.length}>
   <label class="block">
     <span class="text-base text-gray-800">{t('carrito.checkout.name')}</span>
-    <input id="fld-nombre" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okNombre} bind:value={nombre} placeholder={t('carrito.checkout.placeholder.name')} disabled={!$cart.length} on:input={persistToStorage} />
+    <input id="fld-nombre" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okNombre} bind:value={nombre} placeholder={t('carrito.checkout.placeholder.name')} disabled={!$cart.length} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okNombre}
       <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.required')}</p>
     {/if}
@@ -296,7 +296,7 @@
 
   <label class="block">
     <span class="text-base text-gray-800">{t('carrito.checkout.email')}</span>
-    <input id="fld-correo" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okEmail} type="email" bind:value={correo_electronico} placeholder={t('carrito.checkout.placeholder.email')} disabled={!$cart.length} on:input={persistToStorage} />
+    <input id="fld-correo" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okEmail} type="email" bind:value={correo_electronico} placeholder={t('carrito.checkout.placeholder.email')} disabled={!$cart.length} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okEmail}
       <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.invalid_email')}</p>
     {/if}
@@ -304,7 +304,7 @@
 
   <label class="block">
     <span class="text-base text-gray-800">{t('carrito.checkout.whatsapp')}</span>
-    <input id="fld-whatsapp" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okPhone} bind:value={numero_whatsapp} placeholder={t('carrito.checkout.placeholder.whatsapp')} disabled={!$cart.length} on:blur={() => { numero_whatsapp = normalizePhoneCO(numero_whatsapp); persistToStorage(); }} on:input={persistToStorage} />
+    <input id="fld-whatsapp" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okPhone} bind:value={numero_whatsapp} placeholder={t('carrito.checkout.placeholder.whatsapp')} disabled={!$cart.length} onblur={() => { numero_whatsapp = normalizePhoneCO(numero_whatsapp); persistToStorage(); }} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okPhone}
       <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.invalid_phone')}</p>
     {/if}
@@ -312,7 +312,7 @@
 
   <label class="block">
     <span class="text-base text-gray-800">{t('carrito.checkout.address')}</span>
-    <textarea id="fld-direccion" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDir} rows="3" bind:value={direccion_envio} placeholder={t('carrito.checkout.placeholder.address')} disabled={!$cart.length} on:input={persistToStorage}></textarea>
+    <textarea id="fld-direccion" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDir} rows="3" bind:value={direccion_envio} placeholder={t('carrito.checkout.placeholder.address')} disabled={!$cart.length} oninput={persistToStorage}></textarea>
     {#if submitAttempted && !validateAll().okDir}
       <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.required')}</p>
     {/if}
@@ -320,7 +320,7 @@
 
   <label class="block">
     <span class="text-base text-gray-800">{t('carrito.checkout.delivery_date')}</span>
-    <input id="fld-fecha" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okFecha} type="date" bind:value={fecha_entrega} min={minDeliveryDate()} placeholder={t('carrito.checkout.placeholder.delivery_date')} disabled={!$cart.length} on:input={persistToStorage} />
+    <input id="fld-fecha" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okFecha} type="date" bind:value={fecha_entrega} min={minDeliveryDate()} placeholder={t('carrito.checkout.placeholder.delivery_date')} disabled={!$cart.length} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okFecha}
       <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.invalid_date')}</p>
     {/if}
@@ -335,11 +335,7 @@
   {/if}
 </div>
 
-<!-- Payment method placeholder (WOMPI) -->
-<section class="mb-5 border rounded-xl p-4 bg-white shadow-sm">
-  <h2 class="font-semibold mb-2 text-gray-800">Pago</h2>
-  <p class="text-sm text-gray-600">Integración con WOMPI próximamente.</p>
-</section>
+
 
 <button
   class="w-full rounded-lg bg-emerald-600 disabled:bg-emerald-300 text-white py-3 px-4 shadow-sm"

@@ -18,6 +18,7 @@ type IncomingItem = {
 export async function POST({ request, setHeaders, url }) {
   // Do not cache order responses
   setHeaders({ 'Cache-Control': 'no-store' });
+  const DEBUG = process.env.DEBUG_ORDER === '1';
 
   let payload: any;
   try {
@@ -78,12 +79,18 @@ export async function POST({ request, setHeaders, url }) {
   pedidoFields["Estado"] = estado || 'Iniciado';
 
   let pedidoId: string;
+  if (DEBUG) {
+    console.log('[order] Creating pedido with fields:', Object.keys(pedidoFields));
+  }
   try {
     const pedidoRecord = await base(PEDIDO_TABLE).create(pedidoFields);
     pedidoId = pedidoRecord.id;
   } catch (e: any) {
     const detail = e?.error || e?.message || e;
-    console.error('Airtable pedido create failed', e?.statusCode || e?.code, detail);
+    console.error('Airtable pedido create failed', e?.statusCode || e?.code, detail, {
+      table: PEDIDO_TABLE,
+      fields: Object.keys(pedidoFields),
+    });
     return json(
       { ok: false, code: 'airtable_pedido_failed', message: 'No se pudo guardar el pedido', detail },
       { status: 502 }
@@ -102,12 +109,19 @@ export async function POST({ request, setHeaders, url }) {
 
   // Airtable allows up to 10 per batch create
   try {
+    if (DEBUG) {
+      console.log('[order] Creating detalle_pedido records:', detalleRecords.length, 'table:', DETALLE_PEDIDO_TABLE, 'fields:', ['Cantidad','Precio unitario','Pedido','Producto']);
+    }
     for (let i = 0; i < detalleRecords.length; i += 10) {
       await base(DETALLE_PEDIDO_TABLE).create(detalleRecords.slice(i, i + 10));
     }
   } catch (e: any) {
     const detail = e?.error || e?.message || e;
-    console.error('Airtable detalle_pedido create failed', e?.statusCode || e?.code, detail);
+    console.error('Airtable detalle_pedido create failed', e?.statusCode || e?.code, detail, {
+      table: DETALLE_PEDIDO_TABLE,
+      batchSize: detalleRecords.length,
+      sample: detalleRecords[0]?.fields ? Object.keys(detalleRecords[0].fields) : [],
+    });
     return json(
       { ok: false, code: 'airtable_detalle_failed', message: 'No se pudo guardar los artículos del pedido', pedidoId, detail },
       { status: 502 }

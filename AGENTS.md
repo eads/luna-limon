@@ -32,7 +32,9 @@
 
 ## Security & Configuration Tips
 - Never commit real secrets. Use `.env` locally; CI/CD should inject env vars.
-- Required env vars: `AIRTABLE_TOKEN`, `AIRTABLE_BASE`, product/order table names; optional `WOMPI_PUBLIC_KEY`.
+- Local env: prefer `packages/web/.env` for web-only dev (`pnpm -F web dev`). For `pnpm dev` (SST), set env at root or export before running.
+- Required env vars: `AIRTABLE_TOKEN`, `AIRTABLE_BASE`, product/order table names.
+- Payments (Wompi): `WOMPI_PUBLIC_KEY` (enable checkout), `WOMPI_PRIVATE_KEY` (server verification), optional `WOMPI_ENV` and `WOMPI_REDIRECT_URL`.
 - Webhook: protect `airtable-webhook` with `WEBHOOK_SECRET` when enabled; CloudFront invalidation can use `CLOUDFRONT_DISTRIBUTION_ID`.
 
 ## i18n Notes (Important)
@@ -48,13 +50,32 @@
   - `pnpm texto:seed` → messages → Airtable: flattens nested leaves into `(namespace, clave)` rows, trims newlines.
 - Placeholders used on checkout live under `carrito.checkout.placeholder.*` and are included in seed/sync.
 
+## Payments (Wompi)
+- Hosted Checkout is integrated. On Place Order, the API creates a `pedido` with `Estado = "Iniciado"`, creates `detalle_pedido`, then returns a dynamic Wompi checkout URL (built from request origin). After payment, `/pagar/exito` verifies with Wompi and updates `Estado` to “Pagado” or “Pago fallido”.
+- Env: `WOMPI_PUBLIC_KEY` (pub_test...), `WOMPI_PRIVATE_KEY` (prv_test...), optional `WOMPI_ENV` and `WOMPI_REDIRECT_URL`.
+- Debugging: set `DEBUG_ORDER=1` to log Airtable table names and field keys on create/batch create.
+- Airtable field labels must match exactly (case, accents, punctuation). Copy/paste labels to avoid typos.
+
+### Airtable schema (natural Spanish labels)
+- `pedido` table:
+  - `Estado` (Single select): Iniciado, Pagado, Pago fallido
+  - `Nombre` (Texto), `Correo electrónico` (Texto), `Número de WhatsApp` (Texto)
+  - `Dirección de envío` (Texto largo), `Fecha de entrega` (Fecha), `Notas del cliente` (Texto largo)
+  - Optional Wompi: `Wompi: Transacción ID`, `Wompi: Estado`, `Wompi: Referencia`, `Wompi: Moneda`, `Wompi: Monto (centavos)`, `Pagado en` (Fecha/Hora)
+- `detalle_pedido` table:
+  - `Cantidad` (Número), `Precio unitario` (Número)
+  - `Pedido` (Link to `pedido`), `Producto` (Link to `Products`)
+  - Optional: `Subtotal` (fórmula `Cantidad * Precio unitario`)
+
 ## Layout Notes
 - Global utilities in `packages/web/src/app.css`:
   - `.l-wrap` (grid wrapper: full/content columns), `.u-full-bleed` (span full grid), `.u-content-wrap` (max-width + padding).
 - Calendario/pagar use `.u-full-bleed` for full-width sections; this avoids 100vw scrollbar overflow issues and keeps pages consistent.
 - Pagar summary row: flex layout with proportional image container (aspect-ratio box) and right-aligned quantity controls; item title sits above controls, wraps to multiple lines.
+- Top nav uses a 3-column grid to center the logo with the cart aligned right.
 
 ## Gotchas
 - If messages “revert” on save: it’s the Inlang extension normalizing to nested objects. This is expected with our setup.
 - The runtime loader reads from `messages/` relative to the web package working dir; keep locale files at `packages/web/messages/{en,es}.json`.
 - When adding new strings during dev, prefer editing messages JSON, then run `pnpm -F web texto:seed` to push to Airtable.
+- Airtable labels are strict: UNKNOWN_FIELD_NAME indicates a mismatch. Check for exact spelling, accents, capitalization, punctuation, and accidental trailing spaces. Copy the header text directly from Airtable.
