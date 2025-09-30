@@ -87,12 +87,19 @@ export async function POST({ request, setHeaders, url }) {
     pedidoId = pedidoRecord.id;
   } catch (e: any) {
     const detail = e?.error || e?.message || e;
+    // Try to extract the offending field from Airtable's error message
+    let offendingField: string | undefined;
+    const msg = String(e?.message || e?.error || '');
+    const m1 = msg.match(/Unknown field name:?\s*"?([^"\n]+)"?/i);
+    const m2 = msg.match(/Could not find field\s+"([^"\n]+)"/i);
+    offendingField = (m1 && m1[1]) || (m2 && m2[1]) || undefined;
     console.error('Airtable pedido create failed', e?.statusCode || e?.code, detail, {
       table: PEDIDO_TABLE,
       fields: Object.keys(pedidoFields),
+      offendingField,
     });
     return json(
-      { ok: false, code: 'airtable_pedido_failed', message: 'No se pudo guardar el pedido', detail },
+      { ok: false, code: 'airtable_pedido_failed', message: 'No se pudo guardar el pedido', detail, offendingField },
       { status: 502 }
     );
   }
