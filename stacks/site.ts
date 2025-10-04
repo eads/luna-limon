@@ -18,7 +18,17 @@ export function Web({ resizer }: ServicesCtx = {}) {
       AIRTABLE_ORDERS_TABLE: process.env.AIRTABLE_ORDERS_TABLE ?? "Orders",
       AIRTABLE_PEDIDO_TABLE: process.env.AIRTABLE_PEDIDO_TABLE ?? "pedido",
       AIRTABLE_DETALLE_PEDIDO_TABLE: process.env.AIRTABLE_DETALLE_PEDIDO_TABLE ?? "detalle_pedido",
+      // Analytics (exposed to browser via PUBLIC_ prefix)
+      PUBLIC_GA_ID: process.env.PUBLIC_GA_ID ?? "",
+      // Wompi payment keys
+      WOMPI_PUBLIC_KEY: process.env.WOMPI_PUBLIC_KEY ?? "",
+      WOMPI_PRIVATE_KEY: process.env.WOMPI_PRIVATE_KEY ?? "",
+      WOMPI_ENV: process.env.WOMPI_ENV ?? "",
+      WOMPI_REDIRECT_URL: process.env.WOMPI_REDIRECT_URL ?? "",
+      WOMPI_INTEGRITY_KEY: process.env.WOMPI_INTEGRITY_KEY ?? "",
     },
-    domain: `${$app.stage}.lunalimon.co.com`,
+    domain: $app.stage === "prod"
+      ? { name: "lunalimon.co.com", redirects: ["www.lunalimon.co.com"] }
+      : `${$app.stage}.lunalimon.co.com`,
   });
 }

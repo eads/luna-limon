@@ -1,14 +1,15 @@
 import type { PageServerLoad } from './$types';
 import { base } from '$lib/server/airtable';
+import { env as privateEnv } from '$env/dynamic/private';
 
-const PEDIDO_TABLE = process.env.AIRTABLE_PEDIDO_TABLE || process.env.AIRTABLE_ORDERS_TABLE || 'pedido';
+const PEDIDO_TABLE = privateEnv.AIRTABLE_PEDIDO_TABLE || process.env.AIRTABLE_PEDIDO_TABLE || privateEnv.AIRTABLE_ORDERS_TABLE || process.env.AIRTABLE_ORDERS_TABLE || 'pedido';
 
 export const load: PageServerLoad = async ({ url, fetch }) => {
   const pedidoId = url.searchParams.get('pedidoId') || '';
   const wompiId = url.searchParams.get('id') || '';
 
-  const WOMPI_PRIVATE_KEY = process.env.WOMPI_PRIVATE_KEY;
-  const WOMPI_ENV = process.env.WOMPI_ENV; // optional override: 'test' | 'prod'
+  const WOMPI_PRIVATE_KEY = privateEnv.WOMPI_PRIVATE_KEY || process.env.WOMPI_PRIVATE_KEY;
+  const WOMPI_ENV = privateEnv.WOMPI_ENV || process.env.WOMPI_ENV; // optional override: 'test' | 'prod'
 
   let wompiStatus: string | undefined;
   let finalEstado: 'Pagado' | 'Pago fallido' | undefined;

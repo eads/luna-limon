@@ -4,11 +4,13 @@
 	import { locales, getLocale, setLocale, localizeHref } from '$lib/paraglide/runtime.js';
     import { setupI18n, useI18n } from '$lib/i18n/context';
     import { page } from '$app/stores';
-    import { browser } from '$app/environment';
+    import { browser, dev } from '$app/environment';
     import { onMount, onDestroy } from 'svelte';
   import { goto } from '$app/navigation';
   import { cart } from '$lib/cart';
   import MdiCartOutline from 'virtual:icons/mdi/cart-outline';
+  import { env as publicEnv } from '$env/dynamic/public';
+  const GA_ID = publicEnv.PUBLIC_GA_ID || '';
 
 	let { children, data } = $props<{ children: any; data: { locale: string; messages: any } }>();
 	let selected = $state(getLocale());
@@ -62,31 +64,31 @@
   <div></div>
   <!-- Centered brand logo -->
   <a href={logoHref} class="justify-self-center" aria-label="Luna Limón">
-    <img src="/logo.svg" alt="Luna Limón" class="h-[34px] md:h-[46px] mt-[1px]" />
+    <img src="/logo.svg" alt="Luna Limón" class="h-[40px] md:h-[58px] mt-0" />
   </a>
   <!-- Right: cart button or disabled icon (checkout) -->
   <div class="justify-self-end">
     {#if !$page.url.pathname.includes('/pagar')}
       <a
         href={pagarHref}
-        class={`relative inline-flex items-center justify-center rounded-full text-white h-[34px] w-[34px] md:h-[46px] md:w-[46px] transition-transform duration-150 ease-out hover:scale-105 active:scale-95 shadow-lg ${total > 0 ? 'bg-slate-600 hover:bg-slate-700' : 'bg-slate-400 hover:bg-slate-500'}`}
+        class={`relative inline-flex items-center justify-center rounded-full text-white h-[40px] w-[40px] md:h-[58px] md:w-[58px] transition-transform duration-150 ease-out hover:scale-105 active:scale-95 shadow-lg ${total > 0 ? 'bg-slate-600 hover:bg-slate-700' : 'bg-slate-400 hover:bg-slate-500'}`}
         aria-label={t('carrito.finalizar_compra')}
         title={t('carrito.finalizar_compra')}
       >
-        <MdiCartOutline class="text-lg md:text-xl" />
+        <MdiCartOutline class="text-xl md:text-2xl" />
         {#if total > 0}
-          <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">{total}</span>
+          <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">{total}</span>
         {/if}
       </a>
     {:else}
       <button
-        class="relative inline-flex items-center justify-center rounded-full bg-gray-300 text-gray-600 h-[34px] w-[34px] md:h-[46px] md:w-[46px] shadow-lg cursor-not-allowed"
+        class="relative inline-flex items-center justify-center rounded-full bg-gray-300 text-gray-600 h-[40px] w-[40px] md:h-[58px] md:w-[58px] shadow-lg cursor-not-allowed"
         aria-disabled="true"
         title={t('carrito.finalizar_compra')}
       >
-        <MdiCartOutline class="text-lg md:text-xl" />
+        <MdiCartOutline class="text-xl md:text-2xl" />
         {#if total > 0}
-          <span class="absolute -top-1 -right-1 bg-gray-400 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">{total}</span>
+          <span class="absolute -top-1.5 -right-1.5 bg-gray-400 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">{total}</span>
         {/if}
       </button>
     {/if}
@@ -111,3 +113,17 @@
   </div>
 </div>
 {/if}
+
+<svelte:head>
+  {#if GA_ID && !dev}
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+    <script>
+      {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);} 
+gtag('js', new Date());
+gtag('config', '${GA_ID}', { anonymize_ip: true });
+`.replace('${GA_ID}', GA_ID)}
+    </script>
+  {/if}
+  
+</svelte:head>

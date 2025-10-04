@@ -34,12 +34,14 @@
   import { getResizedImageUrl } from '$lib/utils/images';
   // Prefer a robust image getter that falls back to server-provided calendar image
   function imageFor(p: any): string {
-    const u = imageOf(p);
-    if (u) return u;
     const cal = data?.calendar;
+    // To avoid hydration mismatch on the calendar item, always prefer
+    // the server-provided calendar image when ids match.
     if (cal && p?.id === cal.id) {
       return imageOf({ imagen: cal.imagen });
     }
+    const u = imageOf(p);
+    if (u) return u;
     return '';
   }
   // Prefer server-provided calendar name to avoid stale localStorage cart names

@@ -1,14 +1,17 @@
 import { json, error } from '@sveltejs/kit';
+import { env as privateEnv } from '$env/dynamic/private';
+import { createHash } from 'crypto';
 import { base } from '$lib/server/airtable';
 
 // Table names (allow both English and Spanish envs, default Spanish)
-const PEDIDO_TABLE = process.env.AIRTABLE_PEDIDO_TABLE || process.env.AIRTABLE_ORDERS_TABLE || 'pedido';
-const DETALLE_PEDIDO_TABLE = process.env.AIRTABLE_DETALLE_PEDIDO_TABLE || process.env.AIRTABLE_ORDER_ITEMS_TABLE || 'detalle_pedido';
-const PRODUCTS_TABLE = process.env.AIRTABLE_PRODUCTS_TABLE || 'Products';
+const PEDIDO_TABLE = privateEnv.AIRTABLE_PEDIDO_TABLE || process.env.AIRTABLE_PEDIDO_TABLE || privateEnv.AIRTABLE_ORDERS_TABLE || process.env.AIRTABLE_ORDERS_TABLE || 'pedido';
+const DETALLE_PEDIDO_TABLE = privateEnv.AIRTABLE_DETALLE_PEDIDO_TABLE || process.env.AIRTABLE_DETALLE_PEDIDO_TABLE || privateEnv.AIRTABLE_ORDER_ITEMS_TABLE || process.env.AIRTABLE_ORDER_ITEMS_TABLE || 'detalle_pedido';
+const PRODUCTS_TABLE = privateEnv.AIRTABLE_PRODUCTS_TABLE || process.env.AIRTABLE_PRODUCTS_TABLE || 'Products';
 
 // Optional real processor; today we mock success regardless
-const WOMPI_PUBLIC_KEY = process.env.WOMPI_PUBLIC_KEY;
-const WOMPI_REDIRECT_URL = process.env.WOMPI_REDIRECT_URL;
+const WOMPI_PUBLIC_KEY = privateEnv.WOMPI_PUBLIC_KEY || process.env.WOMPI_PUBLIC_KEY;
+const WOMPI_REDIRECT_URL = privateEnv.WOMPI_REDIRECT_URL || process.env.WOMPI_REDIRECT_URL;
+const WOMPI_INTEGRITY_KEY = privateEnv.WOMPI_INTEGRITY_KEY || process.env.WOMPI_INTEGRITY_KEY;
 
 type IncomingItem = {
   product: { id: string; precio?: number };
@@ -66,7 +69,8 @@ export async function POST({ request, setHeaders, url }) {
     return { pid, cantidad, precio };
   });
 
-  const totalInCents = detalleRecordsInput.reduce((sum, r) => sum + r.cantidad * r.precio * 100, 0);
+  const totalInCentsRaw = detalleRecordsInput.reduce((sum, r) => sum + r.cantidad * r.precio * 100, 0);
+  const totalInCents = Math.round(totalInCentsRaw);
 
   // 3) Create pedido with status "Iniciado" (or provided override)
   const pedidoFields: Record<string, any> = {};
@@ -137,7 +141,9 @@ export async function POST({ request, setHeaders, url }) {
 
   // 5) If Wompi is configured, build Hosted Checkout URL and return it
   if (WOMPI_PUBLIC_KEY) {
-    const reference = `pedido-${pedidoId}`;
+    // Generate a unique transaction reference per attempt to avoid reusing a prior session
+    const uniqueSuffix = Math.random().toString(36).slice(2, 8);
+    const reference = `pedido-${pedidoId}-${uniqueSuffix}`;
     const redirect = (() => {
       if (WOMPI_REDIRECT_URL) return WOMPI_REDIRECT_URL;
       // Use current origin; include pedidoId so the success page can update status
@@ -154,7 +160,29 @@ export async function POST({ request, setHeaders, url }) {
       'redirect-url': redirect,
     });
 
+    // Prefill customer email when available (Wompi supports customer-data:email)
+    if (correo_electronico) {
+      params.set('customer-data:email', String(correo_electronico));
+    }
+
+    // Integrity signature (if merchant setting requires it)
+    if (WOMPI_INTEGRITY_KEY) {
+      // Per Wompi Hosted Checkout docs, signature = sha256(reference + amount_in_cents + currency + integrity_key)
+      const signatureBase = `${reference}${totalInCents}COP${WOMPI_INTEGRITY_KEY}`;
+      const signature = createHash('sha256').update(signatureBase).digest('hex');
+      params.set('signature:integrity', signature);
+      if (DEBUG) {
+        console.log('[order] Wompi integrity included', {
+          reference,
+          amount_in_cents: totalInCents,
+          currency: 'COP',
+          signature_preview: signature.slice(0, 8) + '…',
+        });
+      }
+    }
+
     const checkoutUrl = `https://checkout.wompi.co/p/?${params.toString()}`;
+    if (DEBUG) console.log('[order] Wompi checkout URL:', checkoutUrl);
 
     // Best-effort: store Wompi metadata on the pedido for reconciliation
     try {
