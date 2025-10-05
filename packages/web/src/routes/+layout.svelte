@@ -100,9 +100,11 @@
   <a href={logoHref} class="justify-self-center" aria-label="Luna Limón">
     <img src="/logo.svg" alt="Luna Limón" class="h-[40px] md:h-[58px] mt-0" />
   </a>
-  <!-- Right: cart button or disabled icon (checkout) -->
+  <!-- Right: cart button (hidden on success page; disabled on checkout) -->
   <div class="justify-self-end">
-    {#if !$page.url.pathname.includes('/pagar')}
+    {#if $page.url.pathname.startsWith('/pagar/exito')}
+      <!-- no cart on success page -->
+    {:else if !$page.url.pathname.includes('/pagar')}
       <a
         href={pagarHref}
         class={`relative inline-flex items-center justify-center rounded-full text-white h-[40px] w-[40px] md:h-[58px] md:w-[58px] transition-transform duration-150 ease-out hover:scale-105 active:scale-95 shadow-lg ${total > 0 ? 'bg-slate-600 hover:bg-slate-700' : 'bg-slate-400 hover:bg-slate-500'}`}

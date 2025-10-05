@@ -92,16 +92,34 @@ export async function POST({ request, url, fetch }) {
     if (wompiReference) fields['Wompi: Referencia'] = wompiReference;
     if (typeof wompiAmount === 'number' && Number.isFinite(wompiAmount)) fields['Wompi: Monto (centavos)'] = wompiAmount;
     if (wompiCurrency) fields['Wompi: Moneda'] = wompiCurrency;
+    let ts: string | undefined;
     if (finalEstado === 'Pagado') {
-      const ts = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+      ts = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
       fields['Fecha de pagado'] = ts;
       if (DEBUG) console.log('[wompi-webhook] fecha_de_pagado', ts);
     }
     if (DEBUG) console.log('[wompi-webhook] updating Airtable', { table: PEDIDO_TABLE, pedidoId, fields: Object.keys(fields) });
-    const rec = await base(PEDIDO_TABLE).update(pedidoId, fields);
-    if (DEBUG) console.log('[wompi-webhook] airtable updated', { id: rec?.id || null, table: PEDIDO_TABLE });
+    try {
+      const rec = await base(PEDIDO_TABLE).update(pedidoId, fields);
+      if (DEBUG) console.log('[wompi-webhook] airtable updated', { id: rec?.id || null, table: PEDIDO_TABLE });
+    } catch (e: any) {
+      const msg = String(e?.message || e || '');
+      if (DEBUG) console.error('[wompi-webhook] airtable update failed (first try)', msg);
+      // Retry with date-only format for Fecha de pagado, and without optional numeric/currency if needed
+      const retryFields = { ...fields };
+      delete retryFields['Wompi: Monto (centavos)'];
+      delete retryFields['Wompi: Moneda'];
+      if (ts && /Fecha de pagado/.test(msg)) {
+        retryFields['Fecha de pagado'] = ts.slice(0, 10);
+        if (DEBUG) console.log('[wompi-webhook] retrying with date-only for Fecha de pagado', retryFields['Fecha de pagado']);
+      } else if (!ts) {
+        delete (retryFields as any)['Fecha de pagado'];
+      }
+      const rec2 = await base(PEDIDO_TABLE).update(pedidoId, retryFields);
+      if (DEBUG) console.log('[wompi-webhook] airtable updated (retry)', { id: rec2?.id || null, table: PEDIDO_TABLE });
+    }
   } catch (e) {
-    if (DEBUG) console.error('[wompi-webhook] airtable update failed', (e as any)?.message || e);
+    if (DEBUG) console.error('[wompi-webhook] airtable update error', (e as any)?.message || e);
     return json({ ok: false, message: 'airtable update failed' }, { status: 500 });
   }
 

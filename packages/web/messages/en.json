@@ -54,7 +54,8 @@
     "success": {
       "back_to_catalog": "Back to catalog",
       "order_number": "Your order number is:",
-      "title": "Thank you for your order!"
+      "title": "Thank you for your order!",
+      "blurb": "Thanks for your order. Check your email for confirmation from Wompi and follow‑up from Luna Limón. You'll receive your order soon."
     },
     "agregado_label": "Added to cart",
     "reiniciar_carrito": "Empty cart",

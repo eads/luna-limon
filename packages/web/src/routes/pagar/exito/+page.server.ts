@@ -59,8 +59,9 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
       if (wompiReference) fields['Wompi: Referencia'] = wompiReference;
       if (typeof wompiAmount === 'number' && Number.isFinite(wompiAmount)) fields['Wompi: Monto (centavos)'] = wompiAmount;
       if (wompiCurrency) fields['Wompi: Moneda'] = wompiCurrency;
+      let ts: string | undefined;
       if (finalEstado === 'Pagado') {
-        const ts = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+        ts = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
         fields['Fecha de pagado'] = ts;
         if (DEBUG) console.log('[exito] fecha_de_pagado', ts);
       }
@@ -75,6 +76,13 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
         const retryFields = { ...fields };
         delete retryFields['Wompi: Monto (centavos)'];
         delete retryFields['Wompi: Moneda'];
+        // If fecha de pagado might be date-only field, try YYYY-MM-DD
+        if (ts && /Fecha de pagado/.test(msg)) {
+          retryFields['Fecha de pagado'] = ts.slice(0, 10);
+          if (DEBUG) console.log('[exito] retrying with date-only for Fecha de pagado', retryFields['Fecha de pagado']);
+        } else if (!ts) {
+          delete (retryFields as any)['Fecha de pagado'];
+        }
         if (DEBUG) console.log('[exito] retrying update without amount/currency');
         const rec2 = await base(PEDIDO_TABLE).update(pedidoId, retryFields);
         if (DEBUG) console.log('[exito] airtable updated (retry)', { id: rec2?.id || null, table: PEDIDO_TABLE });

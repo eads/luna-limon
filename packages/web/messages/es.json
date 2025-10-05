@@ -54,7 +54,8 @@
     "success": {
       "back_to_catalog": "Volver al catálogo",
       "order_number": "Tu número de pedido es:",
-      "title": "¡Gracias por tu pedido!"
+      "title": "¡Gracias por tu pedido!",
+      "blurb": "Gracias por tu pedido. Revisa tu correo para la confirmación de Wompi y el seguimiento de Luna Limón. Tu pedido llegará pronto."
     },
     "agregado_label": "Agregado",
     "reiniciar_carrito": "Reiniciar carrito",
