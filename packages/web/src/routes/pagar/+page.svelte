@@ -138,7 +138,7 @@
     const okEmail = isValidEmail(correo_electronico);
     const okPhone = isValidPhoneCO(numero_whatsapp);
     const okDir = isNonEmpty(direccion_envio) && direccion_envio.trim().length > 5;
-    const okFecha = isNonEmpty(fecha_entrega) && fecha_entrega >= minDeliveryDate();
+    const okFecha = !isNonEmpty(fecha_entrega) || fecha_entrega >= minDeliveryDate();
     return { okNombre, okEmail, okPhone, okDir, okFecha, all: okNombre && okEmail && okPhone && okDir && okFecha };
   }
   function scrollToFirstInvalid() {
@@ -326,6 +326,7 @@
     {#if submitAttempted && !validateAll().okFecha}
       <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.invalid_date')}</p>
     {/if}
+    <p class="text-sm text-gray-600 mt-1">{t('carrito.checkout.delivery_date_hint')}</p>
   </label>
 
   <label class="block">

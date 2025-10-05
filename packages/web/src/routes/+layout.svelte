@@ -100,11 +100,11 @@
   <a href={logoHref} class="justify-self-center" aria-label="Luna Limón">
     <img src="/logo.svg" alt="Luna Limón" class="h-[40px] md:h-[58px] mt-0" />
   </a>
-  <!-- Right: cart button (hidden on success page; disabled on checkout) -->
+  <!-- Right: cart button (hidden on pagar pages) -->
   <div class="justify-self-end">
-    {#if $page.url.pathname.startsWith('/pagar/exito')}
-      <!-- no cart on success page -->
-    {:else if !$page.url.pathname.includes('/pagar')}
+    {#if $page.url.pathname.startsWith('/pagar')}
+      <!-- no cart on checkout/success pages -->
+    {:else}
       <a
         href={pagarHref}
         class={`relative inline-flex items-center justify-center rounded-full text-white h-[40px] w-[40px] md:h-[58px] md:w-[58px] transition-transform duration-150 ease-out hover:scale-105 active:scale-95 shadow-lg ${total > 0 ? 'bg-slate-600 hover:bg-slate-700' : 'bg-slate-400 hover:bg-slate-500'}`}
@@ -116,17 +116,6 @@
           <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">{total}</span>
         {/if}
       </a>
-    {:else}
-      <button
-        class="relative inline-flex items-center justify-center rounded-full bg-gray-300 text-gray-600 h-[40px] w-[40px] md:h-[58px] md:w-[58px] shadow-lg cursor-not-allowed"
-        aria-disabled="true"
-        title={t('carrito.finalizar_compra')}
-      >
-        <MdiCartOutline class="text-xl md:text-2xl" />
-        {#if total > 0}
-          <span class="absolute -top-1.5 -right-1.5 bg-gray-400 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">{total}</span>
-        {/if}
-      </button>
     {/if}
   </div>
 </nav>

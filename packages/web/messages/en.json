@@ -47,7 +47,8 @@
         "invalid_email": "Invalid email",
         "invalid_phone": "Invalid phone number",
         "invalid_date": "Invalid date"
-      }
+      },
+      "delivery_date_hint": "Optional — if you don't select a date, we'll ship as soon as possible."
     },
     "carrito_label": "Cart",
     "carrito_vacio": "Cart is empty",

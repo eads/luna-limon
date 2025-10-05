@@ -47,7 +47,8 @@
         "invalid_email": "Correo inválido",
         "invalid_phone": "Número inválido",
         "invalid_date": "Fecha inválida"
-      }
+      },
+      "delivery_date_hint": "Opcional — si no eliges una fecha, enviaremos lo antes posible."
     },
     "carrito_label": "Carrito",
     "carrito_vacio": "El carrito está vacío",
