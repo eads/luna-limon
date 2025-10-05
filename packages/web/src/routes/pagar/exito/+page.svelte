@@ -6,6 +6,50 @@
     estado?: 'Pagado' | 'Pago fallido';
     error?: string;
   };
+  import { onMount, onDestroy } from 'svelte';
+  import { cart } from '$lib/cart';
+  // Clear cart on success (client-side only)
+  onMount(() => {
+    if (data?.estado === 'Pagado') {
+      cart.clear();
+      try { localStorage.removeItem('checkout_info_v1'); } catch {}
+    }
+  });
+
+  // Poll for final status if pending (no estado yet)
+  let polling: any;
+  onMount(() => {
+    if (!data?.estado && data?.wompiId) {
+      let attempts = 0;
+      const maxAttempts = 60; // ~180s at 3s interval
+      const tick = async () => {
+        attempts += 1;
+        try {
+          const u = new URL('/pagar/exito/status', location.origin);
+          if (data.pedidoId) u.searchParams.set('pedido-id', data.pedidoId);
+          u.searchParams.set('id', data.wompiId!);
+          const resp = await fetch(u, { headers: { 'cache-control': 'no-cache' } });
+          if (resp.ok) {
+            const j = await resp.json();
+            if (j?.estado === 'Pagado' || j?.estado === 'Pago fallido') {
+              data.estado = j.estado;
+              data.wompiStatus = j.wompiStatus || j.wompi_status || data.wompiStatus;
+              if (j.estado === 'Pagado') {
+                cart.clear();
+                try { localStorage.removeItem('checkout_info_v1'); } catch {}
+              }
+              clearInterval(polling);
+            }
+          }
+        } catch {}
+        if (attempts >= maxAttempts) clearInterval(polling);
+      };
+      polling = setInterval(tick, 3000);
+      // immediate first tick
+      tick();
+    }
+  });
+  onDestroy(() => { if (polling) clearInterval(polling); });
 </script>
 
 <div class="max-w-md mx-auto pt-8">
@@ -27,4 +71,3 @@
     {#if data.error}<div class="text-red-600">{data.error}</div>{/if}
   </div>
 </div>
-

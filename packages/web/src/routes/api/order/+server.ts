@@ -145,10 +145,10 @@ export async function POST({ request, setHeaders, url }) {
     const uniqueSuffix = Math.random().toString(36).slice(2, 8);
     const reference = `pedido-${pedidoId}-${uniqueSuffix}`;
     const redirect = (() => {
-      if (WOMPI_REDIRECT_URL) return WOMPI_REDIRECT_URL;
-      // Use current origin; include pedidoId so the success page can update status
-      const u = new URL('/pagar/exito', url);
-      u.searchParams.set('pedidoId', pedidoId);
+      // Include a single canonical param for order id
+      const baseUrl = WOMPI_REDIRECT_URL || new URL('/pagar/exito', url).toString();
+      const u = new URL(baseUrl, url);
+      u.searchParams.set('pedido-id', pedidoId);
       return u.toString();
     })();
 
@@ -163,6 +163,24 @@ export async function POST({ request, setHeaders, url }) {
     // Prefill customer email when available (Wompi supports customer-data:email)
     if (correo_electronico) {
       params.set('customer-data:email', String(correo_electronico));
+    }
+    // Prefill full name and phone number when available
+    if (nombre) {
+      params.set('customer-data:full-name', String(nombre));
+    }
+    if (numero_whatsapp) {
+      const digits = String(numero_whatsapp).replace(/\D+/g, '');
+      let prefix = '57';
+      let local = digits;
+      if (digits.startsWith('57') && digits.length >= 12) {
+        prefix = '57';
+        local = digits.slice(-10);
+      } else if (digits.length === 10) {
+        prefix = '57';
+        local = digits;
+      }
+      params.set('customer-data:phone-number', local);
+      params.set('customer-data:phone-number-prefix', prefix);
     }
 
     // Integrity signature (if merchant setting requires it)

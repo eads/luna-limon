@@ -5,11 +5,12 @@ import { env as privateEnv } from '$env/dynamic/private';
 const PEDIDO_TABLE = privateEnv.AIRTABLE_PEDIDO_TABLE || process.env.AIRTABLE_PEDIDO_TABLE || privateEnv.AIRTABLE_ORDERS_TABLE || process.env.AIRTABLE_ORDERS_TABLE || 'pedido';
 
 export const load: PageServerLoad = async ({ url, fetch }) => {
-  const pedidoId = url.searchParams.get('pedidoId') || '';
+  const pedidoId = url.searchParams.get('pedido-id') || '';
   const wompiId = url.searchParams.get('id') || '';
 
   const WOMPI_PRIVATE_KEY = privateEnv.WOMPI_PRIVATE_KEY || process.env.WOMPI_PRIVATE_KEY;
   const WOMPI_ENV = privateEnv.WOMPI_ENV || process.env.WOMPI_ENV; // optional override: 'test' | 'prod'
+  const DEBUG = (privateEnv.DEBUG_ORDER || process.env.DEBUG_ORDER) === '1';
 
   let wompiStatus: string | undefined;
   let finalEstado: 'Pagado' | 'Pago fallido' | undefined;
@@ -23,7 +24,9 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
     try {
       const isTest = WOMPI_ENV === 'test' || WOMPI_PRIVATE_KEY.startsWith('prv_test');
       const baseUrl = isTest ? 'https://sandbox.wompi.co' : 'https://production.wompi.co';
-      const resp = await fetch(`${baseUrl}/v1/transactions/${encodeURIComponent(wompiId)}`, {
+      const verifyUrl = `${baseUrl}/v1/transactions/${encodeURIComponent(wompiId)}`;
+      if (DEBUG) console.log('[exito] verifying wompi', { pedidoId, wompiId, verifyUrl, env: isTest ? 'test' : 'prod' });
+      const resp = await fetch(verifyUrl, {
         headers: { Authorization: `Bearer ${WOMPI_PRIVATE_KEY}` },
       });
       if (!resp.ok) throw new Error(`Wompi status ${resp.status}`);
@@ -33,9 +36,17 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
       wompiAmount = typeof tx?.amount_in_cents === 'number' ? tx.amount_in_cents : undefined;
       wompiCurrency = tx?.currency;
       wompiReference = tx?.reference;
-      finalEstado = wompiStatus === 'APPROVED' ? 'Pagado' : 'Pago fallido';
+      if (wompiStatus === 'APPROVED') {
+        finalEstado = 'Pagado';
+      } else if (['DECLINED', 'VOIDED', 'ERROR'].includes(wompiStatus || '')) {
+        finalEstado = 'Pago fallido';
+      } else {
+        finalEstado = undefined; // PENDING or other intermediate states
+      }
+      if (DEBUG) console.log('[exito] wompi response', { status: wompiStatus, amount: wompiAmount, currency: wompiCurrency, reference: wompiReference, finalEstado });
     } catch (e: any) {
       error = e?.message || 'No se pudo verificar el pago';
+      if (DEBUG) console.error('[exito] wompi verify error', error);
     }
   }
 
@@ -46,12 +57,25 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
       if (wompiId) fields['Wompi: Transacción ID'] = wompiId;
       if (wompiStatus) fields['Wompi: Estado'] = wompiStatus;
       if (wompiReference) fields['Wompi: Referencia'] = wompiReference;
-      if (typeof wompiAmount === 'number') fields['Wompi: Monto (centavos)'] = wompiAmount;
+      if (typeof wompiAmount === 'number' && Number.isFinite(wompiAmount)) fields['Wompi: Monto (centavos)'] = wompiAmount;
       if (wompiCurrency) fields['Wompi: Moneda'] = wompiCurrency;
       if (finalEstado === 'Pagado') fields['Pagado en'] = new Date().toISOString();
-      await base(PEDIDO_TABLE).update(pedidoId, fields);
+      if (DEBUG) console.log('[exito] updating Airtable', { table: PEDIDO_TABLE, pedidoId, fields: Object.keys(fields) });
+      try {
+        await base(PEDIDO_TABLE).update(pedidoId, fields);
+      } catch (e: any) {
+        const msg = String(e?.message || e || '');
+        if (DEBUG) console.error('[exito] airtable update failed (first try)', msg);
+        // Retry without optional numeric/currency fields that may be formulas or incompatible types
+        const retryFields = { ...fields };
+        delete retryFields['Wompi: Monto (centavos)'];
+        delete retryFields['Wompi: Moneda'];
+        if (DEBUG) console.log('[exito] retrying update without amount/currency');
+        await base(PEDIDO_TABLE).update(pedidoId, retryFields);
+      }
     } catch (e) {
       // Swallow errors; show UI message only
+      if (DEBUG) console.error('[exito] airtable update failed', (e as any)?.message || e);
     }
   }
 

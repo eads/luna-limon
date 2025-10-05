@@ -220,7 +220,7 @@
   }
 </script>
 
-  <div class="max-w-md mx-auto pt-6">
+  <div class="max-w-md mx-auto pt-6 px-4 md:px-0 pb-16">
 <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">{t('carrito.checkout.title')}</h1>
 
 {#if renderItems.length}

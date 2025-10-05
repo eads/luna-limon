@@ -9,8 +9,9 @@
   import { goto } from '$app/navigation';
   import { cart } from '$lib/cart';
   import MdiCartOutline from 'virtual:icons/mdi/cart-outline';
-  import { env as publicEnv } from '$env/dynamic/public';
-  const GA_ID = publicEnv.PUBLIC_GA_ID || '';
+  import { PUBLIC_GA_ID } from '$env/static/public';
+  const GA_ID = PUBLIC_GA_ID || '';
+  import { afterNavigate } from '$app/navigation';
 
 	let { children, data } = $props<{ children: any; data: { locale: string; messages: any } }>();
 	let selected = $state(getLocale());
@@ -47,6 +48,36 @@
       if (!browser) return;
       handleScroll();
       window.addEventListener('scroll', handleScroll, { passive: true });
+      // Load GA and send initial + SPA page_view events
+      if (GA_ID && typeof window !== 'undefined') {
+        // Inject GA loader if not present
+        if (!document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js?id="]')) {
+          const s = document.createElement('script');
+          s.async = true;
+          s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+          document.head.appendChild(s);
+        }
+        // @ts-ignore
+        window.dataLayer = (window as any).dataLayer || [];
+        // @ts-ignore
+        (window as any).gtag = (window as any).gtag || function gtag(){ (window as any).dataLayer.push(arguments); };
+        // @ts-ignore
+        (window as any).gtag('js', new Date());
+        // @ts-ignore
+        (window as any).gtag('config', GA_ID, { anonymize_ip: true });
+
+        afterNavigate(() => {
+          // @ts-ignore
+          const gtag = (window as any).gtag as undefined | ((...args: any[]) => void);
+          if (gtag) {
+            gtag('event', 'page_view', {
+              page_location: location.href,
+              page_path: location.pathname,
+              page_title: document.title,
+            });
+          }
+        });
+      }
       // Apply persisted language preference if present
       try {
         const stored = localStorage.getItem('preferredLocale');
@@ -114,16 +145,4 @@
 </div>
 {/if}
 
-<svelte:head>
-  {#if GA_ID && !dev}
-    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
-    <script>
-      {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);} 
-gtag('js', new Date());
-gtag('config', '${GA_ID}', { anonymize_ip: true });
-`.replace('${GA_ID}', GA_ID)}
-    </script>
-  {/if}
-  
-</svelte:head>
+<!-- GA is injected onMount to avoid inline variable reference issues -->
