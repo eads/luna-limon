@@ -85,7 +85,11 @@
       if (obj.correo_electronico) correo_electronico = obj.correo_electronico;
       if (obj.numero_whatsapp) numero_whatsapp = obj.numero_whatsapp;
       if (obj.direccion_envio) direccion_envio = obj.direccion_envio;
-      if (obj.fecha_entrega) fecha_entrega = obj.fecha_entrega;
+      if (obj.fecha_entrega) {
+        const min = minDeliveryDate();
+        // Reset saved date if it's in the past
+        fecha_entrega = obj.fecha_entrega >= min ? obj.fecha_entrega : '';
+      }
       if (obj.notas_cliente) notas_cliente = obj.notas_cliente;
     } catch {}
   }
@@ -290,7 +294,7 @@
   <div class="grid gap-3 mb-5" class:opacity-60={!$cart.length}>
   <label class="block">
     <span class="text-base text-gray-800">{t('carrito.checkout.name')}</span>
-    <input id="fld-nombre" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okNombre} bind:value={nombre} placeholder={t('carrito.checkout.placeholder.name')} disabled={!$cart.length} oninput={persistToStorage} />
+    <input id="fld-nombre" name="name" autocomplete="name" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okNombre} bind:value={nombre} placeholder={t('carrito.checkout.placeholder.name')} disabled={!$cart.length} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okNombre}
       <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.required')}</p>
     {/if}
@@ -298,7 +302,7 @@
 
   <label class="block">
     <span class="text-base text-gray-800">{t('carrito.checkout.email')}</span>
-    <input id="fld-correo" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okEmail} type="email" bind:value={correo_electronico} placeholder={t('carrito.checkout.placeholder.email')} disabled={!$cart.length} oninput={persistToStorage} />
+    <input id="fld-correo" name="email" autocomplete="email" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okEmail} type="email" bind:value={correo_electronico} placeholder={t('carrito.checkout.placeholder.email')} disabled={!$cart.length} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okEmail}
       <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.invalid_email')}</p>
     {/if}
@@ -306,7 +310,7 @@
 
   <label class="block">
     <span class="text-base text-gray-800">{t('carrito.checkout.whatsapp')}</span>
-    <input id="fld-whatsapp" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okPhone} bind:value={numero_whatsapp} placeholder={t('carrito.checkout.placeholder.whatsapp')} disabled={!$cart.length} onblur={() => { numero_whatsapp = normalizePhoneCO(numero_whatsapp); persistToStorage(); }} oninput={persistToStorage} />
+    <input id="fld-whatsapp" name="tel" type="tel" inputmode="numeric" autocomplete="tel" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okPhone} bind:value={numero_whatsapp} placeholder={t('carrito.checkout.placeholder.whatsapp')} disabled={!$cart.length} onblur={() => { numero_whatsapp = normalizePhoneCO(numero_whatsapp); persistToStorage(); }} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okPhone}
       <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.invalid_phone')}</p>
     {/if}
@@ -314,7 +318,7 @@
 
   <label class="block">
     <span class="text-base text-gray-800">{t('carrito.checkout.address')}</span>
-    <textarea id="fld-direccion" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDir} rows="3" bind:value={direccion_envio} placeholder={t('carrito.checkout.placeholder.address')} disabled={!$cart.length} oninput={persistToStorage}></textarea>
+    <textarea id="fld-direccion" name="street-address" autocomplete="street-address" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDir} rows="3" bind:value={direccion_envio} placeholder={t('carrito.checkout.placeholder.address')} disabled={!$cart.length} oninput={persistToStorage}></textarea>
     {#if submitAttempted && !validateAll().okDir}
       <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.required')}</p>
     {/if}
@@ -322,7 +326,7 @@
 
   <label class="block">
     <span class="text-base text-gray-800">{t('carrito.checkout.delivery_date')}</span>
-    <input id="fld-fecha" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okFecha} type="date" bind:value={fecha_entrega} min={minDeliveryDate()} placeholder={t('carrito.checkout.placeholder.delivery_date')} disabled={!$cart.length} oninput={persistToStorage} />
+    <input id="fld-fecha" name="delivery-date" autocomplete="off" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okFecha} type="date" bind:value={fecha_entrega} min={minDeliveryDate()} placeholder={t('carrito.checkout.placeholder.delivery_date')} disabled={!$cart.length} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okFecha}
       <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.invalid_date')}</p>
     {/if}
@@ -330,7 +334,7 @@
 
   <label class="block">
     <span class="text-base text-gray-800">{t('carrito.checkout.notes')}</span>
-    <textarea class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" rows="3" bind:value={notas_cliente} placeholder={t('carrito.checkout.placeholder.notes')} disabled={!$cart.length}></textarea>
+    <textarea name="notes" autocomplete="off" class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" rows="3" bind:value={notas_cliente} placeholder={t('carrito.checkout.placeholder.notes')} disabled={!$cart.length}></textarea>
   </label>
   {#if errorMsg}
     <p class="text-red-600 mb-1 text-sm">{t('carrito.checkout.error')}: {errorMsg}</p>

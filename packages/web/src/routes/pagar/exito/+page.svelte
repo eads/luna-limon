@@ -12,7 +12,6 @@
   onMount(() => {
     if (data?.estado === 'Pagado') {
       cart.clear();
-      try { localStorage.removeItem('checkout_info_v1'); } catch {}
     }
   });
 </script>

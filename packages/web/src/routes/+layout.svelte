@@ -83,7 +83,10 @@
         const stored = localStorage.getItem('preferredLocale');
         if (stored && stored !== selected) {
           selected = stored;
-          goto(localizeHref(location.pathname));
+          // Avoid re-navigation on checkout/success routes to prevent perceived reloads
+          if (!location.pathname.startsWith('/pagar')) {
+            goto(localizeHref(location.pathname));
+          }
         }
       } catch {}
     });
