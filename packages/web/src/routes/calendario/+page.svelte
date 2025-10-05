@@ -143,6 +143,7 @@
             </button>
           </div>
           <div class="text-base md:text-lg font-semibold text-gray-900">{fmtCOP.format(calendar.precio)}</div>
+          <p class="text-sm text-gray-700 mt-2">{t('calendario.preorder')}</p>
         </div>
       </div>
       <div class="relative">
@@ -222,6 +223,7 @@
       <button class={`rounded-full bg-white text-slate-900 hover:bg-white/90 py-2 px-5 shadow ${flash ? 'ring-4 ring-amber-300/40' : ''}`} onclick={addNow}>
         {t('calendario.buy')}
       </button>
+      <span class="text-sm text-white/90">{t('calendario.preorder')}</span>
     </div>
   </div>
 {/if}

@@ -6,7 +6,7 @@
   },
   "calendario": {
     "titulo": "Calendar",
-    "buy": "Buy calendar",
+    "buy": "Pre-order calendar",
     "f2_title": "Seasonal recipes",
     "f4_body": "Beautiful packaging to deliver with care.",
     "f2_body": "Simple, delicious ideas to share at home.",
@@ -17,7 +17,8 @@
     "vacio": "No calendar products.",
     "f1_body": "Original illustrations printed with high-quality inks.",
     "hero_title": "A calendar to live your year with purpose",
-    "f3_title": "Sustainable paper"
+    "f3_title": "Sustainable paper",
+    "preorder": "This is a pre‑order. We’ll ship as soon as it’s ready."
   },
   "carrito": {
     "carrito_total": "Total",
@@ -40,7 +41,10 @@
         "whatsapp": "e.g., +57 300 123 4567",
         "address": "Full address, neighborhood, city, ZIP",
         "delivery_date": "YYYY-MM-DD",
-        "notes": "Instructions or comments"
+        "notes": "Instructions or comments",
+        "city": "City",
+        "state": "State / Department",
+        "postal_code": "ZIP or postal code"
       },
       "validation": {
         "required": "Required",
@@ -48,7 +52,10 @@
         "invalid_phone": "Invalid phone number",
         "invalid_date": "Invalid date"
       },
-      "delivery_date_hint": "Optional — if you don't select a date, we'll ship as soon as possible."
+      "delivery_date_hint": "Optional — if you don't select a date, we'll ship as soon as possible.",
+      "city": "City",
+      "state": "State / Department",
+      "postal_code": "Postal code"
     },
     "carrito_label": "Cart",
     "carrito_vacio": "Cart is empty",
@@ -56,7 +63,8 @@
       "back_to_catalog": "Back to catalog",
       "order_number": "Your order number is:",
       "title": "Thank you for your order!",
-      "blurb": "Thanks for your order. Check your email for confirmation from Wompi and follow‑up from Luna Limón. You'll receive your order soon."
+      "blurb": "Thanks for your order. Check your email for confirmation from Wompi and follow‑up from Luna Limón. You'll receive your order soon.",
+      "preorder": "This is a pre‑order. We’ll ship as soon as it’s ready."
     },
     "agregado_label": "Added to cart",
     "reiniciar_carrito": "Empty cart",

@@ -21,7 +21,8 @@
 <div class="max-w-md mx-auto pt-8">
   {#if data.estado === 'Pagado'}
     <h1 class="text-2xl font-bold text-emerald-700 mb-2">{t('carrito.success.title')}</h1>
-    <p class="text-gray-800 mb-4">{t('carrito.success.blurb')}</p>
+    <p class="text-gray-800 mb-1">{t('carrito.success.blurb')}</p>
+    <p class="text-gray-700 mb-4">{t('carrito.success.preorder')}</p>
   {:else if data.estado === 'Pago fallido'}
     <h1 class="text-2xl font-bold text-red-700 mb-2">El pago no se completó</h1>
     <p class="text-gray-800 mb-4">Tu pedido quedó iniciado. Puedes intentarlo de nuevo.</p>

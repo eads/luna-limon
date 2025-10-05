@@ -66,7 +66,10 @@
   let correo_electronico = $state('');
   let numero_whatsapp = $state('');
   let direccion_envio = $state('');
-  let fecha_entrega = $state(''); // YYYY-MM-DD
+  // Additional address fields for shipping quotes
+  let ciudad = $state('');
+  let departamento = $state('');
+  let codigo_postal = $state('');
   let notas_cliente = $state('');
 
   let submitting = $state(false);
@@ -138,8 +141,9 @@
     const okEmail = isValidEmail(correo_electronico);
     const okPhone = isValidPhoneCO(numero_whatsapp);
     const okDir = isNonEmpty(direccion_envio) && direccion_envio.trim().length > 5;
-    const okFecha = !isNonEmpty(fecha_entrega) || fecha_entrega >= minDeliveryDate();
-    return { okNombre, okEmail, okPhone, okDir, okFecha, all: okNombre && okEmail && okPhone && okDir && okFecha };
+    const okCiudad = isNonEmpty(ciudad);
+    const okDepto = isNonEmpty(departamento);
+    return { okNombre, okEmail, okPhone, okDir, okCiudad, okDepto, all: okNombre && okEmail && okPhone && okDir && okCiudad && okDepto };
   }
   function scrollToFirstInvalid() {
     const v = validateAll();
@@ -148,7 +152,8 @@
       ['correo', v.okEmail],
       ['whatsapp', v.okPhone],
       ['direccion', v.okDir],
-      ['fecha', v.okFecha]
+      ['ciudad', v.okCiudad],
+      ['departamento', v.okDepto]
     ] as const;
     for (const [id, ok] of order) {
       if (!ok) {
@@ -193,7 +198,9 @@
           nombre,
           correo_electronico,
           direccion_envio,
-          fecha_entrega: fecha_entrega || undefined,
+          ciudad,
+          departamento,
+          codigo_postal,
           notas_cliente,
           phone: phoneNormalized,
           items: $cart,
@@ -320,13 +327,25 @@
     {/if}
   </label>
 
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <label class="block">
+      <span class="text-base text-gray-800">{t('carrito.checkout.city')}</span>
+      <input id="fld-ciudad" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okCiudad} bind:value={ciudad} placeholder={t('carrito.checkout.placeholder.city')} disabled={!$cart.length} oninput={persistToStorage} />
+      {#if submitAttempted && !validateAll().okCiudad}
+        <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.required')}</p>
+      {/if}
+    </label>
+    <label class="block">
+      <span class="text-base text-gray-800">{t('carrito.checkout.state')}</span>
+      <input id="fld-departamento" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDepto} bind:value={departamento} placeholder={t('carrito.checkout.placeholder.state')} disabled={!$cart.length} oninput={persistToStorage} />
+      {#if submitAttempted && !validateAll().okDepto}
+        <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.required')}</p>
+      {/if}
+    </label>
+  </div>
   <label class="block">
-    <span class="text-base text-gray-800">{t('carrito.checkout.delivery_date')}</span>
-    <input id="fld-fecha" name="delivery-date" autocomplete="off" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okFecha} type="date" bind:value={fecha_entrega} min={minDeliveryDate()} placeholder={t('carrito.checkout.placeholder.delivery_date')} disabled={!$cart.length} oninput={persistToStorage} />
-    {#if submitAttempted && !validateAll().okFecha}
-      <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.invalid_date')}</p>
-    {/if}
-    <p class="text-sm text-gray-600 mt-1">{t('carrito.checkout.delivery_date_hint')}</p>
+    <span class="text-base text-gray-800">{t('carrito.checkout.postal_code')}</span>
+    <input id="fld-codpostal" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" bind:value={codigo_postal} placeholder={t('carrito.checkout.placeholder.postal_code')} disabled={!$cart.length} oninput={persistToStorage} />
   </label>
 
   <label class="block">

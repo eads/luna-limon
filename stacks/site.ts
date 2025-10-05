@@ -29,6 +29,12 @@ export function Web({ resizer }: ServicesCtx = {}) {
       WOMPI_EVENTS_KEY: process.env.WOMPI_EVENTS_KEY ?? "",
       // Enable verbose server logging (orders/webhooks) when set to '1'
       DEBUG_ORDER: process.env.DEBUG_ORDER ?? "",
+      // Shipping configuration (cents)
+      SHIP_BOGOTA_CENTS: process.env.SHIP_BOGOTA_CENTS ?? "",
+      SHIP_NATIONAL_CENTS: process.env.SHIP_NATIONAL_CENTS ?? "",
+      // Public preview of shipping costs (for UI only)
+      PUBLIC_SHIP_BOGOTA_CENTS: process.env.PUBLIC_SHIP_BOGOTA_CENTS ?? process.env.SHIP_BOGOTA_CENTS ?? "",
+      PUBLIC_SHIP_NATIONAL_CENTS: process.env.PUBLIC_SHIP_NATIONAL_CENTS ?? process.env.SHIP_NATIONAL_CENTS ?? "",
     },
     domain: $app.stage === "prod"
       ? { name: "lunalimon.co.com", redirects: ["www.lunalimon.co.com"] }

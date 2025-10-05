@@ -34,7 +34,10 @@ export async function POST({ request, setHeaders, url }) {
     nombre,
     correo_electronico,
     direccion_envio,
-    fecha_entrega, // ISO date string or undefined
+    // fecha_entrega removed during pre-order
+    ciudad,
+    departamento,
+    codigo_postal,
     notas_cliente,
     estado, // optional override
     phone, // existing field used for numero_whatsapp
@@ -78,7 +81,9 @@ export async function POST({ request, setHeaders, url }) {
   if (correo_electronico) pedidoFields["Correo electrónico"] = correo_electronico;
   if (numero_whatsapp) pedidoFields["Número de WhatsApp"] = numero_whatsapp;
   if (direccion_envio) pedidoFields["Dirección de envío"] = direccion_envio;
-  if (fecha_entrega) pedidoFields["Fecha de entrega"] = fecha_entrega; // Expecting YYYY-MM-DD from UI
+  if (ciudad) pedidoFields["Ciudad"] = ciudad;
+  if (departamento) pedidoFields["Departamento"] = departamento;
+  if (codigo_postal) pedidoFields["Código postal"] = codigo_postal;
   if (notas_cliente) pedidoFields["Notas del cliente"] = notas_cliente;
   pedidoFields["Estado"] = estado || 'Iniciado';
   // Mark environment for filtering in the main base
@@ -144,6 +149,21 @@ export async function POST({ request, setHeaders, url }) {
       { ok: false, code: 'airtable_detalle_failed', message: 'No se pudo guardar los artículos del pedido', pedidoId, detail },
       { status: 502 }
     );
+  }
+
+  // Compute totals including shipping
+  const itemsTotalCents = detalleRecordsInput.reduce((sum, r) => sum + r.cantidad * r.precio * 100, 0);
+  const shipBogota = Number(privateEnv.SHIP_BOGOTA_CENTS || process.env.SHIP_BOGOTA_CENTS || 0) || 0;
+  const shipNational = Number(privateEnv.SHIP_NATIONAL_CENTS || process.env.SHIP_NATIONAL_CENTS || 0) || 0;
+  const isBogota = (name?: string) => {
+    if (!name) return false;
+    const n = String(name).normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    return n.includes('bogota');
+  };
+  const shippingInCents = isBogota(ciudad) ? shipBogota : shipNational;
+  const totalInCents = Math.round(itemsTotalCents + shippingInCents);
+  if (shippingInCents > 0) {
+    try { (pedidoFields as any)["Costo de envío (centavos)"] = shippingInCents; } catch {}
   }
 
   // 5) If Wompi is configured, build Hosted Checkout URL and return it

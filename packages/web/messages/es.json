@@ -6,7 +6,7 @@
   },
   "calendario": {
     "titulo": "Calendario",
-    "buy": "Comprar calendario",
+    "buy": "Preordenar calendario",
     "f2_title": "Recetas estacionales",
     "f4_body": "Empaque hermoso para que llegue con cariño.",
     "f2_body": "Ideas sencillas y deliciosas para compartir en casa.",
@@ -17,7 +17,8 @@
     "vacio": "No hay productos de calendario.",
     "f1_body": "Ilustraciones originales impresas con tintas de alta calidad.",
     "hero_title": "Un calendario para vivir tu año con intención",
-    "f3_title": "Papel sustentable"
+    "f3_title": "Papel sustentable",
+    "preorder": "Es una preorden. Enviaremos en cuanto esté listo."
   },
   "carrito": {
     "carrito_total": "Total",
@@ -40,7 +41,10 @@
         "whatsapp": "ej.: +57 300 123 4567",
         "address": "Dirección completa, barrio, ciudad, código postal",
         "delivery_date": "AAAA-MM-DD",
-        "notes": "Instrucciones o comentarios"
+        "notes": "Instrucciones o comentarios",
+        "city": "Ciudad",
+        "state": "Departamento / Provincia",
+        "postal_code": "Código postal"
       },
       "validation": {
         "required": "Requerido",
@@ -48,7 +52,10 @@
         "invalid_phone": "Número inválido",
         "invalid_date": "Fecha inválida"
       },
-      "delivery_date_hint": "Opcional — si no eliges una fecha, enviaremos lo antes posible."
+      "delivery_date_hint": "Opcional — si no eliges una fecha, enviaremos lo antes posible.",
+      "city": "Ciudad",
+      "state": "Departamento / Provincia",
+      "postal_code": "Código postal"
     },
     "carrito_label": "Carrito",
     "carrito_vacio": "El carrito está vacío",
@@ -56,7 +63,8 @@
       "back_to_catalog": "Volver al catálogo",
       "order_number": "Tu número de pedido es:",
       "title": "¡Gracias por tu pedido!",
-      "blurb": "Gracias por tu pedido. Revisa tu correo para la confirmación de Wompi y el seguimiento de Luna Limón. Tu pedido llegará pronto."
+      "blurb": "Gracias por tu pedido. Revisa tu correo para la confirmación de Wompi y el seguimiento de Luna Limón. Tu pedido llegará pronto.",
+      "preorder": "Es una preorden. Enviaremos en cuanto esté listo."
     },
     "agregado_label": "Agregado",
     "reiniciar_carrito": "Reiniciar carrito",
