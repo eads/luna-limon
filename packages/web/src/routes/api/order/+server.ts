@@ -81,6 +81,11 @@ export async function POST({ request, setHeaders, url }) {
   if (fecha_entrega) pedidoFields["Fecha de entrega"] = fecha_entrega; // Expecting YYYY-MM-DD from UI
   if (notas_cliente) pedidoFields["Notas del cliente"] = notas_cliente;
   pedidoFields["Estado"] = estado || 'Iniciado';
+  // Mark environment for filtering in the main base
+  try {
+    const isTest = (privateEnv.WOMPI_ENV === 'test') || ((privateEnv.WOMPI_PRIVATE_KEY || '').startsWith('prv_test'));
+    pedidoFields["Entorno"] = isTest ? 'Pruebas' : 'Producción';
+  } catch {}
   // Capture order creation timestamp with time component
   try { pedidoFields["Fecha pedido"] = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'); } catch {}
 
