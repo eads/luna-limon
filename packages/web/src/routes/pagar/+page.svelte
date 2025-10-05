@@ -208,7 +208,7 @@
       if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       } else {
-        const id = data.pedidoId ? `?pedidoId=${encodeURIComponent(data.pedidoId)}` : '';
+        const id = data.pedidoId ? `?pedido-id=${encodeURIComponent(data.pedidoId)}` : '';
         goto(`/pagar/exito${id}`);
       }
     } catch (err) {
