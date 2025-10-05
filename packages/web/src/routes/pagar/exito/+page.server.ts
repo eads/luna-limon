@@ -59,10 +59,15 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
       if (wompiReference) fields['Wompi: Referencia'] = wompiReference;
       if (typeof wompiAmount === 'number' && Number.isFinite(wompiAmount)) fields['Wompi: Monto (centavos)'] = wompiAmount;
       if (wompiCurrency) fields['Wompi: Moneda'] = wompiCurrency;
-      if (finalEstado === 'Pagado') fields['Fecha de pagado'] = new Date().toISOString();
+      if (finalEstado === 'Pagado') {
+        const ts = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+        fields['Fecha de pagado'] = ts;
+        if (DEBUG) console.log('[exito] fecha_de_pagado', ts);
+      }
       if (DEBUG) console.log('[exito] updating Airtable', { table: PEDIDO_TABLE, pedidoId, fields: Object.keys(fields) });
       try {
-        await base(PEDIDO_TABLE).update(pedidoId, fields);
+        const rec = await base(PEDIDO_TABLE).update(pedidoId, fields);
+        if (DEBUG) console.log('[exito] airtable updated', { id: rec?.id || null, table: PEDIDO_TABLE });
       } catch (e: any) {
         const msg = String(e?.message || e || '');
         if (DEBUG) console.error('[exito] airtable update failed (first try)', msg);
@@ -71,7 +76,8 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
         delete retryFields['Wompi: Monto (centavos)'];
         delete retryFields['Wompi: Moneda'];
         if (DEBUG) console.log('[exito] retrying update without amount/currency');
-        await base(PEDIDO_TABLE).update(pedidoId, retryFields);
+        const rec2 = await base(PEDIDO_TABLE).update(pedidoId, retryFields);
+        if (DEBUG) console.log('[exito] airtable updated (retry)', { id: rec2?.id || null, table: PEDIDO_TABLE });
       }
     } catch (e) {
       // Swallow errors; show UI message only

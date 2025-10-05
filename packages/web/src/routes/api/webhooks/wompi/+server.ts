@@ -92,9 +92,14 @@ export async function POST({ request, url, fetch }) {
     if (wompiReference) fields['Wompi: Referencia'] = wompiReference;
     if (typeof wompiAmount === 'number' && Number.isFinite(wompiAmount)) fields['Wompi: Monto (centavos)'] = wompiAmount;
     if (wompiCurrency) fields['Wompi: Moneda'] = wompiCurrency;
-    if (finalEstado === 'Pagado') fields['Fecha de pagado'] = new Date().toISOString();
+    if (finalEstado === 'Pagado') {
+      const ts = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+      fields['Fecha de pagado'] = ts;
+      if (DEBUG) console.log('[wompi-webhook] fecha_de_pagado', ts);
+    }
     if (DEBUG) console.log('[wompi-webhook] updating Airtable', { table: PEDIDO_TABLE, pedidoId, fields: Object.keys(fields) });
-    await base(PEDIDO_TABLE).update(pedidoId, fields);
+    const rec = await base(PEDIDO_TABLE).update(pedidoId, fields);
+    if (DEBUG) console.log('[wompi-webhook] airtable updated', { id: rec?.id || null, table: PEDIDO_TABLE });
   } catch (e) {
     if (DEBUG) console.error('[wompi-webhook] airtable update failed', (e as any)?.message || e);
     return json({ ok: false, message: 'airtable update failed' }, { status: 500 });
