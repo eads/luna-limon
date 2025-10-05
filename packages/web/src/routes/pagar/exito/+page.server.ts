@@ -59,7 +59,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
       if (wompiReference) fields['Wompi: Referencia'] = wompiReference;
       if (typeof wompiAmount === 'number' && Number.isFinite(wompiAmount)) fields['Wompi: Monto (centavos)'] = wompiAmount;
       if (wompiCurrency) fields['Wompi: Moneda'] = wompiCurrency;
-      if (finalEstado === 'Pagado') fields['Pagado en'] = new Date().toISOString();
+      if (finalEstado === 'Pagado') fields['Fecha de pagado'] = new Date().toISOString();
       if (DEBUG) console.log('[exito] updating Airtable', { table: PEDIDO_TABLE, pedidoId, fields: Object.keys(fields) });
       try {
         await base(PEDIDO_TABLE).update(pedidoId, fields);

@@ -6,6 +6,17 @@ const PEDIDO_TABLE = privateEnv.AIRTABLE_PEDIDO_TABLE || process.env.AIRTABLE_PE
 
 export async function POST({ request, url, fetch }) {
   const DEBUG = (privateEnv.DEBUG_ORDER || process.env.DEBUG_ORDER) === '1';
+  if (DEBUG) {
+    const eventId = request.headers.get('x-event-id') || '';
+    const secretHdr = request.headers.get('x-webhook-secret') ? 'yes' : 'no';
+    console.log('[wompi-webhook] hit', {
+      method: request.method,
+      path: url.pathname,
+      eventId,
+      hasSecretHeader: secretHdr,
+      search: url.search
+    });
+  }
   const configuredSecret = privateEnv.WEBHOOK_SECRET || process.env.WEBHOOK_SECRET || '';
   const providedSecret = request.headers.get('x-webhook-secret') || url.searchParams.get('secret') || '';
   if (configuredSecret && providedSecret !== configuredSecret) {
@@ -81,7 +92,7 @@ export async function POST({ request, url, fetch }) {
     if (wompiReference) fields['Wompi: Referencia'] = wompiReference;
     if (typeof wompiAmount === 'number' && Number.isFinite(wompiAmount)) fields['Wompi: Monto (centavos)'] = wompiAmount;
     if (wompiCurrency) fields['Wompi: Moneda'] = wompiCurrency;
-    if (finalEstado === 'Pagado') fields['Pagado en'] = new Date().toISOString();
+    if (finalEstado === 'Pagado') fields['Fecha de pagado'] = new Date().toISOString();
     if (DEBUG) console.log('[wompi-webhook] updating Airtable', { table: PEDIDO_TABLE, pedidoId, fields: Object.keys(fields) });
     await base(PEDIDO_TABLE).update(pedidoId, fields);
   } catch (e) {
@@ -91,4 +102,3 @@ export async function POST({ request, url, fetch }) {
 
   return json({ ok: true });
 }
-

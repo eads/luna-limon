@@ -85,11 +85,7 @@
       if (obj.correo_electronico) correo_electronico = obj.correo_electronico;
       if (obj.numero_whatsapp) numero_whatsapp = obj.numero_whatsapp;
       if (obj.direccion_envio) direccion_envio = obj.direccion_envio;
-      if (obj.fecha_entrega) {
-        const min = minDeliveryDate();
-        // Reset saved date if it's in the past
-        fecha_entrega = obj.fecha_entrega >= min ? obj.fecha_entrega : '';
-      }
+      // Do not restore delivery date to avoid accidental reuse
       if (obj.notas_cliente) notas_cliente = obj.notas_cliente;
     } catch {}
   }
@@ -101,7 +97,7 @@
         correo_electronico,
         numero_whatsapp,
         direccion_envio,
-        fecha_entrega,
+        // Do not persist delivery date to encourage fresh intent each time
         notas_cliente
       };
       localStorage.setItem(LS_KEY, JSON.stringify(obj));

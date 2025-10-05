@@ -27,6 +27,8 @@ export function Web({ resizer }: ServicesCtx = {}) {
       WOMPI_REDIRECT_URL: process.env.WOMPI_REDIRECT_URL ?? "",
       WOMPI_INTEGRITY_KEY: process.env.WOMPI_INTEGRITY_KEY ?? "",
       WOMPI_EVENTS_KEY: process.env.WOMPI_EVENTS_KEY ?? "",
+      // Enable verbose server logging (orders/webhooks) when set to '1'
+      DEBUG_ORDER: process.env.DEBUG_ORDER ?? "",
     },
     domain: $app.stage === "prod"
       ? { name: "lunalimon.co.com", redirects: ["www.lunalimon.co.com"] }
