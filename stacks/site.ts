@@ -26,6 +26,7 @@ export function Web({ resizer }: ServicesCtx = {}) {
       WOMPI_ENV: process.env.WOMPI_ENV ?? "",
       WOMPI_REDIRECT_URL: process.env.WOMPI_REDIRECT_URL ?? "",
       WOMPI_INTEGRITY_KEY: process.env.WOMPI_INTEGRITY_KEY ?? "",
+      WOMPI_EVENTS_KEY: process.env.WOMPI_EVENTS_KEY ?? "",
     },
     domain: $app.stage === "prod"
       ? { name: "lunalimon.co.com", redirects: ["www.lunalimon.co.com"] }

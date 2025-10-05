@@ -64,7 +64,7 @@
         // @ts-ignore
         (window as any).gtag('js', new Date());
         // @ts-ignore
-        (window as any).gtag('config', GA_ID, { anonymize_ip: true });
+        (window as any).gtag('config', GA_ID, { anonymize_ip: true, send_page_view: false });
 
         afterNavigate(() => {
           // @ts-ignore

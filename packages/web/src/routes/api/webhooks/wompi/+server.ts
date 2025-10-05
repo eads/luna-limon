@@ -4,7 +4,7 @@ import { base } from '$lib/server/airtable';
 
 const PEDIDO_TABLE = privateEnv.AIRTABLE_PEDIDO_TABLE || process.env.AIRTABLE_PEDIDO_TABLE || privateEnv.AIRTABLE_ORDERS_TABLE || process.env.AIRTABLE_ORDERS_TABLE || 'pedido';
 
-export async function POST({ request, url }) {
+export async function POST({ request, url, fetch }) {
   const DEBUG = (privateEnv.DEBUG_ORDER || process.env.DEBUG_ORDER) === '1';
   const configuredSecret = privateEnv.WEBHOOK_SECRET || process.env.WEBHOOK_SECRET || '';
   const providedSecret = request.headers.get('x-webhook-secret') || url.searchParams.get('secret') || '';
@@ -20,8 +20,32 @@ export async function POST({ request, url }) {
     return json({ ok: false, message: 'invalid json' }, { status: 400 });
   }
 
+  // Optionally verify by pulling the event from Wompi using the Events API Key
+  const eventsKey = privateEnv.WOMPI_EVENTS_KEY || process.env.WOMPI_EVENTS_KEY || '';
+  const wompiEnv = privateEnv.WOMPI_ENV || process.env.WOMPI_ENV;
+  const eventId = request.headers.get('x-event-id') || '';
+  if (eventsKey && eventId) {
+    try {
+      const isTest = wompiEnv === 'test' || eventsKey.startsWith('test_events');
+      const baseUrl = isTest ? 'https://sandbox.wompi.co' : 'https://production.wompi.co';
+      const evUrl = `${baseUrl}/v1/events/${encodeURIComponent(eventId)}`;
+      if (DEBUG) console.log('[wompi-webhook] verifying via Events API', { evUrl, env: isTest ? 'test' : 'prod' });
+      const resp = await fetch(evUrl, { headers: { Authorization: `Bearer ${eventsKey}` } });
+      if (resp.ok) {
+        const eventData = await resp.json();
+        if (DEBUG) console.log('[wompi-webhook] event fetched ok');
+        // Prefer the verified payload
+        body = eventData?.data || eventData || body;
+      } else if (DEBUG) {
+        console.error('[wompi-webhook] events fetch failed', resp.status);
+      }
+    } catch (e: any) {
+      if (DEBUG) console.error('[wompi-webhook] events fetch error', e?.message || e);
+    }
+  }
+
   // Wompi event shapes can vary; try common structures
-  const tx = body?.data?.transaction || body?.transaction || body?.data || body;
+  const tx = body?.transaction || body?.data?.transaction || body?.data || body;
   const wompiId: string | undefined = tx?.id;
   const wompiStatus: string | undefined = tx?.status;
   const wompiReference: string | undefined = tx?.reference;

@@ -145,11 +145,19 @@ export async function POST({ request, setHeaders, url }) {
     const uniqueSuffix = Math.random().toString(36).slice(2, 8);
     const reference = `pedido-${pedidoId}-${uniqueSuffix}`;
     const redirect = (() => {
-      // Include a single canonical param for order id
-      const baseUrl = WOMPI_REDIRECT_URL || new URL('/pagar/exito', url).toString();
-      const u = new URL(baseUrl, url);
-      u.searchParams.set('pedido-id', pedidoId);
-      return u.toString();
+      const stage = (privateEnv.SST_STAGE || process.env.SST_STAGE || '').toString();
+      // Default to current origin
+      const defaultUrl = new URL('/pagar/exito', url);
+      defaultUrl.searchParams.set('pedido-id', pedidoId);
+      // Only honor WOMPI_REDIRECT_URL in non-prod stages to avoid accidental localhost in prod
+      if (WOMPI_REDIRECT_URL && stage !== 'prod') {
+        try {
+          const candidate = new URL(WOMPI_REDIRECT_URL, url);
+          candidate.searchParams.set('pedido-id', pedidoId);
+          return candidate.toString();
+        } catch {}
+      }
+      return defaultUrl.toString();
     })();
 
     const params = new URLSearchParams({
@@ -197,6 +205,8 @@ export async function POST({ request, setHeaders, url }) {
           signature_preview: signature.slice(0, 8) + '…',
         });
       }
+    } else if (DEBUG) {
+      console.warn('[order] WOMPI_INTEGRITY_KEY not set; integrity signature will not be sent');
     }
 
     const checkoutUrl = `https://checkout.wompi.co/p/?${params.toString()}`;
