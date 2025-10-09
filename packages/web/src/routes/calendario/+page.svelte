@@ -37,13 +37,28 @@
   let showSecondBg = $state(false);
   const showSticky = $derived(!topCtaInView);
 
+  function updateBackgroundState() {
+    if (!browser) return;
+    const trigger = window.innerHeight * 0.18;
+    const y = window.scrollY || 0;
+    showSecondBg = y > trigger;
+  }
+
   onMount(() => {
     if (!browser) {
       topCtaInView = true;
       showSecondBg = true;
       return;
     }
-    if (typeof IntersectionObserver === 'undefined') return;
+    const handleScroll = () => updateBackgroundState();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    updateBackgroundState();
+
+    if (typeof IntersectionObserver === 'undefined') {
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
     const observers: IntersectionObserver[] = [];
     if (topCtaEl) {
       const ctaObserver = new IntersectionObserver(
@@ -60,14 +75,21 @@
       const storyObserver = new IntersectionObserver(
         (entries) => {
           const entry = entries[0];
-          showSecondBg = !!entry?.isIntersecting || (entry?.boundingClientRect.top ?? 1) < 0;
+          if (!entry) return;
+          const intersecting = !!entry.isIntersecting || (entry.boundingClientRect.top ?? 1) < 0;
+          if (intersecting) {
+            showSecondBg = true;
+          }
         },
-        { threshold: [0.25, 0.6] }
+        { threshold: [0.1, 0.3] }
       );
       storyObserver.observe(storyEl);
       observers.push(storyObserver);
     }
-    return () => observers.forEach((observer) => observer.disconnect());
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observers.forEach((observer) => observer.disconnect());
+    };
   });
 </script>
 
@@ -82,8 +104,10 @@
   .calendar-page__background {
     position: fixed;
     inset: 0;
-    background-size: cover;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
     background-position: center;
+    background-color: #f6ede3;
     z-index: -3;
     pointer-events: none;
     transition: opacity 900ms ease, transform 1200ms ease;
@@ -91,32 +115,32 @@
   }
   .calendar-page__background--primary {
     background-image: url('/images/IMG_5709.jpg');
-    transform: scale(1.12);
+    transform: scale(1.05);
   }
   .calendar-page__background--secondary {
     background-image: url('/images/IMG_5718.jpg');
     opacity: 0;
-    transform: scale(1.18);
+    transform: scale(1.08);
   }
   .calendar-page.show-second .calendar-page__background--primary {
     opacity: 0;
-    transform: scale(1.06);
+    transform: scale(1.02);
   }
   .calendar-page.show-second .calendar-page__background--secondary {
     opacity: 1;
-    transform: scale(1.1);
+    transform: scale(1.04);
   }
   .calendar-page__scrim {
     position: fixed;
     inset: 0;
     z-index: -2;
     pointer-events: none;
-    background: linear-gradient(155deg, rgba(38, 18, 10, 0.82) 0%, rgba(18, 10, 6, 0.86) 42%, rgba(18, 8, 6, 0.72) 68%, rgba(255, 233, 204, 0.35) 100%);
+    background: linear-gradient(155deg, rgba(38, 22, 14, 0.62) 0%, rgba(24, 14, 8, 0.54) 42%, rgba(18, 10, 6, 0.45) 68%, rgba(255, 233, 204, 0.32) 100%);
     mix-blend-mode: multiply;
     transition: background 600ms ease;
   }
   .calendar-page.show-second .calendar-page__scrim {
-    background: linear-gradient(120deg, rgba(28, 16, 9, 0.85) 0%, rgba(24, 12, 7, 0.8) 52%, rgba(255, 221, 187, 0.42) 100%);
+    background: linear-gradient(120deg, rgba(32, 18, 10, 0.55) 0%, rgba(26, 14, 8, 0.5) 52%, rgba(255, 221, 187, 0.38) 100%);
   }
   .calendar-hero {
     position: relative;
@@ -129,7 +153,7 @@
   .calendar-hero__inner {
     position: relative;
     z-index: 1;
-    max-width: clamp(30rem, 62vw, 44rem);
+    max-width: clamp(32rem, 68vw, 52rem);
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
@@ -139,25 +163,29 @@
     display: inline-flex;
     align-self: flex-start;
     border-radius: 999px;
-    border: 1px solid rgba(255, 237, 213, 0.4);
-    background: rgba(255, 244, 228, 0.12);
-    color: #ffead0;
+    border: 1px solid rgba(255, 237, 213, 0.3);
+    background: rgba(255, 244, 228, 0.08);
+    color: #ffe5c6;
     padding: 0.25rem 0.9rem;
     font-size: 0.8rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+    font-weight: 600;
   }
   .calendar-hero__title {
-    font-size: clamp(2.5rem, 7.5vw, 4.75rem);
-    line-height: 1.03;
-    font-weight: 800;
+    font-size: clamp(2.8rem, 7.8vw, 5.1rem);
+    line-height: 1.08;
+    font-weight: 700;
+    letter-spacing: -0.01em;
     text-wrap: balance;
+    color: rgba(255, 244, 233, 0.96);
   }
   .calendar-hero__subtitle {
     font-size: clamp(1.05rem, 2.5vw, 1.35rem);
-    line-height: 1.6;
-    color: rgba(255, 247, 235, 0.9);
-    max-width: 50ch;
+    line-height: 1.7;
+    color: rgba(255, 248, 236, 0.88);
+    max-width: 60ch;
+    font-weight: 300;
   }
   .calendar-hero__actions {
     display: flex;
@@ -171,11 +199,11 @@
     gap: 1rem;
     border-radius: 1.9rem;
     padding: 1.4rem 1.6rem;
-    background: rgba(255, 240, 216, 0.18);
-    border: 1px solid rgba(255, 235, 205, 0.4);
-    backdrop-filter: blur(24px);
-    color: #341a0d;
-    box-shadow: 0 42px 80px -45px rgba(12, 6, 3, 0.85);
+    background: rgba(255, 240, 216, 0.22);
+    border: 1px solid rgba(255, 235, 205, 0.3);
+    backdrop-filter: blur(18px);
+    color: #3a2011;
+    box-shadow: 0 30px 60px -42px rgba(12, 6, 3, 0.7);
   }
   .calendar-hero__cta-controls {
     display: flex;
@@ -186,9 +214,9 @@
   .calendar-hero__qty {
     display: inline-flex;
     border-radius: 999px;
-    border: 1px solid rgba(60, 31, 15, 0.2);
+    border: 1px solid rgba(60, 31, 15, 0.16);
     overflow: hidden;
-    background: rgba(255, 245, 224, 0.55);
+    background: rgba(255, 245, 224, 0.48);
   }
   .calendar-hero__qty button {
     padding: 0.6rem 1rem;
@@ -205,25 +233,25 @@
     border: none;
     background: transparent;
     font-weight: 600;
-    color: #33190d;
+    color: #2f180d;
   }
   .calendar-hero__buy {
     border-radius: 999px;
     padding: 0.75rem 2.2rem;
     font-weight: 700;
     font-size: 1.05rem;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #2b1507;
-    background: linear-gradient(135deg, #fff4d7, #ffd8aa);
-    border: 1px solid rgba(255, 214, 170, 0.9);
-    box-shadow: 0 20px 48px -24px rgba(45, 25, 12, 0.85);
+    color: #2d1708;
+    background: linear-gradient(135deg, #fff5dc, #ffdcb3);
+    border: 1px solid rgba(255, 214, 170, 0.7);
+    box-shadow: 0 18px 46px -26px rgba(45, 25, 12, 0.7);
     transition: transform 150ms ease, box-shadow 200ms ease, background 150ms ease, color 150ms ease;
   }
   .calendar-hero__buy:hover {
-    background: linear-gradient(135deg, #fff0cf, #ffd1a1);
+    background: linear-gradient(135deg, #fff0d0, #ffd2a1);
     transform: translateY(-1px);
-    box-shadow: 0 24px 56px -28px rgba(45, 25, 12, 0.85);
+    box-shadow: 0 22px 52px -30px rgba(45, 25, 12, 0.72);
   }
   .calendar-hero__buy:active {
     transform: translateY(0);
@@ -235,7 +263,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
-    color: rgba(56, 28, 16, 0.86);
+    color: rgba(56, 32, 21, 0.82);
   }
   .calendar-hero__price {
     font-weight: 700;
@@ -251,18 +279,18 @@
     gap: 0.85rem;
     border-radius: 999px;
     padding: 0.85rem 2.3rem;
-    background: linear-gradient(135deg, rgba(255, 244, 214, 0.22), rgba(255, 205, 154, 0.25));
-    border: 1px solid rgba(255, 224, 187, 0.55);
-    color: #ffedd0;
+    background: linear-gradient(135deg, rgba(255, 244, 222, 0.26), rgba(255, 210, 164, 0.3));
+    border: 1px solid rgba(255, 224, 187, 0.45);
+    color: #ffe8c9;
     font-weight: 600;
     text-decoration: none;
-    box-shadow: 0 26px 60px -34px rgba(21, 10, 5, 0.9);
+    box-shadow: 0 22px 54px -34px rgba(21, 10, 5, 0.75);
     transition: transform 150ms ease, box-shadow 200ms ease, background 150ms ease;
   }
   .calendar-hero__follow:hover {
-    background: linear-gradient(135deg, rgba(255, 244, 214, 0.35), rgba(255, 210, 160, 0.35));
+    background: linear-gradient(135deg, rgba(255, 244, 214, 0.42), rgba(255, 210, 160, 0.4));
     transform: translateY(-1px);
-    box-shadow: 0 30px 64px -34px rgba(21, 10, 5, 0.9);
+    box-shadow: 0 26px 60px -34px rgba(21, 10, 5, 0.78);
   }
   .calendar-hero__follow-icon {
     font-size: 1.4rem;
@@ -281,12 +309,12 @@
     position: relative;
     max-width: clamp(28rem, 60vw, 42rem);
     margin-inline: auto;
-    background: rgba(255, 252, 245, 0.78);
-    backdrop-filter: blur(26px);
+    background: rgba(255, 252, 245, 0.82);
+    backdrop-filter: blur(22px);
     border-radius: 1.6rem;
     padding: clamp(2rem, 5vw, 3rem);
-    box-shadow: 0 40px 80px -44px rgba(36, 19, 10, 0.45);
-    border: 1px dashed rgba(219, 168, 120, 0.6);
+    box-shadow: 0 36px 74px -44px rgba(36, 19, 10, 0.42);
+    border: 1px dashed rgba(219, 168, 120, 0.5);
   }
   .calendar-story__placeholder-label {
     display: inline-flex;
@@ -406,7 +434,7 @@
       padding-bottom: clamp(6rem, 8vw, 10rem);
     }
     .calendar-hero__inner {
-      margin-left: clamp(2rem, 8vw, 10rem);
+      margin-left: clamp(2rem, 8vw, 12rem);
     }
     .calendar-hero__actions {
       flex-direction: row;
@@ -421,6 +449,9 @@
     }
   }
   @media (max-width: 640px) {
+    .calendar-page__background {
+      background-size: cover;
+    }
     .calendar-hero__inner {
       margin-left: 0;
       text-align: left;

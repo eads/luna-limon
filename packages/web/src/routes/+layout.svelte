@@ -94,7 +94,7 @@
     onDestroy(() => { if (browser) window.removeEventListener('scroll', handleScroll); });
 </script>
 
-<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-black/5 py-4 px-4 shadow-[0_6px_20px_-12px_rgba(0,0,0,0.3)] relative grid grid-cols-[1fr_auto_1fr] items-center">
+<nav class="sticky top-0 z-50 bg-white border-b border-black/5 py-4 px-4 shadow-[0_6px_20px_-12px_rgba(0,0,0,0.3)] relative grid grid-cols-[1fr_auto_1fr] items-center">
   <!-- Left spacer -->
   <div></div>
   <!-- Centered brand logo -->
