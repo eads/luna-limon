@@ -140,10 +140,10 @@
     const okNombre = isNonEmpty(nombre);
     const okEmail = isValidEmail(correo_electronico);
     const okPhone = isValidPhoneCO(numero_whatsapp);
-    const okDir = isNonEmpty(direccion_envio) && direccion_envio.trim().length > 5;
+    const okDir = true;
     const okCiudad = isNonEmpty(ciudad);
     const okDepto = isNonEmpty(departamento);
-    return { okNombre, okEmail, okPhone, okDir, okCiudad, okDepto, all: okNombre && okEmail && okPhone && okDir && okCiudad && okDepto };
+    return { okNombre, okEmail, okPhone, okCiudad, okDepto, all: okNombre && okEmail && okPhone && okCiudad && okDepto };
   }
   function scrollToFirstInvalid() {
     const v = validateAll();
@@ -151,7 +151,6 @@
       ['nombre', v.okNombre],
       ['correo', v.okEmail],
       ['whatsapp', v.okPhone],
-      ['direccion', v.okDir],
       ['ciudad', v.okCiudad],
       ['departamento', v.okDepto]
     ] as const;
@@ -319,13 +318,7 @@
     {/if}
   </label>
 
-  <label class="block">
-    <span class="text-base text-gray-800">{t('carrito.checkout.address')}</span>
-    <textarea id="fld-direccion" name="street-address" autocomplete="street-address" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDir} rows="3" bind:value={direccion_envio} placeholder={t('carrito.checkout.placeholder.address')} disabled={!$cart.length} oninput={persistToStorage}></textarea>
-    {#if submitAttempted && !validateAll().okDir}
-      <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.required')}</p>
-    {/if}
-  </label>
+  <!-- Address textarea temporarily removed during pre-order period -->
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
     <label class="block">

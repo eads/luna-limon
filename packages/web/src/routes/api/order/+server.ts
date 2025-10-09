@@ -64,7 +64,7 @@ export async function POST({ request, setHeaders, url }) {
     }
   }
 
-  // 2) Prepare detalle records and compute total
+  // 2) Prepare detalle records (we will compute totals + shipping later)
   const detalleRecordsInput = itemsIn.map((i) => {
     const pid = i.product?.id;
     const cantidad = Number(i.quantity ?? 0) || 0;
@@ -72,8 +72,6 @@ export async function POST({ request, setHeaders, url }) {
     return { pid, cantidad, precio };
   });
 
-  const totalInCentsRaw = detalleRecordsInput.reduce((sum, r) => sum + r.cantidad * r.precio * 100, 0);
-  const totalInCents = Math.round(totalInCentsRaw);
 
   // 3) Create pedido with status "Iniciado" (or provided override)
   const pedidoFields: Record<string, any> = {};
