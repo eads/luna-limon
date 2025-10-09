@@ -153,7 +153,7 @@ export async function POST({ request, setHeaders, url }) {
 
   // Compute totals including shipping
   const itemsTotalCents = detalleRecordsInput.reduce((sum, r) => sum + r.cantidad * r.precio * 100, 0);
-  const shipCali = Number(privateEnv.SHIP_CALI_CENTS || process.env.SHIP_CALI_CENTS || privateEnv.SHIP_BOGOTA_CENTS || process.env.SHIP_BOGOTA_CENTS || 0) || 0;
+  const shipCali = Number(privateEnv.SHIP_CALI_CENTS || process.env.SHIP_CALI_CENTS || 0) || 0;
   const shipNational = Number(privateEnv.SHIP_NATIONAL_CENTS || process.env.SHIP_NATIONAL_CENTS || 0) || 0;
   const isCali = (name?: string) => {
     if (!name) return false;
