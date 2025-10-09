@@ -153,14 +153,14 @@ export async function POST({ request, setHeaders, url }) {
 
   // Compute totals including shipping
   const itemsTotalCents = detalleRecordsInput.reduce((sum, r) => sum + r.cantidad * r.precio * 100, 0);
-  const shipBogota = Number(privateEnv.SHIP_BOGOTA_CENTS || process.env.SHIP_BOGOTA_CENTS || 0) || 0;
+  const shipCali = Number(privateEnv.SHIP_CALI_CENTS || process.env.SHIP_CALI_CENTS || privateEnv.SHIP_BOGOTA_CENTS || process.env.SHIP_BOGOTA_CENTS || 0) || 0;
   const shipNational = Number(privateEnv.SHIP_NATIONAL_CENTS || process.env.SHIP_NATIONAL_CENTS || 0) || 0;
-  const isBogota = (name?: string) => {
+  const isCali = (name?: string) => {
     if (!name) return false;
     const n = String(name).normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
-    return n.includes('bogota');
+    return n.includes('cali');
   };
-  const shippingInCents = isBogota(ciudad) ? shipBogota : shipNational;
+  const shippingInCents = isCali(ciudad) ? shipCali : shipNational;
   const totalInCents = Math.round(itemsTotalCents + shippingInCents);
   if (shippingInCents > 0) {
     try { (pedidoFields as any)["Costo de envío (centavos)"] = shippingInCents; } catch {}
