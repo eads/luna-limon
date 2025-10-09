@@ -39,16 +39,8 @@
 
     const { t } = useI18n();
     const total = $derived($cart.reduce((sum, item) => sum + item.quantity, 0));
-    const isCalendario = $derived($page.url.pathname.startsWith('/calendario'));
-    let langVisible = $state(true);
-    function handleScroll() {
-      if (!browser) return;
-      langVisible = (window.scrollY || 0) < 60;
-    }
     onMount(() => {
       if (!browser) return;
-      handleScroll();
-      window.addEventListener('scroll', handleScroll, { passive: true });
       // Load GA and send initial + SPA page_view events
       if (GA_ID && typeof window !== 'undefined') {
         // Inject GA loader if not present
@@ -91,12 +83,19 @@
         }
       } catch {}
     });
-    onDestroy(() => { if (browser) window.removeEventListener('scroll', handleScroll); });
 </script>
 
-<nav class="sticky top-0 z-50 bg-white border-b border-black/5 py-4 px-4 shadow-[0_6px_20px_-12px_rgba(0,0,0,0.3)] relative grid grid-cols-[1fr_auto_1fr] items-center">
-  <!-- Left spacer -->
-  <div></div>
+<nav class="sticky top-0 z-50 bg-white border-b border-black/5 py-4 px-4 shadow-[0_6px_20px_-12px_rgba(0,0,0,0.3)] relative grid grid-cols-[auto_1fr_auto] items-center gap-3">
+  <!-- Language toggle -->
+  <div class="flex items-center gap-1 text-[11px] font-semibold tracking-[0.1em] uppercase text-slate-600">
+    {#each ['es','en'] as l (l)}
+      <button
+        class={`px-2 py-1 rounded-full border border-transparent transition ${selected === l ? 'text-[#4e4060]' : 'text-slate-400 hover:text-slate-600'}`}
+        aria-pressed={selected === l}
+        onclick={() => { selected = l; try { if (browser) localStorage.setItem('preferredLocale', selected); } catch {}; goto(localizeHref(location.pathname)); }}
+      >{l.toUpperCase()}</button>
+    {/each}
+  </div>
   <!-- Centered brand logo -->
   <a href={logoHref} class="justify-self-center" aria-label="Luna Limón">
     <img src="/logo.svg" alt="Luna Limón" class="h-[40px] md:h-[58px] mt-0" />
@@ -126,52 +125,4 @@
 </main>
 
 <!-- Floaty language toggle (bottom-left) -->
-{#if !$page.url.pathname.includes('/pagar')}
-<div
-  class={`fixed bottom-6 z-40 transition-opacity duration-150 language-toggle-wrapper ${isCalendario ? 'left-6 translate-x-0 language-toggle-wrapper--calendario' : 'left-1/2 -translate-x-1/2'}`}
-  style={`opacity:${langVisible ? 1 : 0}; pointer-events:${langVisible ? 'auto' : 'none'}`}
->
-  <div
-    class={`language-toggle bg-slate-600/95 text-white backdrop-blur-md rounded-full shadow-2xl ring-1 ring-black/20 px-2.5 py-1.5 flex items-center gap-1.5 ${isCalendario ? 'language-toggle--calendario' : ''}`}
-  >
-    {#each ['es','en'] as l (l)}
-      <button
-        class={`language-toggle__btn px-3.5 py-1.5 text-sm rounded-full transition ${selected === l ? 'bg-white/20 shadow-inner' : 'bg-transparent hover:bg-white/10'}`}
-        aria-pressed={selected === l}
-        onclick={() => { selected = l; try { if (browser) localStorage.setItem('preferredLocale', selected); } catch {}; goto(localizeHref(location.pathname)); }}
-      >{l.toUpperCase()}</button>
-    {/each}
-  </div>
-</div>
-{/if}
-
 <!-- GA is injected onMount to avoid inline variable reference issues -->
-
-<style>
-  :global(.language-toggle-wrapper--calendario) {
-    left: 1.5rem;
-    transform: none;
-  }
-  :global(.language-toggle--calendario) {
-    background: linear-gradient(135deg, rgba(255, 244, 214, 0.32), rgba(255, 205, 158, 0.34));
-    color: #2f160b;
-    border: 1px solid rgba(255, 223, 189, 0.55);
-    box-shadow: 0 24px 52px -32px rgba(21, 10, 5, 0.65);
-  }
-  :global(.language-toggle--calendario .language-toggle__btn) {
-    color: #2f160b;
-    background: transparent;
-    border: 1px solid transparent;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-  }
-  :global(.language-toggle--calendario .language-toggle__btn:hover) {
-    background: rgba(255, 228, 197, 0.32);
-  }
-  :global(.language-toggle--calendario .language-toggle__btn[aria-pressed="true"]) {
-    background: rgba(255, 240, 214, 0.92);
-    border-color: rgba(255, 214, 170, 0.7);
-    box-shadow: inset 0 0 0 1px rgba(255, 214, 170, 0.45);
-    color: #2b1507;
-  }
-</style>

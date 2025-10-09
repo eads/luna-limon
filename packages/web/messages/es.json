@@ -27,11 +27,9 @@
     "story_point_2": "↺ Punto provisional — redacción final en camino.",
     "story_point_3": "↺ Punto provisional — lo escribiremos junto al equipo.",
     "story_list_label": "elementos provisionales",
-    "qty_decrease": "Disminuir cantidad",
-    "qty_increase": "Aumentar cantidad",
-    "qty_input": "Cantidad",
     "follow_handle": "@lunalimon.co",
-    "story_placeholder_label": "Copy temporal"
+    "story_placeholder_label": "Copy temporal",
+    "buy_simple": "Preordenar"
   },
   "carrito": {
     "carrito_total": "Total",

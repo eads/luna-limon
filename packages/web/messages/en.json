@@ -27,11 +27,9 @@
     "story_point_2": "↺ Placeholder bullet — handcrafted copy coming from the studio.",
     "story_point_3": "↺ Placeholder bullet — to be replaced with the real narrative.",
     "story_list_label": "placeholder highlights",
-    "qty_decrease": "Decrease quantity",
-    "qty_increase": "Increase quantity",
-    "qty_input": "Quantity",
     "follow_handle": "@lunalimon.co",
-    "story_placeholder_label": "Draft copy"
+    "story_placeholder_label": "Draft copy",
+    "buy_simple": "Pre-order"
   },
   "carrito": {
     "carrito_total": "Total",

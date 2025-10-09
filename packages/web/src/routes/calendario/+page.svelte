@@ -15,463 +15,280 @@
   import { goto } from '$app/navigation';
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
-  const nameOf = (p: Product) => p.nombre[getLocale() as 'es' | 'en'] ?? p.nombre.es ?? p.nombre.en ?? '';
-  const fmtCOP = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
+  import { getResizedImageUrl } from '$lib/utils/images';
+
+  const nameOf = (p: Product) =>
+    p.nombre[getLocale() as 'es' | 'en'] ?? p.nombre.es ?? p.nombre.en ?? '';
 
   let { data } = $props<{ data: { products: Product[] } }>();
   const calendar = $derived(data.products?.[0]);
-  let qty = $state(1);
   let flash = $state(false);
+
+  let heroDimmed = $state(false);
+  let galleryDimmed = $state(false);
+  let gallerySection: HTMLElement | null = null;
 
   function addNow() {
     if (!calendar) return;
-    cart.add(calendar, qty || 1);
+    cart.add(calendar, 1);
     flash = true;
     setTimeout(() => (flash = false), 700);
     goto(localizeHref('/pagar'));
   }
 
-  let topCtaEl: HTMLElement | null = null;
-  let storyEl: HTMLElement | null = null;
-  let topCtaInView = $state(true);
-  let showSecondBg = $state(false);
-  const showSticky = $derived(!topCtaInView);
-
-  function updateBackgroundState() {
-    if (!browser) return;
-    const trigger = window.innerHeight * 0.18;
-    const y = window.scrollY || 0;
-    showSecondBg = y > trigger;
-  }
-
   onMount(() => {
-    if (!browser) {
-      topCtaInView = true;
-      showSecondBg = true;
-      return;
-    }
-    const handleScroll = () => updateBackgroundState();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    updateBackgroundState();
+    if (!browser) return;
+    const handleScroll = () => {
+      const y = window.scrollY || document.documentElement.scrollTop || 0;
+      heroDimmed = y > window.innerHeight * 0.3;
 
-    if (typeof IntersectionObserver === 'undefined') {
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-      };
-    }
-    const observers: IntersectionObserver[] = [];
-    if (topCtaEl) {
-      const ctaObserver = new IntersectionObserver(
-        (entries) => {
-          const entry = entries[0];
-          topCtaInView = !!entry?.isIntersecting;
-        },
-        { threshold: 0.6 }
-      );
-      ctaObserver.observe(topCtaEl);
-      observers.push(ctaObserver);
-    }
-    if (storyEl) {
-      const storyObserver = new IntersectionObserver(
-        (entries) => {
-          const entry = entries[0];
-          if (!entry) return;
-          const intersecting = !!entry.isIntersecting || (entry.boundingClientRect.top ?? 1) < 0;
-          if (intersecting) {
-            showSecondBg = true;
-          }
-        },
-        { threshold: [0.1, 0.3] }
-      );
-      storyObserver.observe(storyEl);
-      observers.push(storyObserver);
-    }
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      observers.forEach((observer) => observer.disconnect());
+      if (gallerySection) {
+        const rect = gallerySection.getBoundingClientRect();
+        const trigger = window.innerHeight * 0.45;
+        galleryDimmed = rect.top < trigger;
+      }
     };
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   });
 </script>
 
 <style>
-  .calendar-page {
+  .calendar-visual {
     position: relative;
-    min-height: 100vh;
+    height: min(80vh, 620px);
+    overflow: hidden;
     display: flex;
-    flex-direction: column;
-    gap: clamp(4rem, 12vw, 6rem);
+    align-items: flex-end;
+    justify-content: center;
   }
-  .calendar-page__background {
-    position: fixed;
+  .calendar-visual__image {
+    position: absolute;
     inset: 0;
-    background-size: auto 100%;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: #f6ede3;
-    z-index: -3;
-    pointer-events: none;
-    transition: opacity 900ms ease, transform 1200ms ease;
-    will-change: opacity, transform;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 48%;
+    transform-origin: center;
+    transition: transform 480ms ease, opacity 320ms ease;
   }
-  .calendar-page__background--primary {
-    background-image: url('/images/IMG_5709.jpg');
-    transform: scale(1.05);
+  .calendar-visual.dimmed .calendar-visual__image {
+    opacity: 0.52;
+    transform: scale(1.045) translateY(-2%);
   }
-  .calendar-page__background--secondary {
-    background-image: url('/images/IMG_5718.jpg');
-    opacity: 0;
-    transform: scale(1.08);
-  }
-  .calendar-page.show-second .calendar-page__background--primary {
-    opacity: 0;
-    transform: scale(1.02);
-  }
-  .calendar-page.show-second .calendar-page__background--secondary {
-    opacity: 1;
-    transform: scale(1.04);
-  }
-  .calendar-page__scrim {
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    pointer-events: none;
-    background: linear-gradient(155deg, rgba(38, 22, 14, 0.62) 0%, rgba(24, 14, 8, 0.54) 42%, rgba(18, 10, 6, 0.45) 68%, rgba(255, 233, 204, 0.32) 100%);
-    mix-blend-mode: multiply;
-    transition: background 600ms ease;
-  }
-  .calendar-page.show-second .calendar-page__scrim {
-    background: linear-gradient(120deg, rgba(32, 18, 10, 0.55) 0%, rgba(26, 14, 8, 0.5) 52%, rgba(255, 221, 187, 0.38) 100%);
-  }
-  .calendar-hero {
-    position: relative;
-    min-height: 110svh;
-    padding: clamp(5rem, 10vw, 8rem) 0 clamp(4rem, 8vw, 6rem);
-    display: flex;
-    align-items: center;
-    color: #fef9f4;
-  }
-  .calendar-hero__inner {
+  .calendar-visual__title {
     position: relative;
     z-index: 1;
-    max-width: clamp(32rem, 68vw, 52rem);
+    margin-bottom: clamp(2rem, 7vw, 3.5rem);
+    padding: 0 clamp(1.5rem, 6vw, 3rem);
+    font-size: clamp(2.6rem, 6.2vw, 3.9rem);
+    line-height: 1.08;
+    font-weight: 600;
+    color: #fefaf6;
+    text-shadow: 0 12px 30px rgba(12, 6, 4, 0.42);
+    text-wrap: balance;
+    transition: transform 480ms ease;
+    font-family: 'Etania Ezra Script', cursive;
+  }
+  .calendar-visual.dimmed .calendar-visual__title {
+    transform: translateY(-4vh);
+  }
+  .calendar-primary {
+    background: rgba(255, 255, 255, 0.92);
+    padding: clamp(3.5rem, 8vw, 5.5rem) 0 clamp(3rem, 7vw, 5rem);
+  }
+  .calendar-primary__wrap {
+    max-width: 44rem;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 1.75rem;
-    margin-left: clamp(0rem, 5vw, 8rem);
+    gap: clamp(1.3rem, 3vw, 2.2rem);
   }
-  .calendar-hero__eyebrow {
+  .calendar-primary__eyebrow {
     display: inline-flex;
     align-self: flex-start;
+    padding: 0.35rem 0.9rem;
     border-radius: 999px;
-    border: 1px solid rgba(255, 237, 213, 0.3);
-    background: rgba(255, 244, 228, 0.08);
-    color: #ffe5c6;
-    padding: 0.25rem 0.9rem;
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
+    background: linear-gradient(90deg, rgba(190, 180, 210, 0.28), rgba(240, 130, 100, 0.38));
+    color: #5c4b75;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     font-weight: 600;
+    font-family: 'Aceh', 'Helvetica Neue', sans-serif;
   }
-  .calendar-hero__title {
-    font-size: clamp(2.8rem, 7.8vw, 5.1rem);
-    line-height: 1.08;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    text-wrap: balance;
-    color: rgba(255, 244, 233, 0.96);
-  }
-  .calendar-hero__subtitle {
-    font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+  .calendar-primary__body {
+    font-size: clamp(1.05rem, 2.4vw, 1.35rem);
     line-height: 1.7;
-    color: rgba(255, 248, 236, 0.88);
-    max-width: 60ch;
-    font-weight: 300;
+    color: rgba(44, 26, 34, 0.85);
+    font-family: 'Aceh', 'Helvetica Neue', sans-serif;
   }
-  .calendar-hero__actions {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    align-items: flex-start;
-  }
-  .calendar-hero__cta {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    border-radius: 1.9rem;
-    padding: 1.4rem 1.6rem;
-    background: rgba(255, 240, 216, 0.22);
-    border: 1px solid rgba(255, 235, 205, 0.3);
-    backdrop-filter: blur(18px);
-    color: #3a2011;
-    box-shadow: 0 30px 60px -42px rgba(12, 6, 3, 0.7);
-  }
-  .calendar-hero__cta-controls {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.85rem;
-  }
-  .calendar-hero__qty {
+  .calendar-primary__cta {
     display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .calendar-primary__button {
     border-radius: 999px;
-    border: 1px solid rgba(60, 31, 15, 0.16);
-    overflow: hidden;
-    background: rgba(255, 245, 224, 0.48);
-  }
-  .calendar-hero__qty button {
-    padding: 0.6rem 1rem;
+    padding: 0.75rem 2.5rem;
     font-weight: 600;
-    transition: background 150ms ease, color 150ms ease;
-    color: #3c1f0f;
-  }
-  .calendar-hero__qty button:hover {
-    background: rgba(255, 240, 220, 0.75);
-  }
-  .calendar-hero__qty input {
-    width: 3.2rem;
-    text-align: center;
-    border: none;
-    background: transparent;
-    font-weight: 600;
-    color: #2f180d;
-  }
-  .calendar-hero__buy {
-    border-radius: 999px;
-    padding: 0.75rem 2.2rem;
-    font-weight: 700;
-    font-size: 1.05rem;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #2d1708;
-    background: linear-gradient(135deg, #fff5dc, #ffdcb3);
-    border: 1px solid rgba(255, 214, 170, 0.7);
-    box-shadow: 0 18px 46px -26px rgba(45, 25, 12, 0.7);
-    transition: transform 150ms ease, box-shadow 200ms ease, background 150ms ease, color 150ms ease;
+    border: 2px solid rgba(240, 130, 100, 0.8);
+    color: #402430;
+    background: transparent;
+    transition: transform 150ms ease, border-color 180ms ease, color 180ms ease;
+    font-family: 'Aceh', 'Helvetica Neue', sans-serif;
   }
-  .calendar-hero__buy:hover {
-    background: linear-gradient(135deg, #fff0d0, #ffd2a1);
+  .calendar-primary__button:hover {
     transform: translateY(-1px);
-    box-shadow: 0 22px 52px -30px rgba(45, 25, 12, 0.72);
+    border-color: rgba(190, 180, 210, 0.9);
+    color: #3b2a47;
   }
-  .calendar-hero__buy:active {
+  .calendar-primary__button:active {
     transform: translateY(0);
   }
-  .calendar-hero__buy--flash {
-    box-shadow: 0 0 0 4px rgba(255, 221, 173, 0.45), 0 22px 50px -26px rgba(45, 25, 12, 0.85);
+  .calendar-primary__button.flash {
+    box-shadow: 0 0 0 4px rgba(240, 130, 100, 0.18);
   }
-  .calendar-hero__meta {
+  .calendar-gallery {
+    position: relative;
+    overflow: hidden;
+    background: #f4f1f9;
+    margin-bottom: clamp(3rem, 12vw, 7rem);
+  }
+  .calendar-gallery__media {
+    position: relative;
+    height: min(72vh, 580px);
     display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    color: rgba(56, 32, 21, 0.82);
-  }
-  .calendar-hero__price {
-    font-weight: 700;
-    font-size: 1.05rem;
-  }
-  .calendar-hero__note {
-    font-size: 0.95rem;
-  }
-  .calendar-hero__follow {
-    display: inline-flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    gap: 0.85rem;
-    border-radius: 999px;
-    padding: 0.85rem 2.3rem;
-    background: linear-gradient(135deg, rgba(255, 244, 222, 0.26), rgba(255, 210, 164, 0.3));
-    border: 1px solid rgba(255, 224, 187, 0.45);
-    color: #ffe8c9;
+  }
+  .calendar-gallery__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 52%;
+    transform-origin: center;
+    transition: transform 480ms ease, opacity 320ms ease;
+  }
+  .calendar-gallery.dimmed .calendar-gallery__img {
+    opacity: 0.58;
+    transform: scale(1.045) translateY(-2%);
+  }
+  .calendar-gallery__title {
+    position: relative;
+    z-index: 1;
+    padding: 0 clamp(1.5rem, 6vw, 3rem) clamp(2.5rem, 8vw, 4rem);
+    font-size: clamp(2.1rem, 5vw, 3.2rem);
+    line-height: 1.12;
     font-weight: 600;
-    text-decoration: none;
-    box-shadow: 0 22px 54px -34px rgba(21, 10, 5, 0.75);
-    transition: transform 150ms ease, box-shadow 200ms ease, background 150ms ease;
+    color: #faf6ff;
+    text-shadow: 0 10px 26px rgba(22, 12, 6, 0.4);
+    text-wrap: balance;
+    transition: transform 480ms ease;
+    font-family: 'Etania Ezra Script', cursive;
   }
-  .calendar-hero__follow:hover {
-    background: linear-gradient(135deg, rgba(255, 244, 214, 0.42), rgba(255, 210, 160, 0.4));
-    transform: translateY(-1px);
-    box-shadow: 0 26px 60px -34px rgba(21, 10, 5, 0.78);
-  }
-  .calendar-hero__follow-icon {
-    font-size: 1.4rem;
-    line-height: 0;
-  }
-  .calendar-hero__follow-handle {
-    font-weight: 700;
-    letter-spacing: 0.03em;
+  .calendar-gallery.dimmed .calendar-gallery__title {
+    transform: translateY(-3vh);
   }
   .calendar-story {
-    position: relative;
-    padding: clamp(5rem, 10vw, 7rem) 0 clamp(4rem, 8vw, 6rem);
-    color: #2e1a11;
+    background: rgba(255, 255, 255, 0.88);
+    padding: clamp(3.5rem, 9vw, 6rem) 0 clamp(3rem, 9vw, 6.5rem);
   }
-  .calendar-story__panel {
-    position: relative;
-    max-width: clamp(28rem, 60vw, 42rem);
-    margin-inline: auto;
-    background: rgba(255, 252, 245, 0.82);
-    backdrop-filter: blur(22px);
-    border-radius: 1.6rem;
-    padding: clamp(2rem, 5vw, 3rem);
-    box-shadow: 0 36px 74px -44px rgba(36, 19, 10, 0.42);
-    border: 1px dashed rgba(219, 168, 120, 0.5);
+  .calendar-story__wrap {
+    max-width: 42rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.1rem, 2.8vw, 1.9rem);
   }
-  .calendar-story__placeholder-label {
+  .calendar-story__label {
     display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
+    align-self: flex-start;
+    padding: 0.35rem 0.85rem;
     border-radius: 999px;
-    padding: 0.35rem 0.9rem;
-    font-size: 0.75rem;
-    text-transform: uppercase;
+    background: rgba(190, 180, 210, 0.18);
+    color: #5c4b75;
+    font-size: 0.78rem;
     letter-spacing: 0.12em;
-    background: rgba(255, 229, 196, 0.45);
-    color: rgba(110, 60, 30, 0.75);
-    margin-bottom: 1.25rem;
+    text-transform: uppercase;
+    font-family: 'Aceh', 'Helvetica Neue', sans-serif;
   }
   .calendar-story__title {
-    font-size: clamp(2rem, 5vw, 2.9rem);
-    line-height: 1.2;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: #2a160e;
+    font-size: clamp(2rem, 4.5vw, 2.6rem);
+    line-height: 1.18;
+    font-weight: 600;
+    color: #2b1624;
+    font-family: 'Aceh', 'Helvetica Neue', sans-serif;
   }
   .calendar-story__body {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: rgba(52, 30, 18, 0.9);
-    margin-bottom: 1.5rem;
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+    line-height: 1.6;
+    color: rgba(43, 23, 31, 0.78);
+    font-family: 'Aceh', 'Helvetica Neue', sans-serif;
   }
   .calendar-story__list {
     list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 0;
-    margin: 0;
-  }
-  .calendar-story__list li {
-    position: relative;
-    padding-left: 1.9rem;
+    gap: 0.7rem;
+    color: rgba(43, 23, 31, 0.82);
     font-weight: 500;
-    color: rgba(43, 23, 13, 0.92);
+    font-family: 'Aceh', 'Helvetica Neue', sans-serif;
   }
   .calendar-story__list li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.55rem;
-    width: 1rem;
-    height: 1rem;
-    border-radius: 999px;
-    background: linear-gradient(135deg, rgba(255, 182, 118, 0.95), rgba(255, 210, 150, 0.9));
-    box-shadow: 0 12px 24px -12px rgba(220, 120, 70, 0.6);
-  }
-  .calendar-sticky {
-    background: rgba(34, 19, 12, 0.94);
-    color: #fff4dc;
-    border-radius: 999px;
-    padding: 0.65rem 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    box-shadow: 0 24px 40px -30px rgba(12, 6, 3, 0.9);
-    backdrop-filter: blur(14px);
-  }
-  .calendar-sticky__label {
-    font-weight: 600;
-    display: none;
-  }
-  .calendar-sticky__qty {
-    display: inline-flex;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.15);
-  }
-  .calendar-sticky__qty button {
-    padding: 0.5rem 0.9rem;
-    font-weight: 600;
-    color: #ffead0;
-    transition: background 150ms ease;
-  }
-  .calendar-sticky__qty button:hover {
-    background: rgba(255, 237, 210, 0.2);
-  }
-  .calendar-sticky__qty input {
-    width: 3rem;
-    text-align: center;
-    border: none;
-    background: transparent;
-    color: #fff2d6;
-    font-weight: 600;
-  }
-  .calendar-sticky__buy {
-    border-radius: 999px;
-    padding: 0.6rem 1.4rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #ffe2b5, #ffd099);
-    color: #341a0d;
-    box-shadow: 0 18px 40px -24px rgba(15, 6, 2, 0.9);
-    transition: transform 150ms ease, box-shadow 200ms ease;
-  }
-  .calendar-sticky__buy:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 20px 42px -25px rgba(15, 6, 2, 0.8);
-  }
-  .calendar-sticky__buy:active {
-    transform: translateY(0);
-  }
-  .calendar-sticky__buy--flash {
-    box-shadow: 0 0 0 4px rgba(255, 207, 160, 0.4);
-  }
-  .calendar-sticky__note {
-    font-size: 0.85rem;
-    color: rgba(255, 244, 220, 0.75);
+    content: '—';
+    margin-right: 0.75rem;
+    color: #f08264;
   }
   @media (min-width: 768px) {
-    .calendar-hero {
-      padding-bottom: clamp(6rem, 8vw, 10rem);
-    }
-    .calendar-hero__inner {
-      margin-left: clamp(2rem, 8vw, 12rem);
-    }
-    .calendar-hero__actions {
+    .calendar-primary__cta {
       flex-direction: row;
-      align-items: flex-start;
-      gap: 1.6rem;
+      align-items: center;
     }
-    .calendar-hero__follow {
-      margin-top: 0.5rem;
-    }
-    .calendar-sticky__label {
-      display: inline;
+    .calendar-story__wrap {
+      gap: clamp(1.4rem, 2vw, 2.2rem);
     }
   }
   @media (max-width: 640px) {
-    .calendar-page__background {
-      background-size: cover;
+    .calendar-visual {
+      height: 66vh;
     }
-    .calendar-hero__inner {
-      margin-left: 0;
-      text-align: left;
+    .calendar-visual__image {
+      height: 66vh;
+      object-position: center 52%;
     }
-    .calendar-hero__cta {
+    .calendar-primary__wrap {
+      gap: 1.4rem;
+    }
+    .calendar-primary__cta {
+      flex-direction: column;
       align-items: stretch;
     }
-    .calendar-hero__qty {
-      align-self: stretch;
-      justify-content: space-between;
+    .calendar-primary__button {
+      width: 100%;
+      justify-content: center;
     }
-    .calendar-story {
-      padding: 5rem 0 4rem;
+    .calendar-gallery__media {
+      height: 60vh;
     }
-    .calendar-story__panel {
-      margin-inline: 0;
+    .calendar-gallery__img {
+      height: 60vh;
+      object-position: center 54%;
     }
-    .calendar-sticky {
-      gap: 0.6rem;
-      padding-inline: 1rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .calendar-visual__image,
+    .calendar-visual.dimmed .calendar-visual__image,
+    .calendar-primary__button,
+    .calendar-primary__button.flash {
+      transition: none;
     }
   }
 </style>
@@ -479,75 +296,47 @@
 {#if !calendar}
   <p class="text-gray-500">{t('calendario.vacio')}</p>
 {:else}
-  <div class="calendar-page u-full-bleed" class:show-second={showSecondBg}>
-    <div class="calendar-page__background calendar-page__background--primary" aria-hidden="true"></div>
-    <div class="calendar-page__background calendar-page__background--secondary" aria-hidden="true"></div>
-    <div class="calendar-page__scrim" aria-hidden="true"></div>
+  <section class="calendar-visual u-full-bleed" class:dimmed={heroDimmed}>
+    <img class="calendar-visual__image" src={getResizedImageUrl('/images/IMG_5710.jpg', 1600)} alt={nameOf(calendar)} loading="lazy" />
+    <h1 class="calendar-visual__title">{t('calendario.hero_title')}</h1>
+  </section>
 
-    <section class="calendar-hero">
-      <div class="u-content-wrap">
-        <div class="calendar-hero__inner">
-          <span class="calendar-hero__eyebrow">{t('calendario.hero_eyebrow')}</span>
-          <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
-          <p class="calendar-hero__subtitle">{t('calendario.hero_subtitle')}</p>
-          <div class="calendar-hero__actions">
-            <div class="calendar-hero__cta" bind:this={topCtaEl}>
-              <div class="calendar-hero__cta-controls">
-                <div class="calendar-hero__qty">
-                  <button type="button" aria-label={t('calendario.qty_decrease')} onclick={() => (qty = Math.max(1, qty - 1))}>-</button>
-                  <input type="number" min="1" bind:value={qty} aria-label={t('calendario.qty_input')} />
-                  <button type="button" aria-label={t('calendario.qty_increase')} onclick={() => (qty = qty + 1)}>+</button>
-                </div>
-                <button class={`calendar-hero__buy ${flash ? 'calendar-hero__buy--flash' : ''}`} type="button" onclick={addNow}>
-                  {t('calendario.buy')}
-                </button>
-              </div>
-              <div class="calendar-hero__meta">
-                <span class="calendar-hero__price">{fmtCOP.format(calendar.precio)}</span>
-                <span class="calendar-hero__note">{t('calendario.preorder')}</span>
-              </div>
-            </div>
-            <a class="calendar-hero__follow" href="https://www.instagram.com/lunalimon.co" target="_blank" rel="noopener noreferrer">
-              <span class="calendar-hero__follow-icon" aria-hidden="true">◎</span>
-              <span>{t('calendario.follow_cta')}</span>
-              <span class="calendar-hero__follow-handle">{t('calendario.follow_handle')}</span>
-            </a>
-          </div>
+  <section class="calendar-primary u-full-bleed">
+    <div class="u-content-wrap">
+      <div class="calendar-primary__wrap">
+        <span class="calendar-primary__eyebrow">{t('calendario.hero_eyebrow')}</span>
+        <p class="calendar-primary__body">{t('calendario.hero_subtitle')}</p>
+        <div class="calendar-primary__cta">
+          <button
+            class={`calendar-primary__button ${flash ? 'flash' : ''}`}
+            type="button"
+            onclick={addNow}
+          >
+            {t('calendario.buy_simple') ?? t('calendario.buy')}
+          </button>
         </div>
       </div>
-    </section>
-
-    <section class="calendar-story" bind:this={storyEl}>
-      <div class="u-content-wrap">
-        <div class="calendar-story__panel">
-          <span class="calendar-story__placeholder-label">{t('calendario.story_placeholder_label')}</span>
-          <h2 class="calendar-story__title">{t('calendario.story_title')}</h2>
-          <p class="calendar-story__body">{t('calendario.story_body')}</p>
-          <ul class="calendar-story__list" aria-label={t('calendario.story_list_label')}>
-            <li>{t('calendario.story_point_1')}</li>
-            <li>{t('calendario.story_point_2')}</li>
-            <li>{t('calendario.story_point_3')}</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <div class="fixed bottom-4 inset-x-0 flex justify-center pointer-events-none">
-    <div
-      class="calendar-sticky pointer-events-auto"
-      style={`opacity:${showSticky ? 1 : 0}; transform: translateY(${showSticky ? 0 : 8}px); transition: opacity 200ms ease, transform 200ms ease;`}
-    >
-      <span class="calendar-sticky__label">{nameOf(calendar)}</span>
-      <div class="calendar-sticky__qty">
-        <button type="button" aria-label={t('calendario.qty_decrease')} onclick={() => (qty = Math.max(1, qty - 1))}>-</button>
-        <input type="number" min="1" bind:value={qty} aria-label={t('calendario.qty_input')} />
-        <button type="button" aria-label={t('calendario.qty_increase')} onclick={() => (qty = qty + 1)}>+</button>
-      </div>
-      <button class={`calendar-sticky__buy ${flash ? 'calendar-sticky__buy--flash' : ''}`} type="button" onclick={addNow}>
-        {t('calendario.buy')}
-      </button>
-      <span class="calendar-sticky__note">{t('calendario.preorder')}</span>
     </div>
-  </div>
+  </section>
+
+  <section class="calendar-gallery u-full-bleed" bind:this={gallerySection} class:dimmed={galleryDimmed}>
+    <div class="calendar-gallery__media">
+      <img class="calendar-gallery__img" src={getResizedImageUrl('/images/IMG_5716.jpg', 1600)} alt={nameOf(calendar)} loading="lazy" />
+      <h2 class="calendar-gallery__title">{t('calendario.story_title')}</h2>
+    </div>
+  </section>
+
+  <section class="calendar-story u-full-bleed">
+    <div class="u-content-wrap">
+      <div class="calendar-story__wrap">
+        <span class="calendar-story__label">{t('calendario.story_placeholder_label')}</span>
+        <p class="calendar-story__body">{t('calendario.story_body')}</p>
+        <ul class="calendar-story__list" aria-label={t('calendario.story_list_label')}>
+          <li>{t('calendario.story_point_1')}</li>
+          <li>{t('calendario.story_point_2')}</li>
+          <li>{t('calendario.story_point_3')}</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 {/if}
