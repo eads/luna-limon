@@ -297,7 +297,7 @@
   <p class="text-gray-500">{t('calendario.vacio')}</p>
 {:else}
   <section class="calendar-visual u-full-bleed" class:dimmed={heroDimmed}>
-    <img class="calendar-visual__image" src={getResizedImageUrl('/images/IMG_5710.jpg', 1600)} alt={nameOf(calendar)} loading="lazy" />
+    <img class="calendar-visual__image" src={getResizedImageUrl('/images/IMG_5710.jpg', 1600)} alt={nameOf(calendar)} loading="eager" decoding="async" />
     <h1 class="calendar-visual__title">{t('calendario.hero_title')}</h1>
   </section>
 
