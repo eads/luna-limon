@@ -101,7 +101,7 @@
   line-height: 1;
   display: inline-block;
   vertical-align: baseline;
-  transform: translateY(-0.18em);
+  transform: translateY(-0.08em);
   margin-right: 0.45rem;
   color: rgba(36, 18, 26, 0.92);
 }
@@ -221,7 +221,7 @@
   }
   .calendar-primary__drop {
     font-size: clamp(2.8rem, 12vw, 3.4rem);
-    transform: translateY(-0.2em);
+    transform: translateY(-0.08em);
   }
   .calendar-gallery__img {
     height: min(60vh, 420px);
