@@ -4,6 +4,9 @@ import sharp from 'sharp';
 export const handler = async (event: any) => {
   const imageUrl = event.queryStringParameters?.url;
   const width = parseInt(event.queryStringParameters?.w || '400', 10);
+  const qualityParam = parseInt(event.queryStringParameters?.q || '85', 10);
+  const clamp = (val: number, min: number, max: number) => Math.min(Math.max(val, min), max);
+  const webpQuality = clamp(isNaN(qualityParam) ? 85 : qualityParam, 50, 95);
 
   if (!imageUrl) {
     return {
@@ -65,7 +68,7 @@ export const handler = async (event: any) => {
     }
 
     const resized = await pipeline
-      .toFormat('webp', { quality: 85 })       // ensure consistent output type
+      .toFormat('webp', { quality: webpQuality })       // ensure consistent output type
       .toBuffer();
 
     return {

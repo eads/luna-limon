@@ -41,6 +41,7 @@
   const galleryImageSrc = getResizedImageUrl('/images/IMG_5882.jpg', 1600);
   const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_5882.jpg', 800);
   const featureVideoSources = [
+    { src: '/video/IMG_5880.webm', type: 'video/webm' },
     { src: '/video/IMG_5880.mp4', type: 'video/mp4' },
     { src: '/video/IMG_5880.MOV', type: 'video/quicktime' }
   ];
@@ -105,6 +106,7 @@
           muted
           loop
           preload="metadata"
+          poster={galleryImageSrcSmall}
         >
           {#each featureVideoSources as { src, type } (src)}
             <source src={src} type={type} />
