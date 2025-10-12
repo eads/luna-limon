@@ -117,20 +117,6 @@
     </div>
   </section>
 
-  <section class="calendar-gallery u-full-bleed">
-    <div class="calendar-gallery__media">
-      <img
-        class="calendar-gallery__img"
-        src={galleryImageSrc}
-        srcset={`${galleryImageSrcSmall} 800w, ${galleryImageSrc} 1600w`}
-        sizes="(max-width: 768px) 100vw, 1600px"
-        alt={nameOf(calendar)}
-        loading="lazy"
-        decoding="async"
-      />
-    </div>
-  </section>
-
   <section class="calendar-story u-full-bleed">
     <div class="u-content-wrap">
       <div class="calendar-story__wrap">
@@ -145,5 +131,20 @@
     </div>
   </section>
 
+
+
+  <section class="calendar-gallery u-full-bleed">
+    <div class="calendar-gallery__media">
+      <img
+        class="calendar-gallery__img"
+        src={galleryImageSrc}
+        srcset={`${galleryImageSrcSmall} 800w, ${galleryImageSrc} 1600w`}
+        sizes="(max-width: 768px) 100vw, 1600px"
+        alt={nameOf(calendar)}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </section>
   <section class="calendar-ending u-full-bleed" aria-hidden="true"></section>
 {/if}
