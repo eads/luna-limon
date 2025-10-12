@@ -13,7 +13,6 @@
   // @ts-expect-error - runtime types not generated yet
   import { getLocale, localizeHref } from '$lib/paraglide/runtime.js';
   import { goto } from '$app/navigation';
-  import { dev } from '$app/environment';
   import { getResizedImageUrl } from '$lib/utils/images';
   import './calendario.css';
 
@@ -39,9 +38,8 @@
 
   const heroImageSrc = getResizedImageUrl('/images/IMG_5710.jpg', 1600);
   const heroImageSrcSmall = getResizedImageUrl('/images/IMG_5710.jpg', 800);
-  const galleryAssetPath = dev ? '/images/IMG_5716.jpg' : '/images/IMG_5882.HEIC';
-  const galleryImageSrc = getResizedImageUrl(galleryAssetPath, 1600);
-  const galleryImageSrcSmall = getResizedImageUrl(galleryAssetPath, 800);
+  const galleryImageSrc = getResizedImageUrl('/images/IMG_5882.HEIC', 1600);
+  const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_5882.HEIC', 800);
   const featureVideoSources = [
     { src: '/video/IMG_5880.mp4', type: 'video/mp4' },
     { src: '/video/IMG_5880.MOV', type: 'video/quicktime' }
