@@ -38,7 +38,8 @@
 
   const heroImageSrc = getResizedImageUrl('/images/IMG_5710.jpg', 1600);
   const heroImageSrcSmall = getResizedImageUrl('/images/IMG_5710.jpg', 800);
-  const heroImageFallback = '/images/IMG_5710.jpg';
+  const heroImageFallback = getResizedImageUrl('/images/IMG_5710.jpg', 1600);
+  const heroImageFallbackSmall = getResizedImageUrl('/images/IMG_5710.jpg', 800);
   const galleryImageSrc = getResizedImageUrl('/images/IMG_5882.jpg', 1600);
   const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_5882.jpg', 800);
   const videoPosterSrc = getResizedImageUrl('/images/IMG_5882.jpg', 1280);
@@ -74,7 +75,7 @@
         type="image/webp"
       />
       <source
-        srcset={`${heroImageFallback} 800w, ${heroImageFallback} 1600w`}
+        srcset={`${heroImageFallbackSmall} 800w, ${heroImageFallback} 1600w`}
         sizes="(max-width: 768px) 100vw, 1600px"
         type="image/jpeg"
       />
