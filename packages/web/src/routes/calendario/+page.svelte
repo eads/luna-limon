@@ -39,8 +39,8 @@
   const heroImageSrc = getResizedImageUrl('/images/IMG_5710.jpg', 1600);
   const heroImageSrcSmall = getResizedImageUrl('/images/IMG_5710.jpg', 800);
   const galleryHeicSrc = '/images/IMG_5882.HEIC';
-  const galleryJpegSrc = getResizedImageUrl('/images/IMG_5716.jpg', 1600);
-  const galleryJpegSrcSmall = getResizedImageUrl('/images/IMG_5716.jpg', 800);
+  const galleryImageSrc = getResizedImageUrl('/images/IMG_5716.jpg', 1600);
+  const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_5716.jpg', 800);
   const featureVideoSources = [
     { src: '/video/IMG_5880.mp4', type: 'video/mp4' },
     { src: '/video/IMG_5880.MOV', type: 'video/quicktime' }
@@ -138,8 +138,8 @@
         <source srcset={galleryHeicSrc} type="image/heic" />
         <img
           class="calendar-gallery__img"
-          src={galleryJpegSrc}
-          srcset={`${galleryJpegSrcSmall} 800w, ${galleryJpegSrc} 1600w`}
+          src={galleryImageSrc}
+          srcset={`${galleryImageSrcSmall} 800w, ${galleryImageSrc} 1600w`}
           sizes="(max-width: 768px) 100vw, 1600px"
           alt={nameOf(calendar)}
           loading="lazy"
