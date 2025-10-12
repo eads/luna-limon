@@ -114,6 +114,9 @@
   max-width: 72rem;
   margin: 0 auto;
 }
+.calendar-gallery__media picture {
+  display: block;
+}
 .calendar-gallery__img {
   display: block;
   width: 100%;
