@@ -87,7 +87,6 @@
             {t('calendario.buy_simple') ?? t('calendario.buy')}
           </button>
         </div>
-        <span class="calendar-primary__eyebrow">{t('calendario.hero_eyebrow')}</span>
         <p class="calendar-primary__body">
           {#if heroSubtitleParts.lead}
             <span class="calendar-primary__drop">{heroSubtitleParts.lead}</span>{heroSubtitleParts.rest}
@@ -100,19 +99,21 @@
   </section>
 
   <section class="calendar-video u-full-bleed">
-    <div class="calendar-video__media">
-      <video
-        playsinline
-        autoplay
-        muted
-        loop
-        preload="metadata"
-        poster={galleryImageSrcSmall || heroImageSrc}
-      >
-        {#each featureVideoSources as { src, type } (src)}
-          <source src={src} type={type} />
-        {/each}
-      </video>
+    <div class="calendar-video__wrap">
+      <div class="calendar-video__media">
+        <video
+          playsinline
+          autoplay
+          muted
+          loop
+          preload="metadata"
+          poster={galleryImageSrcSmall || heroImageSrc}
+        >
+          {#each featureVideoSources as { src, type } (src)}
+            <source src={src} type={type} />
+          {/each}
+        </video>
+      </div>
     </div>
   </section>
 
@@ -127,9 +128,6 @@
         loading="lazy"
         decoding="async"
       />
-      <div class="calendar-gallery__caption">
-        <h2 class="calendar-gallery__title">{t('calendario.story_title')}</h2>
-      </div>
     </div>
   </section>
 
