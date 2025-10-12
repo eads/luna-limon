@@ -2,6 +2,13 @@
 
 export function Services() {
   const stage = $app.stage;
+  const siteDomain = stage === "prod" ? "lunalimon.co.com" : `${stage}.lunalimon.co.com`;
+  const siteOrigin = stage === "prod" ? "https://lunalimon.co.com" : `https://${siteDomain}`;
+  const allowedImageHosts = [
+    "airtableusercontent.com",
+    siteDomain,
+    ...(stage === "prod" ? ["www.lunalimon.co.com"] : []),
+  ];
 
   /* ───────────────── existing resources ───────────────────── */
   const resizer = new sst.aws.Function("ImageResizerFn", {
@@ -10,6 +17,11 @@ export function Services() {
     runtime: "nodejs20.x",
     memory: "512 MB",
     url: true,
+    environment: {
+      SST_STAGE: stage,
+      ALLOWED_IMAGE_HOSTS: allowedImageHosts.join(","),
+      SITE_BASE_URL: siteOrigin,
+    },
   });
 
   new sst.Linkable("ImageResizer", {

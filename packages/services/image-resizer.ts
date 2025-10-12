@@ -11,17 +11,47 @@ export const handler = async (event: any) => {
       body: 'Missing image URL'
     };
   }
+  let requestedUrl = imageUrl;
+  const siteBase = process.env.SITE_BASE_URL;
+  if (siteBase && requestedUrl.startsWith('/')) {
+    requestedUrl = siteBase.replace(/\/+$/, '') + requestedUrl;
+  }
+  if (siteBase && requestedUrl.startsWith('://')) {
+    requestedUrl = `https:${requestedUrl}`;
+  }
 
-  // Security: Only allow Airtable URLs
-  if (!imageUrl.includes('airtableusercontent.com')) {
+  const allowedHosts = (process.env.ALLOWED_IMAGE_HOSTS ?? '')
+    .split(',')
+    .map((host) => host.trim().toLowerCase())
+    .filter(Boolean);
+
+  if (!allowedHosts.length) {
+    allowedHosts.push('airtableusercontent.com');
+  }
+
+  let hostname = '';
+  try {
+    hostname = new URL(requestedUrl).hostname.toLowerCase();
+  } catch {
+    return {
+      statusCode: 400,
+      body: 'Invalid image URL'
+    };
+  }
+
+  const hostAllowed = allowedHosts.some((allowed) =>
+    hostname === allowed || hostname.endsWith(`.${allowed}`)
+  );
+
+  if (!hostAllowed) {
     return {
       statusCode: 403,
-      body: 'Only Airtable images are allowed'
+      body: 'Image host not permitted'
     };
   }
 
   try {
-    const response = await fetch(imageUrl);
+    const response = await fetch(requestedUrl);
     if (!response.ok) throw new Error(`Failed to fetch image`);
 
     // ⬇️ Standard Fetch API: use arrayBuffer() instead of buffer()
