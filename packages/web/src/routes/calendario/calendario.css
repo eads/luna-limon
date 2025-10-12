@@ -200,7 +200,7 @@
   color: #f08264;
 }
 .calendar-video {
-  background: #0f0a09;
+  background: #f1f1f3;
   padding: clamp(2.5rem, 7vw, 4.5rem) 0;
 }
 .calendar-video__media {
@@ -208,7 +208,7 @@
   max-height: 90vh;
   margin: 0 auto;
   overflow: hidden;
-  box-shadow: 0 38px 80px -36px rgba(10, 4, 2, 0.6);
+  box-shadow: 0 38px 80px -36px rgba(10, 4, 2, 0.4);
   border-radius: clamp(1rem, 3vw, 1.6rem);
   aspect-ratio: 16 / 9;
 }
@@ -251,6 +251,7 @@
   }
   .calendar-video__media {
     border-radius: clamp(0.75rem, 4vw, 1.2rem);
+    max-width: 100%;
     max-height: 90vh;
     aspect-ratio: 9 / 16;
   }
