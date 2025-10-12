@@ -12,7 +12,7 @@ export const load: LayoutServerLoad = async ({ setHeaders }) => {
   const locale: 'en' | 'es' = getLocale();
   const stage = process.env.SST_STAGE ?? 'staging';
   const isProd = stage === 'prod' || stage === 'production';
-  const ttl = isProd ? 86_400 : 300; // prod: 24h, staging/dev: 5m
+  const ttl = isProd ? 604800 : 300; // prod: 24h, staging/dev: 5m
 
   // Cache the HTML at the edge; stage-based TTL (avoid duplicate header errors in dev)
   try {
