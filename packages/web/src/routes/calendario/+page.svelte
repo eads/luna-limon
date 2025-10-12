@@ -13,8 +13,6 @@
   // @ts-expect-error - runtime types not generated yet
   import { getLocale, localizeHref } from '$lib/paraglide/runtime.js';
   import { goto } from '$app/navigation';
-  import { browser } from '$app/environment';
-  import { onMount } from 'svelte';
   import { getResizedImageUrl } from '$lib/utils/images';
 
   const nameOf = (p: Product) =>
@@ -24,9 +22,10 @@
   const calendar = $derived(data.products?.[0]);
   let flash = $state(false);
 
-  let heroDimmed = $state(false);
-  let galleryDimmed = $state(false);
-  let gallerySection: HTMLElement | null = null;
+  const heroImageSrc = getResizedImageUrl('/images/IMG_5710.jpg', 1600);
+  const heroImageSrcSmall = getResizedImageUrl('/images/IMG_5710.jpg', 800);
+  const galleryImageSrc = getResizedImageUrl('/images/IMG_5716.jpg', 1600);
+  const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_5716.jpg', 800);
 
   function addNow() {
     if (!calendar) return;
@@ -35,64 +34,57 @@
     setTimeout(() => (flash = false), 700);
     goto(localizeHref('/pagar'));
   }
-
-  onMount(() => {
-    if (!browser) return;
-    const handleScroll = () => {
-      const y = window.scrollY || document.documentElement.scrollTop || 0;
-      heroDimmed = y > window.innerHeight * 0.3;
-
-      if (gallerySection) {
-        const rect = gallerySection.getBoundingClientRect();
-        const trigger = window.innerHeight * 0.45;
-        galleryDimmed = rect.top < trigger;
-      }
-    };
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  });
 </script>
 
+<svelte:head>
+  <link rel="preload" as="image" href={heroImageSrc} fetchpriority="high" />
+</svelte:head>
 <style>
-  .calendar-visual {
+  .calendar-hero {
     position: relative;
-    height: min(80vh, 620px);
-    overflow: hidden;
+    min-height: clamp(420px, 72vh, 640px);
     display: flex;
     align-items: flex-end;
     justify-content: center;
+    color: #fef9f4;
   }
-  .calendar-visual__image {
+  .calendar-hero__media {
     position: absolute;
     inset: 0;
+    overflow: hidden;
+  }
+  .calendar-hero__img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center 48%;
-    transform-origin: center;
-    transition: transform 480ms ease, opacity 320ms ease;
   }
-  .calendar-visual.dimmed .calendar-visual__image {
-    opacity: 0.52;
-    transform: scale(1.045) translateY(-2%);
+  .calendar-hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(22, 12, 8, 0) 0%,
+      rgba(22, 12, 8, 0) 48%,
+      rgba(22, 12, 8, 0.4) 72%,
+      rgba(22, 12, 8, 0.72) 100%
+    );
   }
-  .calendar-visual__title {
+  .calendar-hero__content {
     position: relative;
     z-index: 1;
-    margin-bottom: clamp(2rem, 7vw, 3.5rem);
-    padding: 0 clamp(1.5rem, 6vw, 3rem);
-    font-size: clamp(2.6rem, 6.2vw, 3.9rem);
-    line-height: 1.08;
-    font-weight: 600;
-    color: #fefaf6;
-    text-shadow: 0 12px 30px rgba(12, 6, 4, 0.42);
-    text-wrap: balance;
-    transition: transform 480ms ease;
-    font-family: 'Etania Ezra Script', cursive;
+    width: 100%;
+    padding: clamp(3rem, 12vw, 5.5rem) clamp(1.5rem, 6vw, 3.5rem);
+    text-align: center;
   }
-  .calendar-visual.dimmed .calendar-visual__title {
-    transform: translateY(-4vh);
+  .calendar-hero__title {
+    font-size: clamp(2.9rem, 7vw, 4.7rem);
+    line-height: 1.08;
+    font-weight: 500;
+    text-wrap: balance;
+    margin: 0;
+    text-shadow: 0 12px 32px rgba(12, 6, 4, 0.62);
+    font-family: 'Elgraine', 'Aceh', 'Helvetica Neue', sans-serif;
   }
   .calendar-primary {
     background: rgba(255, 255, 255, 0.92);
@@ -153,47 +145,35 @@
     box-shadow: 0 0 0 4px rgba(240, 130, 100, 0.18);
   }
   .calendar-gallery {
-    position: relative;
-    overflow: hidden;
     background: #f4f1f9;
-    margin-bottom: clamp(3rem, 12vw, 7rem);
+    padding: clamp(3rem, 9vw, 5.5rem) 0;
   }
   .calendar-gallery__media {
     position: relative;
-    height: min(72vh, 580px);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
+    max-width: 72rem;
+    margin: 0 auto;
   }
   .calendar-gallery__img {
-    position: absolute;
-    inset: 0;
+    display: block;
     width: 100%;
-    height: 100%;
+    height: min(68vh, 520px);
     object-fit: cover;
     object-position: center 52%;
-    transform-origin: center;
-    transition: transform 480ms ease, opacity 320ms ease;
   }
-  .calendar-gallery.dimmed .calendar-gallery__img {
-    opacity: 0.58;
-    transform: scale(1.045) translateY(-2%);
+  .calendar-gallery__caption {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: clamp(1.9rem, 5vw, 3rem) clamp(1.5rem, 6vw, 3rem);
+    background: linear-gradient(0deg, rgba(18, 10, 6, 0.78) 0%, rgba(18, 10, 6, 0) 70%);
+    color: #faf6ff;
+    text-align: center;
   }
   .calendar-gallery__title {
-    position: relative;
-    z-index: 1;
-    padding: 0 clamp(1.5rem, 6vw, 3rem) clamp(2.5rem, 8vw, 4rem);
     font-size: clamp(2.1rem, 5vw, 3.2rem);
     line-height: 1.12;
-    font-weight: 600;
-    color: #faf6ff;
-    text-shadow: 0 10px 26px rgba(22, 12, 6, 0.4);
+    font-weight: 500;
     text-wrap: balance;
-    transition: transform 480ms ease;
-    font-family: 'Etania Ezra Script', cursive;
-  }
-  .calendar-gallery.dimmed .calendar-gallery__title {
-    transform: translateY(-3vh);
+    font-family: 'Elgraine', 'Aceh', 'Helvetica Neue', sans-serif;
   }
   .calendar-story {
     background: rgba(255, 255, 255, 0.88);
@@ -257,12 +237,8 @@
     }
   }
   @media (max-width: 640px) {
-    .calendar-visual {
-      height: 66vh;
-    }
-    .calendar-visual__image {
-      height: 66vh;
-      object-position: center 52%;
+    .calendar-hero {
+      min-height: 60vh;
     }
     .calendar-primary__wrap {
       gap: 1.4rem;
@@ -275,30 +251,36 @@
       width: 100%;
       justify-content: center;
     }
-    .calendar-gallery__media {
-      height: 60vh;
-    }
     .calendar-gallery__img {
-      height: 60vh;
+      height: min(60vh, 420px);
       object-position: center 54%;
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .calendar-visual__image,
-    .calendar-visual.dimmed .calendar-visual__image,
     .calendar-primary__button,
     .calendar-primary__button.flash {
       transition: none;
     }
+  }
+
+  .calendar-ending {
+    min-height: clamp(5rem, 14vw, 9rem);
+    background: #fffdf8;
   }
 </style>
 
 {#if !calendar}
   <p class="text-gray-500">{t('calendario.vacio')}</p>
 {:else}
-  <section class="calendar-visual u-full-bleed" class:dimmed={heroDimmed}>
-    <img class="calendar-visual__image" src={getResizedImageUrl('/images/IMG_5710.jpg', 1600)} alt={nameOf(calendar)} loading="eager" decoding="async" />
-    <h1 class="calendar-visual__title">{t('calendario.hero_title')}</h1>
+  <section class="calendar-hero u-full-bleed">
+    <picture class="calendar-hero__media">
+      <source srcset={`${heroImageSrcSmall} 800w, ${heroImageSrc} 1600w`} sizes="(max-width: 768px) 100vw, 1600px" />
+      <img class="calendar-hero__img" src={heroImageSrc} alt={nameOf(calendar)} loading="eager" fetchpriority="high" />
+    </picture>
+    <span class="calendar-hero__scrim" aria-hidden="true"></span>
+    <div class="calendar-hero__content">
+      <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
+    </div>
   </section>
 
   <section class="calendar-primary u-full-bleed">
@@ -319,10 +301,20 @@
     </div>
   </section>
 
-  <section class="calendar-gallery u-full-bleed" bind:this={gallerySection} class:dimmed={galleryDimmed}>
+  <section class="calendar-gallery u-full-bleed">
     <div class="calendar-gallery__media">
-      <img class="calendar-gallery__img" src={getResizedImageUrl('/images/IMG_5716.jpg', 1600)} alt={nameOf(calendar)} loading="lazy" />
-      <h2 class="calendar-gallery__title">{t('calendario.story_title')}</h2>
+      <img
+        class="calendar-gallery__img"
+        src={galleryImageSrc}
+        srcset={`${galleryImageSrcSmall} 800w, ${galleryImageSrc} 1600w`}
+        sizes="(max-width: 768px) 100vw, 1600px"
+        alt={nameOf(calendar)}
+        loading="lazy"
+        decoding="async"
+      />
+      <div class="calendar-gallery__caption">
+        <h2 class="calendar-gallery__title">{t('calendario.story_title')}</h2>
+      </div>
     </div>
   </section>
 
@@ -339,4 +331,6 @@
       </div>
     </div>
   </section>
+
+  <section class="calendar-ending u-full-bleed" aria-hidden="true"></section>
 {/if}
