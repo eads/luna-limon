@@ -38,6 +38,7 @@
 
   const heroImageSrc = getResizedImageUrl('/images/IMG_5710.jpg', 1600);
   const heroImageSrcSmall = getResizedImageUrl('/images/IMG_5710.jpg', 800);
+  const heroImageFallback = '/images/IMG_5710.jpg';
   const galleryImageSrc = getResizedImageUrl('/images/IMG_5882.jpg', 1600);
   const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_5882.jpg', 800);
   const videoPosterSrc = getResizedImageUrl('/images/IMG_5882.jpg', 1280);
@@ -67,8 +68,17 @@
 {:else}
   <section class="calendar-hero u-full-bleed">
     <picture class="calendar-hero__media">
-      <source srcset={`${heroImageSrcSmall} 800w, ${heroImageSrc} 1600w`} sizes="(max-width: 768px) 100vw, 1600px" />
-      <img class="calendar-hero__img" src={heroImageSrc} alt={nameOf(calendar)} loading="eager" fetchpriority="high" />
+      <source
+        srcset={`${heroImageSrcSmall} 800w, ${heroImageSrc} 1600w`}
+        sizes="(max-width: 768px) 100vw, 1600px"
+        type="image/webp"
+      />
+      <source
+        srcset={`${heroImageFallback} 800w, ${heroImageFallback} 1600w`}
+        sizes="(max-width: 768px) 100vw, 1600px"
+        type="image/jpeg"
+      />
+      <img class="calendar-hero__img" src={heroImageFallback} alt={nameOf(calendar)} loading="eager" fetchpriority="high" />
     </picture>
     <span class="calendar-hero__scrim" aria-hidden="true"></span>
     <div class="calendar-hero__content">
