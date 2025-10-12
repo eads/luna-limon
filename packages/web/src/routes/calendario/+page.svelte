@@ -38,9 +38,26 @@
 
   const heroImageSrc = getResizedImageUrl('/images/IMG_5710.jpg', 1600);
   const heroImageSrcSmall = getResizedImageUrl('/images/IMG_5710.jpg', 800);
-  const galleryImageSrc = getResizedImageUrl('/images/IMG_5882.HEIC', 1600);
-  const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_5882.HEIC', 800);
-  const featureVideoSrc = '/video/IMG_5880.MOV';
+  const galleryPrimaryPath = '/images/IMG_5882.HEIC';
+  const galleryFallbackPath = '/images/IMG_5716.jpg';
+  const galleryImageSrc = getResizedImageUrl(galleryPrimaryPath, 1600);
+  const galleryImageSrcSmall = getResizedImageUrl(galleryPrimaryPath, 800);
+  const galleryImageEffective = $derived(() => {
+    const src = galleryImageSrc || '';
+    return src.toLowerCase().endsWith('.heic')
+      ? getResizedImageUrl(galleryFallbackPath, 1600)
+      : src;
+  });
+  const galleryImageEffectiveSmall = $derived(() => {
+    const src = galleryImageSrcSmall || '';
+    return src.toLowerCase().endsWith('.heic')
+      ? getResizedImageUrl(galleryFallbackPath, 800)
+      : src;
+  });
+  const featureVideoSources = $derived(() => [
+    { src: '/video/IMG_5880.mp4', type: 'video/mp4' },
+    { src: '/video/IMG_5880.MOV', type: 'video/quicktime' }
+  ]);
 
   function addNow() {
     if (!calendar) return;
@@ -102,10 +119,11 @@
         muted
         loop
         preload="metadata"
-        poster={galleryImageSrcSmall || heroImageSrc}
+        poster={galleryImageEffectiveSmall || heroImageSrc}
       >
-        <source src={featureVideoSrc} type="video/quicktime" />
-        <source src={featureVideoSrc} type="video/mp4" />
+        {#each featureVideoSources as source}
+          <source src={source.src} type={source.type} />
+        {/each}
       </video>
     </div>
   </section>
@@ -114,8 +132,8 @@
     <div class="calendar-gallery__media">
       <img
         class="calendar-gallery__img"
-        src={galleryImageSrc}
-        srcset={`${galleryImageSrcSmall} 800w, ${galleryImageSrc} 1600w`}
+        src={galleryImageEffective}
+        srcset={`${galleryImageEffectiveSmall} 800w, ${galleryImageEffective} 1600w`}
         sizes="(max-width: 768px) 100vw, 1600px"
         alt={nameOf(calendar)}
         loading="lazy"
