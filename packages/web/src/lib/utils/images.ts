@@ -1,26 +1,25 @@
 // $lib/utils/images.ts
 import { dev } from '$app/environment';
 
-// We'll set this via environment variable in production
-const RESIZER_URL = dev ? null : process.env.RESIZER_URL;
+// We'll set this via environment variable in production (used by server proxy)
+const HAS_RESIZER = !dev && Boolean(process.env.RESIZER_URL);
+const CDN_RESIZER_PATH = '/_image';
 
 /**
  * Generate a resized image URL using our Lambda function
  */
 export function getResizedImageUrl(originalUrl: string, width: number = 400): string {
   if (!originalUrl) return '';
-  
-  // In dev mode or if no resizer URL, just return the original URL
-  if (dev || !RESIZER_URL) {
+
+  // In dev mode or if the resizer isn't configured, fall back to original URL
+  if (dev || !HAS_RESIZER) {
     return originalUrl;
   }
-  
-  const params = new URLSearchParams({
-    url: originalUrl,
-    w: width.toString()
-  });
-  
-  return `${RESIZER_URL}?${params.toString()}`;
+
+  const params = new URLSearchParams({ url: originalUrl });
+  if (width) params.set('w', width.toString());
+
+  return `${CDN_RESIZER_PATH}?${params.toString()}`;
 }
 
 /**
