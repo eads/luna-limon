@@ -58,8 +58,13 @@ export const handler = async (event: any) => {
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const resized = await sharp(buffer)
-      .resize(width)          // keep existing behaviour
+    const pipeline = sharp(buffer, { failOn: 'none' }).rotate();
+
+    if (Number.isFinite(width) && width > 0) {
+      pipeline.resize(width); // keep existing behaviour
+    }
+
+    const resized = await pipeline
       .toFormat('jpeg')       // ensure consistent output type
       .toBuffer();
 

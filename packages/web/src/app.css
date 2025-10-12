@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
@@ -6,6 +7,14 @@
   font-family: 'Etania Ezra Script';
   src: url('/fonts/EtaniaEzraScript-Regular.ttf') format('truetype');
   font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Etania Ezra Script';
+  src: url('/fonts/EtaniaEzraScript-Bold.ttf') format('truetype');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
@@ -22,14 +31,6 @@
   font-family: 'Elgraine';
   src: url('/fonts/Elgraine-Bold.woff') format('woff');
   font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Aceh';
-  src: url('/fonts/Aceh-Regular.ttf') format('truetype');
-  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
