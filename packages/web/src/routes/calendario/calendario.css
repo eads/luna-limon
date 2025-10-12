@@ -233,8 +233,11 @@
     aspect-ratio: 9 / 16;
   }
   .calendar-video__media video {
-    object-fit: contain;
-    background: #050302;
+    width: 100%;
+    height: auto;
+    max-height: 55vh;
+    display: block;
+    margin: 0 auto;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -246,4 +249,14 @@
 .calendar-ending {
   min-height: clamp(5rem, 14vw, 9rem);
   background: #fffdf8;
+}
+
+@media (max-width: 640px) {
+  .calendar-video__media video {
+    width: 100%;
+    height: auto;
+    max-height: 55vh;
+    display: block;
+    margin: 0 auto;
+  }
 }
