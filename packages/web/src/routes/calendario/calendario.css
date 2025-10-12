@@ -98,12 +98,12 @@
   font-family: 'Etania Ezra Script', 'Montserrat', 'Helvetica Neue', sans-serif;
   font-weight: 700;
   font-size: clamp(3rem, 6.4vw, 3.9rem);
-  line-height: 0.78;
-  float: left;
-  margin-right: 0.45rem;
-  margin-top: 0.08em;
-  color: rgba(36, 18, 26, 0.92);
+  line-height: 1;
   display: inline-block;
+  vertical-align: baseline;
+  transform: translateY(-0.18em);
+  margin-right: 0.45rem;
+  color: rgba(36, 18, 26, 0.92);
 }
 .calendar-gallery {
   background: #f4f1f9;
@@ -221,8 +221,7 @@
   }
   .calendar-primary__drop {
     font-size: clamp(2.8rem, 12vw, 3.4rem);
-    margin-top: 0.05em;
-    margin-right: 0.35rem;
+    transform: translateY(-0.2em);
   }
   .calendar-gallery__img {
     height: min(60vh, 420px);
