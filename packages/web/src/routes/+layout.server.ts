@@ -11,7 +11,8 @@ const COPY_TABLE = process.env.AIRTABLE_COPY_TABLE || process.env.AIRTABLE_TABLE
 export const load: LayoutServerLoad = async ({ setHeaders }) => {
   const locale: 'en' | 'es' = getLocale();
   const stage = process.env.SST_STAGE ?? 'staging';
-  const ttl = stage === 'production' ? 3600 : 300; // staging: 5m, production: 1h
+  const isProd = stage === 'prod' || stage === 'production';
+  const ttl = isProd ? 86_400 : 300; // prod: 24h, staging/dev: 5m
 
   // Cache the HTML at the edge; stage-based TTL (avoid duplicate header errors in dev)
   try {

@@ -3,7 +3,7 @@ import { RESIZER_URL } from '$env/static/private';
 
 const stage = process.env.SST_STAGE ?? 'staging';
 const isProd = stage === 'prod' || stage === 'production';
-const edgeTtl = isProd ? 3600 : 300;
+const edgeTtl = isProd ? 86_400 : 300;
 const cacheHeader = `public, s-maxage=${edgeTtl}, stale-while-revalidate=60`;
 
 export const GET: RequestHandler = async ({ url }) => {
