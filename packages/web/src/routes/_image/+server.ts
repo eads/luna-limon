@@ -41,7 +41,7 @@ export const GET: RequestHandler = async ({ url }) => {
   }
 
   const buffer = await response.arrayBuffer();
-  const contentType = response.headers.get('content-type') ?? 'image/jpeg';
+  const contentType = 'image/webp';
 
   return new Response(buffer, {
     status: 200,

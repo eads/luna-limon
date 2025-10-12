@@ -105,7 +105,6 @@
           muted
           loop
           preload="metadata"
-          poster={galleryImageSrcSmall || heroImageSrc}
         >
           {#each featureVideoSources as { src, type } (src)}
             <source src={src} type={type} />

@@ -65,7 +65,7 @@ export const handler = async (event: any) => {
     }
 
     const resized = await pipeline
-      .toFormat('jpeg')       // ensure consistent output type
+      .toFormat('webp', { quality: 85 })       // ensure consistent output type
       .toBuffer();
 
     return {
