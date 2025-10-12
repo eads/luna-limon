@@ -40,9 +40,11 @@
   const heroImageSrcSmall = getResizedImageUrl('/images/IMG_5710.jpg', 800);
   const galleryImageSrc = getResizedImageUrl('/images/IMG_5882.jpg', 1600);
   const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_5882.jpg', 800);
+  const videoPosterSrc = galleryImageSrcSmall;
   const featureVideoSources = [
-    { src: '/video/IMG_5880.webm', type: 'video/webm' },
-    { src: '/video/IMG_5880.mp4', type: 'video/mp4' },
+    { src: '/video/IMG_5880-mobile.webm', type: 'video/webm', media: '(max-width: 640px)' },
+    { src: '/video/IMG_5880-desktop.webm', type: 'video/webm' },
+    { src: '/video/IMG_5880-desktop.mp4', type: 'video/mp4' },
     { src: '/video/IMG_5880.MOV', type: 'video/quicktime' }
   ];
 
@@ -106,10 +108,14 @@
           muted
           loop
           preload="metadata"
-          poster={galleryImageSrcSmall}
+          poster={videoPosterSrc}
         >
-          {#each featureVideoSources as { src, type } (src)}
-            <source src={src} type={type} />
+          {#each featureVideoSources as source (source.src)}
+            {#if source.media}
+              <source src={source.src} type={source.type} media={source.media} />
+            {:else}
+              <source src={source.src} type={source.type} />
+            {/if}
           {/each}
         </video>
       </div>
