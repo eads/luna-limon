@@ -234,10 +234,9 @@
   }
   .calendar-video__media video {
     width: 100%;
-    height: auto;
+    height: 100%;
     max-height: 55vh;
-    display: block;
-    margin: 0 auto;
+    object-fit: cover;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -251,12 +250,3 @@
   background: #fffdf8;
 }
 
-@media (max-width: 640px) {
-  .calendar-video__media video {
-    width: 100%;
-    height: auto;
-    max-height: 55vh;
-    display: block;
-    margin: 0 auto;
-  }
-}
