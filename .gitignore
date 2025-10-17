@@ -30,3 +30,8 @@ vite.config.ts.timestamp-*
 
 #svelte-kit
 .svelte-kit
+
+# static files
+packages/web/static/fonts/
+packages/web/static/video/
+packages/web/static/images/
