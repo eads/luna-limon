@@ -116,7 +116,7 @@
       </div>
     </div>
 
-    <div class="calendar-video__wrap">
+    <div class="calendar-video__wrap calendar-media-block">
       <div class="calendar-video__media">
         <video
           playsinline
@@ -137,40 +137,12 @@
       </div>
     </div>
 
-    <!-- <picture class="calendar-hero__picture">
-      <source
-        media="(min-width: 1280px)"
-        srcset={`${heroImageDesktopMd} 2000w, ${heroImageDesktopLg} 2800w`}
-        sizes="100vw"
-      />
-      <source
-        media="(min-width: 768px)"
-        srcset={`${heroImageDesktopSm} 1400w, ${heroImageDesktopMd} 2000w`}
-        sizes="100vw"
-      />
-      <source
-        media="(min-width: 480px)"
-        srcset={`${heroImageMobileSm} 900w, ${heroImageMobileLg} 1600w`}
-        sizes="100vw"
-      />
-      <img
-        class="calendar-hero__image"
-        src={heroImageMobileLg}
-        srcset={`${heroImageMobileSm} 900w, ${heroImageMobileLg} 1600w`}
-        sizes="100vw"
-        alt={nameOf(calendar)}
-        loading="eager"
-        fetchpriority="high"
-      />
-    </picture>
-    // -->
   </section>
 
   <section class="calendar-primary u-full-bleed">
     <div class="u-content-wrap">
       <div class="calendar-primary__wrap">
         <div class="calendar-primary__text">
-          
           <p class="calendar-primary__body">
             {#if heroSubtitleParts.lead}
               <span class="calendar-primary__drop">{heroSubtitleParts.lead}</span>{heroSubtitleParts.rest}
@@ -179,16 +151,12 @@
             {/if}
           </p>
         </div>
-        <picture class="calendar-primary__media" aria-hidden="true">
+        <picture class="calendar-primary__media calendar-media-block" aria-hidden="true">
           <source media="(min-width: 768px)" srcset={`${highlightImageSrc} 1600w`} sizes="40vw" />
           <img class="calendar-primary__media-img" src={highlightImageSrcSmall} alt="" loading="lazy" />
         </picture>
       </div>
     </div>
-  </section>
-
-  <section class="calendar-video u-full-bleed">
-
   </section>
 
   <section class="calendar-story u-full-bleed">
@@ -208,7 +176,7 @@
 
 
   <section class="calendar-gallery u-full-bleed">
-    <div class="calendar-gallery__media">
+    <div class="calendar-gallery__media calendar-media-block">
       <img
         class="calendar-gallery__img"
         src={galleryImageSrc}
