@@ -215,14 +215,19 @@
 @media (max-width: 640px) {
   .calendar-video__media {
     aspect-ratio: 4 / 5;
-    border-radius: 0;
-    box-shadow: none;
+    border-radius: clamp(16px, 6vw, 24px);
+    box-shadow: 0 24px 48px -28px rgba(17, 6, 11, 0.3);
   }
 
   .calendar-media-block {
     width: 100vw;
     max-width: none;
     margin-inline: calc((100% - 100vw) / 2);
+  }
+
+  .calendar-video__wrap.calendar-media-block {
+    width: calc(100vw - clamp(1.5rem, 8vw, 2.75rem));
+    margin-inline: auto;
   }
 
   .calendar-primary__media-img,
