@@ -38,14 +38,16 @@
   const heroSubtitleText = $derived(t('calendario.hero_subtitle'));
   const heroSubtitleParts = $derived(splitFirstWord(heroSubtitleText));
 
-  const heroImageSrc = getResizedImageUrl('/images/IMG_6395.jpg', 2200);
-  const heroImageLarge = getResizedImageUrl('/images/IMG_6395.jpg', 2800);
-  const heroImageSrcSmall = getResizedImageUrl('/images/IMG_6395.jpg', 960);
+  const heroImageDesktopLg = getResizedImageUrl('/images/IMG_6395-horizontal.jpg', 2800);
+  const heroImageDesktopMd = getResizedImageUrl('/images/IMG_6395-horizontal.jpg', 2000);
+  const heroImageDesktopSm = getResizedImageUrl('/images/IMG_6395-horizontal.jpg', 1400);
+  const heroImageMobileLg = getResizedImageUrl('/images/IMG_6395-vertical.jpg', 1600);
+  const heroImageMobileSm = getResizedImageUrl('/images/IMG_6395-vertical.jpg', 900);
   const highlightImageSrc = getResizedImageUrl('/images/IMG_6403.jpg', 1600);
   const highlightImageSrcSmall = getResizedImageUrl('/images/IMG_6403.jpg', 820);
   const galleryImageSrc = getResizedImageUrl('/images/IMG_6403.jpg', 1600);
   const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_6403.jpg', 800);
-  const videoPosterSrc = getResizedImageUrl('/images/IMG_6395.jpg', 1280);
+  const videoPosterSrc = getResizedImageUrl('/images/IMG_6395-horizontal.jpg', 1280);
   const featureVideoSources = [
     { src: '/video/IMG_5880-mobile.webm', type: 'video/webm', media: '(max-width: 640px)' },
     { src: '/video/IMG_5880-desktop.webm', type: 'video/webm' },
@@ -83,7 +85,15 @@
 </script>
 
 <svelte:head>
-  <link rel="preload" as="image" href={heroImageSrc} fetchpriority="high" />
+  <link
+    rel="preload"
+    as="image"
+    href={heroImageDesktopMd}
+    imagesrcset={`${heroImageDesktopSm} 1400w, ${heroImageDesktopMd} 2000w, ${heroImageDesktopLg} 2800w`}
+    imagesizes="(min-width: 768px) 100vw, 100vw"
+    fetchpriority="high"
+  />
+  <link rel="preload" as="image" href={heroImageMobileLg} media="(max-width: 767px)" />
 </svelte:head>
 
 
@@ -97,18 +107,25 @@
   >
     <picture class="calendar-hero__picture">
       <source
-        media="(min-width: 1024px)"
-        srcset={`${heroImageSrc} 2200w, ${heroImageLarge} 2800w`}
+        media="(min-width: 1280px)"
+        srcset={`${heroImageDesktopMd} 2000w, ${heroImageDesktopLg} 2800w`}
         sizes="100vw"
       />
       <source
-        media="(min-width: 640px)"
-        srcset={`${heroImageSrcSmall} 960w, ${heroImageSrc} 2200w`}
+        media="(min-width: 768px)"
+        srcset={`${heroImageDesktopSm} 1400w, ${heroImageDesktopMd} 2000w`}
+        sizes="100vw"
+      />
+      <source
+        media="(min-width: 480px)"
+        srcset={`${heroImageMobileSm} 900w, ${heroImageMobileLg} 1600w`}
         sizes="100vw"
       />
       <img
         class="calendar-hero__image"
-        src={heroImageSrc}
+        src={heroImageMobileLg}
+        srcset={`${heroImageMobileSm} 900w, ${heroImageMobileLg} 1600w`}
+        sizes="100vw"
         alt={nameOf(calendar)}
         loading="eager"
         fetchpriority="high"
