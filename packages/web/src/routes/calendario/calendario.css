@@ -215,8 +215,8 @@
 @media (max-width: 640px) {
   .calendar-video__media {
     aspect-ratio: 4 / 5;
-    border-radius: clamp(16px, 6vw, 24px);
-    box-shadow: 0 24px 48px -28px rgba(17, 6, 11, 0.3);
+    border-radius: 0;
+    box-shadow: 0 26px 42px -32px rgba(17, 6, 11, 0.32);
   }
 
   .calendar-media-block {
@@ -226,7 +226,7 @@
   }
 
   .calendar-video__wrap.calendar-media-block {
-    width: calc(100vw - clamp(1.5rem, 8vw, 2.75rem));
+    width: calc(100vw - clamp(3rem, 14vw, 4.75rem));
     margin-inline: auto;
   }
 
