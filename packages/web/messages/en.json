@@ -86,5 +86,14 @@
   },
   "desayuno": {
     "etiqueta_catalogo": "Choose your breakfast"
+  },
+  "inicio": {
+    "hero": {
+      "eyebrow": "Handcrafted breakfasts",
+      "title": "Bloom-filled mornings made to share",
+      "copy": "Start the day with handmade trays, seasonal bites, and little details that turn moments into memories.",
+      "cta": "Browse the menu",
+      "image_alt": "Handcrafted breakfast tray from Luna Limón with flowers and fruit"
+    }
   }
 }

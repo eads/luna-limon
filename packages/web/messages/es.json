@@ -86,5 +86,14 @@
   },
   "desayuno": {
     "etiqueta_catalogo": "Elija su desayuno"
+  },
+  "inicio": {
+    "hero": {
+      "eyebrow": "Desayunos artesanales",
+      "title": "Flores, colores y el saborcito que enamora",
+      "copy": "Comienza el día con bandejas hechas a mano, ingredientes frescos y detalles que celebran cada momento especial.",
+      "cta": "Ver el menú",
+      "image_alt": "Bandeja de desayuno artesanal de Luna Limón junto a flores y frutas"
+    }
   }
 }

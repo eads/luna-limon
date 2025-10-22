@@ -55,6 +55,20 @@ const UMAMI_ID = PUBLIC_UMAMI_SITE_ID || '';
 </script>
 
 <svelte:head>
+  <link
+    rel="preload"
+    href="/fonts/Elgraine-Regular.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+  <link
+    rel="preload"
+    href="/fonts/Elgraine-Bold.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
   {#if UMAMI_ID}
     <script
       defer

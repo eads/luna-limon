@@ -36,13 +36,11 @@
   const heroSubtitleText = $derived(t('calendario.hero_subtitle'));
   const heroSubtitleParts = $derived(splitFirstWord(heroSubtitleText));
 
-  const heroImageSrc = getResizedImageUrl('/images/IMG_5710.jpg', 1600);
-  const heroImageSrcSmall = getResizedImageUrl('/images/IMG_5710.jpg', 800);
-  const heroImageFallback = getResizedImageUrl('/images/IMG_5710.jpg', 1600);
-  const heroImageFallbackSmall = getResizedImageUrl('/images/IMG_5710.jpg', 800);
-  const galleryImageSrc = getResizedImageUrl('/images/IMG_5882.jpg', 1600);
-  const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_5882.jpg', 800);
-  const videoPosterSrc = getResizedImageUrl('/images/IMG_5882.jpg', 1280);
+  const heroImageSrc = getResizedImageUrl('/images/IMG_6403.jpg', 1600);
+  const heroImageSrcSmall = getResizedImageUrl('/images/IMG_6403.jpg', 800);
+  const galleryImageSrc = getResizedImageUrl('/images/IMG_6395.jpg', 1600);
+  const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_6395.jpg', 800);
+  const videoPosterSrc = getResizedImageUrl('/images/IMG_6395.jpg', 1280);
   const featureVideoSources = [
     { src: '/video/IMG_5880-mobile.webm', type: 'video/webm', media: '(max-width: 640px)' },
     { src: '/video/IMG_5880-desktop.webm', type: 'video/webm' },
@@ -68,22 +66,29 @@
   <p class="text-gray-500">{t('calendario.vacio')}</p>
 {:else}
   <section class="calendar-hero u-full-bleed">
-    <picture class="calendar-hero__media">
-      <source
-        srcset={`${heroImageSrcSmall} 800w, ${heroImageSrc} 1600w`}
-        sizes="(max-width: 768px) 100vw, 1600px"
-        type="image/webp"
-      />
-      <source
-        srcset={`${heroImageFallbackSmall} 800w, ${heroImageFallback} 1600w`}
-        sizes="(max-width: 768px) 100vw, 1600px"
-        type="image/jpeg"
-      />
-      <img class="calendar-hero__img" src={heroImageFallback} alt={nameOf(calendar)} loading="eager" fetchpriority="high" />
-    </picture>
-    <span class="calendar-hero__scrim" aria-hidden="true"></span>
-    <div class="calendar-hero__content">
-      <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
+    <div class="u-content-wrap">
+      <div class="calendar-hero__content">
+        <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
+      </div>
+      <picture class="calendar-hero__media">
+        <source
+          srcset={`${heroImageSrcSmall} 800w, ${heroImageSrc} 1600w`}
+          sizes="(max-width: 768px) 92vw, 720px"
+          type="image/webp"
+        />
+        <source
+          srcset={`${heroImageSrcSmall} 800w, ${heroImageSrc} 1600w`}
+          sizes="(max-width: 768px) 92vw, 720px"
+          type="image/jpeg"
+        />
+        <img
+          class="calendar-hero__img"
+          src={heroImageSrc}
+          alt={nameOf(calendar)}
+          loading="eager"
+          fetchpriority="high"
+        />
+      </picture>
     </div>
   </section>
 
