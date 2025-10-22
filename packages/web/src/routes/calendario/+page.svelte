@@ -38,13 +38,13 @@
   const heroSubtitleText = $derived(t('calendario.hero_subtitle'));
   const heroSubtitleParts = $derived(splitFirstWord(heroSubtitleText));
 
-  const heroImageSrc = getResizedImageUrl('/images/IMG_6403.jpg', 2200);
-  const heroImageLarge = getResizedImageUrl('/images/IMG_6403.jpg', 2800);
-  const heroImageSrcSmall = getResizedImageUrl('/images/IMG_6403.jpg', 960);
-  const heroAccentSrc = getResizedImageUrl('/images/IMG_6395.jpg', 1600);
-  const heroAccentSrcSmall = getResizedImageUrl('/images/IMG_6395.jpg', 820);
-  const galleryImageSrc = getResizedImageUrl('/images/IMG_6395.jpg', 1600);
-  const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_6395.jpg', 800);
+  const heroImageSrc = getResizedImageUrl('/images/IMG_6395.jpg', 2200);
+  const heroImageLarge = getResizedImageUrl('/images/IMG_6395.jpg', 2800);
+  const heroImageSrcSmall = getResizedImageUrl('/images/IMG_6395.jpg', 960);
+  const highlightImageSrc = getResizedImageUrl('/images/IMG_6403.jpg', 1600);
+  const highlightImageSrcSmall = getResizedImageUrl('/images/IMG_6403.jpg', 820);
+  const galleryImageSrc = getResizedImageUrl('/images/IMG_6403.jpg', 1600);
+  const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_6403.jpg', 800);
   const videoPosterSrc = getResizedImageUrl('/images/IMG_6395.jpg', 1280);
   const featureVideoSources = [
     { src: '/video/IMG_5880-mobile.webm', type: 'video/webm', media: '(max-width: 640px)' },
@@ -116,7 +116,6 @@
     </picture>
     <div class="calendar-hero__scrim" aria-hidden="true"></div>
     <div class="calendar-hero__content">
-      <span class="calendar-hero__eyebrow">{t('calendario.hero_eyebrow')}</span>
       <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
     </div>
   </section>
@@ -125,13 +124,6 @@
     <div class="u-content-wrap">
       <div class="calendar-primary__wrap">
         <div class="calendar-primary__text">
-          <p class="calendar-primary__body">
-            {#if heroSubtitleParts.lead}
-              <span class="calendar-primary__drop">{heroSubtitleParts.lead}</span>{heroSubtitleParts.rest}
-            {:else}
-              {heroSubtitleText}
-            {/if}
-          </p>
           <div class="calendar-primary__cta">
             <button
               class={`calendar-primary__button ${flash ? 'flash' : ''}`}
@@ -141,10 +133,17 @@
               {t('calendario.buy_simple') ?? t('calendario.buy')}
             </button>
           </div>
+          <p class="calendar-primary__body">
+            {#if heroSubtitleParts.lead}
+              <span class="calendar-primary__drop">{heroSubtitleParts.lead}</span>{heroSubtitleParts.rest}
+            {:else}
+              {heroSubtitleText}
+            {/if}
+          </p>
         </div>
         <picture class="calendar-primary__media" aria-hidden="true">
-          <source media="(min-width: 768px)" srcset={`${heroAccentSrc} 1600w`} sizes="40vw" />
-          <img class="calendar-primary__media-img" src={heroAccentSrcSmall} alt="" loading="lazy" />
+          <source media="(min-width: 768px)" srcset={`${highlightImageSrc} 1600w`} sizes="40vw" />
+          <img class="calendar-primary__media-img" src={highlightImageSrcSmall} alt="" loading="lazy" />
         </picture>
       </div>
     </div>
