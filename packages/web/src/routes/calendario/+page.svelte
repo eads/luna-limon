@@ -14,6 +14,8 @@
   import { getLocale, localizeHref } from '$lib/paraglide/runtime.js';
   import { goto } from '$app/navigation';
   import { getResizedImageUrl } from '$lib/utils/images';
+  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
   import './calendario.css';
 
   const splitFirstWord = (text: string) => {
@@ -36,8 +38,11 @@
   const heroSubtitleText = $derived(t('calendario.hero_subtitle'));
   const heroSubtitleParts = $derived(splitFirstWord(heroSubtitleText));
 
-  const heroImageSrc = getResizedImageUrl('/images/IMG_6403.jpg', 1600);
-  const heroImageSrcSmall = getResizedImageUrl('/images/IMG_6403.jpg', 800);
+  const heroImageSrc = getResizedImageUrl('/images/IMG_6403.jpg', 2200);
+  const heroImageLarge = getResizedImageUrl('/images/IMG_6403.jpg', 2800);
+  const heroImageSrcSmall = getResizedImageUrl('/images/IMG_6403.jpg', 960);
+  const heroAccentSrc = getResizedImageUrl('/images/IMG_6395.jpg', 1600);
+  const heroAccentSrcSmall = getResizedImageUrl('/images/IMG_6395.jpg', 820);
   const galleryImageSrc = getResizedImageUrl('/images/IMG_6395.jpg', 1600);
   const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_6395.jpg', 800);
   const videoPosterSrc = getResizedImageUrl('/images/IMG_6395.jpg', 1280);
@@ -48,6 +53,9 @@
     { src: '/video/IMG_5880.MOV', type: 'video/quicktime' }
   ];
 
+  let heroSection: HTMLElement | undefined;
+  let heroProgress = $state(0);
+
   function addNow() {
     if (!calendar) return;
     cart.add(calendar, 1);
@@ -55,6 +63,23 @@
     setTimeout(() => (flash = false), 700);
     goto(localizeHref('/pagar'));
   }
+
+  onMount(() => {
+    if (!browser) return;
+    const handle = () => {
+      if (!heroSection) return;
+      const rect = heroSection.getBoundingClientRect();
+      const progress = rect.height > 0 ? Math.min(Math.max(-rect.top / rect.height, 0), 1) : 0;
+      heroProgress = progress;
+    };
+    handle();
+    window.addEventListener('scroll', handle, { passive: true });
+    window.addEventListener('resize', handle);
+    return () => {
+      window.removeEventListener('scroll', handle);
+      window.removeEventListener('resize', handle);
+    };
+  });
 </script>
 
 <svelte:head>
@@ -65,52 +90,62 @@
 {#if !calendar}
   <p class="text-gray-500">{t('calendario.vacio')}</p>
 {:else}
-  <section class="calendar-hero u-full-bleed">
-    <div class="u-content-wrap">
-      <div class="calendar-hero__content">
-        <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
-      </div>
-      <picture class="calendar-hero__media">
-        <source
-          srcset={`${heroImageSrcSmall} 800w, ${heroImageSrc} 1600w`}
-          sizes="(max-width: 768px) 92vw, 720px"
-          type="image/webp"
-        />
-        <source
-          srcset={`${heroImageSrcSmall} 800w, ${heroImageSrc} 1600w`}
-          sizes="(max-width: 768px) 92vw, 720px"
-          type="image/jpeg"
-        />
-        <img
-          class="calendar-hero__img"
-          src={heroImageSrc}
-          alt={nameOf(calendar)}
-          loading="eager"
-          fetchpriority="high"
-        />
-      </picture>
+  <section
+    class="calendar-hero u-full-bleed"
+    bind:this={heroSection}
+    style={`--hero-progress:${heroProgress}`}
+  >
+    <picture class="calendar-hero__picture">
+      <source
+        media="(min-width: 1024px)"
+        srcset={`${heroImageSrc} 2200w, ${heroImageLarge} 2800w`}
+        sizes="100vw"
+      />
+      <source
+        media="(min-width: 640px)"
+        srcset={`${heroImageSrcSmall} 960w, ${heroImageSrc} 2200w`}
+        sizes="100vw"
+      />
+      <img
+        class="calendar-hero__image"
+        src={heroImageSrc}
+        alt={nameOf(calendar)}
+        loading="eager"
+        fetchpriority="high"
+      />
+    </picture>
+    <div class="calendar-hero__scrim" aria-hidden="true"></div>
+    <div class="calendar-hero__content">
+      <span class="calendar-hero__eyebrow">{t('calendario.hero_eyebrow')}</span>
+      <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
     </div>
   </section>
 
   <section class="calendar-primary u-full-bleed">
     <div class="u-content-wrap">
       <div class="calendar-primary__wrap">
-        <div class="calendar-primary__cta">
-          <button
-            class={`calendar-primary__button ${flash ? 'flash' : ''}`}
-            type="button"
-            onclick={addNow}
-          >
-            {t('calendario.buy_simple') ?? t('calendario.buy')}
-          </button>
+        <div class="calendar-primary__text">
+          <p class="calendar-primary__body">
+            {#if heroSubtitleParts.lead}
+              <span class="calendar-primary__drop">{heroSubtitleParts.lead}</span>{heroSubtitleParts.rest}
+            {:else}
+              {heroSubtitleText}
+            {/if}
+          </p>
+          <div class="calendar-primary__cta">
+            <button
+              class={`calendar-primary__button ${flash ? 'flash' : ''}`}
+              type="button"
+              onclick={addNow}
+            >
+              {t('calendario.buy_simple') ?? t('calendario.buy')}
+            </button>
+          </div>
         </div>
-        <p class="calendar-primary__body">
-          {#if heroSubtitleParts.lead}
-            <span class="calendar-primary__drop">{heroSubtitleParts.lead}</span>{heroSubtitleParts.rest}
-          {:else}
-            {heroSubtitleText}
-          {/if}
-        </p>
+        <picture class="calendar-primary__media" aria-hidden="true">
+          <source media="(min-width: 768px)" srcset={`${heroAccentSrc} 1600w`} sizes="40vw" />
+          <img class="calendar-primary__media-img" src={heroAccentSrcSmall} alt="" loading="lazy" />
+        </picture>
       </div>
     </div>
   </section>
