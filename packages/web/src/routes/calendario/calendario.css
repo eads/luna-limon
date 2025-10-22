@@ -1,20 +1,7 @@
 .calendar-hero {
-  position: relative;
-  min-height: clamp(500px, 88vh, 860px);
-  overflow: hidden;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
   padding: clamp(1.4rem, 4vw, 3rem) clamp(1.25rem, 6vw, 4rem) clamp(2rem, 9vw, 4.5rem);
-  color: #fdf6ee;
-  background: #fffdf8;
 }
-.calendar-hero__picture,
-.calendar-hero__image,
-.calendar-hero__scrim {
-  position: absolute;
-  inset: 0;
-}
+
 .calendar-hero__image {
   width: 100%;
   height: 100%;
@@ -22,30 +9,14 @@
   object-position: center;
   filter: brightness(1.08) saturate(1.08);
 }
-.calendar-hero__scrim {
-  background: linear-gradient(180deg, rgba(12, 6, 8, 0.28) 0%, rgba(12, 6, 8, 0.12) 38%, rgba(12, 6, 8, 0.04) 62%, transparent 82%);
-  pointer-events: none;
-}
-.calendar-hero__content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.4rem, 1.6vw, 1rem);
-  max-width: clamp(18rem, 46vw, 30rem);
-  transform: translateY(calc(var(--hero-progress, 0) * 32px));
-  opacity: clamp(0.35, 1, 1 - (var(--hero-progress, 0) * 1.1));
-  text-align: left;
-}
 .calendar-hero__title {
   font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-size: clamp(2.8rem, 8vw, 5.1rem);
-  line-height: 0.95;
+  font-size: clamp(2.2rem, 6vw, 4.1rem);
+  line-height: 1.15;
   text-wrap: balance;
   margin: 0;
-  font-weight: 600;
-  color: #fff8ed;
-  text-shadow: 0 26px 46px rgba(12, 5, 8, 0.6);
+  font-weight: 400;
+  text-align: center;
 }
 .calendar-primary {
   background: #fff;
@@ -66,22 +37,20 @@
   text-align: left;
 }
 .calendar-primary__cta {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  text-align: center;
 }
 .calendar-primary__button {
-  border-radius: 999px;
-  padding: 0.95rem clamp(2.6rem, 6vw, 3.6rem);
+  border-radius: 20px;
+  padding: 0.25rem clamp(.8rem, 6vw, 1.4rem);
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   border: none;
   color: #25121a;
   background: #fbdcd5;
-  transition: transform 150ms ease, box-shadow 200ms ease, filter 200ms ease;
   font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
-  box-shadow: 0 18px 34px -20px rgba(180, 74, 102, 0.4);
+  margin-top: 1.2rem;
+  margin-bottom: 1.2rem;
 }
 .calendar-primary__button:hover {
   transform: translateY(-2px);
@@ -201,11 +170,10 @@
 .calendar-video__wrap { padding: 0; }
 .calendar-video__media {
   max-width: min(42rem, 88vw);
-  max-height: 75vh;
+  max-height: 65vh;
   min-height: clamp(18rem, 45vh, 32rem);
   margin: 0 auto;
   overflow: hidden;
-  box-shadow: 0 38px 80px -36px rgba(10, 4, 2, 0.4);
   aspect-ratio: 5 / 4;
 }
 .calendar-video__media video {

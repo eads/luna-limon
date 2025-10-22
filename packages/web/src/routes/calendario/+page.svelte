@@ -49,10 +49,8 @@
   const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_6403.jpg', 800);
   const videoPosterSrc = getResizedImageUrl('/images/IMG_6395-horizontal.jpg', 1280);
   const featureVideoSources = [
-    { src: '/video/IMG_5880-mobile.webm', type: 'video/webm', media: '(max-width: 640px)' },
-    { src: '/video/IMG_5880-desktop.webm', type: 'video/webm' },
-    { src: '/video/IMG_5880-desktop.mp4', type: 'video/mp4' },
-    { src: '/video/IMG_5880.MOV', type: 'video/quicktime' }
+    { src: '/video/IMG_6469-mobile.webm', type: 'video/webm', media: '(max-width: 640px)' },
+    { src: '/video/IMG_6472-desktop.webm', type: 'video/webm' },
   ];
 
   let heroSection: HTMLElement | undefined;
@@ -105,7 +103,41 @@
     bind:this={heroSection}
     style={`--hero-progress:${heroProgress}`}
   >
-    <picture class="calendar-hero__picture">
+    <div class="calendar-hero__content">
+      <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
+      <div class="calendar-primary__cta">
+        <button
+          class={`calendar-primary__button ${flash ? 'flash' : ''}`}
+          type="button"
+          onclick={addNow}
+        >
+          {t('calendario.buy_simple') ?? t('calendario.buy')}
+        </button>
+      </div>
+    </div>
+
+    <div class="calendar-video__wrap">
+      <div class="calendar-video__media">
+        <video
+          playsinline
+          autoplay
+          muted
+          loop
+          preload="metadata"
+          poster={videoPosterSrc}
+        >
+          {#each featureVideoSources as source (source.src)}
+            {#if source.media}
+              <source src={source.src} type={source.type} media={source.media} />
+            {:else}
+              <source src={source.src} type={source.type} />
+            {/if}
+          {/each}
+        </video>
+      </div>
+    </div>
+
+    <!-- <picture class="calendar-hero__picture">
       <source
         media="(min-width: 1280px)"
         srcset={`${heroImageDesktopMd} 2000w, ${heroImageDesktopLg} 2800w`}
@@ -131,25 +163,14 @@
         fetchpriority="high"
       />
     </picture>
-    <div class="calendar-hero__scrim" aria-hidden="true"></div>
-    <div class="calendar-hero__content">
-      <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
-    </div>
+    // -->
   </section>
 
   <section class="calendar-primary u-full-bleed">
     <div class="u-content-wrap">
       <div class="calendar-primary__wrap">
         <div class="calendar-primary__text">
-          <div class="calendar-primary__cta">
-            <button
-              class={`calendar-primary__button ${flash ? 'flash' : ''}`}
-              type="button"
-              onclick={addNow}
-            >
-              {t('calendario.buy_simple') ?? t('calendario.buy')}
-            </button>
-          </div>
+          
           <p class="calendar-primary__body">
             {#if heroSubtitleParts.lead}
               <span class="calendar-primary__drop">{heroSubtitleParts.lead}</span>{heroSubtitleParts.rest}
@@ -167,26 +188,7 @@
   </section>
 
   <section class="calendar-video u-full-bleed">
-    <div class="calendar-video__wrap">
-      <div class="calendar-video__media">
-        <video
-          playsinline
-          autoplay
-          muted
-          loop
-          preload="metadata"
-          poster={videoPosterSrc}
-        >
-          {#each featureVideoSources as source (source.src)}
-            {#if source.media}
-              <source src={source.src} type={source.type} media={source.media} />
-            {:else}
-              <source src={source.src} type={source.type} />
-            {/if}
-          {/each}
-        </video>
-      </div>
-    </div>
+
   </section>
 
   <section class="calendar-story u-full-bleed">
