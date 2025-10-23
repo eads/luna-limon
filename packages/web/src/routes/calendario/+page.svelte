@@ -56,10 +56,9 @@
 
   let heroSection: HTMLElement | undefined;
   let heroProgress = $state(0);
-  let stickyObserver: IntersectionObserver | undefined;
   let showStickyCta = $state(false);
   const ctaText = $derived(t('calendario.buy_simple') ?? t('calendario.buy'));
-  let stickySentinel: HTMLElement | undefined;
+  const stickyRevealOffset = 120;
 
   function addNow() {
     if (!calendar) return;
@@ -95,20 +94,14 @@
       const rect = heroSection.getBoundingClientRect();
       const progress = rect.height > 0 ? Math.min(Math.max(-rect.top / rect.height, 0), 1) : 0;
       heroProgress = progress;
+      showStickyCta = rect.bottom <= stickyRevealOffset;
     };
     handle();
     window.addEventListener('scroll', handle, { passive: true });
     window.addEventListener('resize', handle);
-    if (stickySentinel) {
-      stickyObserver = new IntersectionObserver(([entry]) => {
-        showStickyCta = !entry.isIntersecting;
-      }, { threshold: 0, rootMargin: '0px 0px 0px 0px' });
-      stickyObserver.observe(stickySentinel);
-    }
     return () => {
       window.removeEventListener('scroll', handle);
       window.removeEventListener('resize', handle);
-      stickyObserver?.disconnect();
     };
   });
 </script>
@@ -167,8 +160,6 @@
         {ctaText}
       </button>
     </div>
-
-    <div bind:this={stickySentinel} class="calendar-sticky-sentinel" aria-hidden="true"></div>
   </section>
   {#if showStickyCta}
     <div class="calendar-sticky-cta" transition:fade={{ duration: 260, easing: cubicOut }}>
