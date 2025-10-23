@@ -15,6 +15,8 @@
   import { goto } from '$app/navigation';
   import { getResizedImageUrl } from '$lib/utils/images';
   import { onMount } from 'svelte';
+  import { fade } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
   import { browser } from '$app/environment';
   import './calendario.css';
 
@@ -100,7 +102,7 @@
     if (stickySentinel) {
       stickyObserver = new IntersectionObserver(([entry]) => {
         showStickyCta = !entry.isIntersecting;
-      }, { threshold: 0, rootMargin: '-96px 0px 0px 0px' });
+      }, { threshold: 0, rootMargin: '-64px 0px 0px 0px' });
       stickyObserver.observe(stickySentinel);
     }
     return () => {
@@ -143,6 +145,7 @@
           {ctaText}
         </button>
       </div>
+      <div bind:this={stickySentinel} class="calendar-sticky-sentinel" aria-hidden="true"></div>
     </div>
 
     <div class="calendar-video__wrap calendar-media-block" use:fadeIn={{ delay: 80 }}>
@@ -166,11 +169,8 @@
     </div>
 
   </section>
-
-  <div bind:this={stickySentinel} class="calendar-sticky-sentinel" aria-hidden="true"></div>
-
   {#if showStickyCta}
-    <div class="calendar-sticky-cta">
+    <div class="calendar-sticky-cta" transition:fade={{ duration: 260, easing: cubicOut }}>
       <button
         class={`calendar-primary__button ${flash ? 'flash' : ''}`}
         type="button"
