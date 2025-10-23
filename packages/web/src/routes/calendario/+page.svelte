@@ -136,16 +136,6 @@
   >
     <div class="calendar-hero__content">
       <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
-      <div class="calendar-primary__cta">
-        <button
-          class={`calendar-primary__button ${flash ? 'flash' : ''}`}
-          type="button"
-          onclick={addNow}
-        >
-          {ctaText}
-        </button>
-      </div>
-      <div bind:this={stickySentinel} class="calendar-sticky-sentinel" aria-hidden="true"></div>
     </div>
 
     <div class="calendar-video__wrap calendar-media-block" use:fadeIn={{ delay: 80 }}>
@@ -168,6 +158,17 @@
       </div>
     </div>
 
+    <div class="calendar-primary__cta calendar-hero__cta" use:fadeIn={{ delay: 140 }}>
+      <button
+        class={`calendar-primary__button ${flash ? 'flash' : ''}`}
+        type="button"
+        onclick={addNow}
+      >
+        {ctaText}
+      </button>
+    </div>
+
+    <div bind:this={stickySentinel} class="calendar-sticky-sentinel" aria-hidden="true"></div>
   </section>
   {#if showStickyCta}
     <div class="calendar-sticky-cta" transition:fade={{ duration: 260, easing: cubicOut }}>

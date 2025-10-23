@@ -33,6 +33,10 @@
   justify-content: center;
 }
 
+.calendar-hero__cta {
+  margin-top: clamp(1.5rem, 4vw, 2.75rem);
+}
+
 .calendar-primary__button {
   border: none;
   border-radius: 999px;
@@ -215,7 +219,7 @@
 
 @media (max-width: 640px) {
   .calendar-video__media {
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 3 / 4;
     border-radius: 0;
     box-shadow: 0 26px 42px -32px rgba(17, 6, 11, 0.32);
   }
@@ -227,8 +231,8 @@
   }
 
   .calendar-video__wrap.calendar-media-block {
-    width: calc(100vw - clamp(4rem, 20vw, 6rem));
-    margin-inline: auto;
+    width: 100vw;
+    margin-inline: calc((100% - 100vw) / 2);
   }
 
   .calendar-primary__media-img,
