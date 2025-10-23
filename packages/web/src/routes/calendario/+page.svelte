@@ -127,38 +127,36 @@
     bind:this={heroSection}
     style={`--hero-progress:${heroProgress}`}
   >
-    <div class="calendar-hero__content">
-      <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
-    </div>
-
-    <div class="calendar-video__wrap calendar-media-block" use:fadeIn={{ delay: 80 }}>
-      <div class="calendar-video__media">
-        <video
-          playsinline
-          autoplay
-          muted
-          loop
-          preload="metadata"
-        >
-          {#each featureVideoSources as source (source.src)}
-            {#if source.media}
-              <source src={source.src} type={source.type} media={source.media} />
-            {:else}
-              <source src={source.src} type={source.type} />
-            {/if}
-          {/each}
-        </video>
-      </div>
-    </div>
-
-    <div class="calendar-primary__cta calendar-hero__cta" use:fadeIn={{ delay: 140 }}>
-      <button
-        class={`calendar-primary__button ${flash ? 'flash' : ''}`}
-        type="button"
-        onclick={addNow}
+    <div class="calendar-hero__frame calendar-media-block" use:fadeIn={{ delay: 60 }}>
+      <video
+        class="calendar-hero__video"
+        playsinline
+        autoplay
+        muted
+        loop
+        preload="metadata"
       >
-        {ctaText}
-      </button>
+        {#each featureVideoSources as source (source.src)}
+          {#if source.media}
+            <source src={source.src} type={source.type} media={source.media} />
+          {:else}
+            <source src={source.src} type={source.type} />
+          {/if}
+        {/each}
+      </video>
+
+      <div class="calendar-hero__overlay">
+        <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
+        <div class="calendar-primary__cta calendar-hero__cta" use:fadeIn={{ delay: 120 }}>
+          <button
+            class={`calendar-primary__button ${flash ? 'flash' : ''}`}
+            type="button"
+            onclick={addNow}
+          >
+            {ctaText}
+          </button>
+        </div>
+      </div>
     </div>
   </section>
   {#if showStickyCta}
