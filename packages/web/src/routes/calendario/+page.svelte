@@ -54,6 +54,10 @@
 
   let heroSection: HTMLElement | undefined;
   let heroProgress = $state(0);
+  let stickyObserver: IntersectionObserver | undefined;
+  let showStickyCta = $state(false);
+  const ctaText = $derived(t('calendario.buy_simple') ?? t('calendario.buy'));
+  let stickySentinel: HTMLElement | undefined;
 
   function addNow() {
     if (!calendar) return;
@@ -61,6 +65,25 @@
     flash = true;
     setTimeout(() => (flash = false), 700);
     goto(localizeHref('/pagar'));
+  }
+
+  function fadeIn(node: HTMLElement, options?: { delay?: number }) {
+    if (!browser) return;
+    const delay = options?.delay ?? 0;
+    node.classList.add('fade-ready');
+    node.style.setProperty('--fade-delay', `${delay}ms`);
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        node.classList.add('fade-visible');
+        observer.disconnect();
+      }
+    }, { threshold: 0.15 });
+    observer.observe(node);
+    return {
+      destroy() {
+        observer.disconnect();
+      }
+    };
   }
 
   onMount(() => {
@@ -74,9 +97,16 @@
     handle();
     window.addEventListener('scroll', handle, { passive: true });
     window.addEventListener('resize', handle);
+    if (stickySentinel) {
+      stickyObserver = new IntersectionObserver(([entry]) => {
+        showStickyCta = !entry.isIntersecting;
+      }, { threshold: 0, rootMargin: '-96px 0px 0px 0px' });
+      stickyObserver.observe(stickySentinel);
+    }
     return () => {
       window.removeEventListener('scroll', handle);
       window.removeEventListener('resize', handle);
+      stickyObserver?.disconnect();
     };
   });
 </script>
@@ -110,12 +140,12 @@
           type="button"
           onclick={addNow}
         >
-          {t('calendario.buy_simple') ?? t('calendario.buy')}
+          {ctaText}
         </button>
       </div>
     </div>
 
-    <div class="calendar-video__wrap">
+    <div class="calendar-video__wrap calendar-media-block" use:fadeIn={{ delay: 80 }}>
       <div class="calendar-video__media">
         <video
           playsinline
@@ -137,10 +167,24 @@
 
   </section>
 
+  <div bind:this={stickySentinel} class="calendar-sticky-sentinel" aria-hidden="true"></div>
+
+  {#if showStickyCta}
+    <div class="calendar-sticky-cta">
+      <button
+        class={`calendar-primary__button ${flash ? 'flash' : ''}`}
+        type="button"
+        onclick={addNow}
+      >
+        {ctaText}
+      </button>
+    </div>
+  {/if}
+
   <section class="calendar-primary u-full-bleed">
     <div class="u-content-wrap">
       <div class="calendar-primary__wrap">
-        <div class="calendar-primary__text">
+        <div class="calendar-primary__text" use:fadeIn>
           
           <p class="calendar-primary__body">
             {#if heroSubtitleParts.lead}
@@ -152,13 +196,13 @@
         </div>
       </div>
     </div>
-    <picture class="calendar-primary__media" aria-hidden="true">
+    <picture class="calendar-primary__media" aria-hidden="true" use:fadeIn={{ delay: 120 }}>
       <source media="(min-width: 768px)" srcset={`${highlightImageSrc} 1600w`} sizes="40vw" />
       <img class="calendar-primary__media-img" src={highlightImageSrcSmall} alt="" loading="lazy" />
     </picture>
   </section>
 
-  <section class="calendar-story u-full-bleed">
+  <section class="calendar-story u-full-bleed" use:fadeIn>
     <div class="u-content-wrap">
       <div class="calendar-story__wrap">
         <span class="calendar-story__label">{t('calendario.story_placeholder_label')}</span>
@@ -172,8 +216,8 @@
     </div>
   </section>
   
-  <section class="calendar-gallery u-full-bleed">
-    <picture class="calendar-hero__picture">
+  <section class="calendar-gallery u-full-bleed" use:fadeIn={{ delay: 100 }}>
+    <picture class="calendar-gallery__picture calendar-media-block">
       <source
         media="(min-width: 1280px)"
         srcset={`${heroImageDesktopMd} 2000w, ${heroImageDesktopLg} 2800w`}
@@ -190,7 +234,7 @@
         sizes="100vw"
       />
       <img
-        class="calendar-hero__image"
+        class="calendar-gallery__image"
         src={heroImageMobileLg}
         srcset={`${heroImageMobileSm} 900w, ${heroImageMobileLg} 1600w`}
         sizes="100vw"
