@@ -102,7 +102,7 @@
     if (stickySentinel) {
       stickyObserver = new IntersectionObserver(([entry]) => {
         showStickyCta = !entry.isIntersecting;
-      }, { threshold: 0, rootMargin: '-64px 0px 0px 0px' });
+      }, { threshold: 0, rootMargin: '0px 0px 0px 0px' });
       stickyObserver.observe(stickySentinel);
     }
     return () => {

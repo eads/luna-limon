@@ -20,12 +20,12 @@
 
 .calendar-hero__title {
   font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-size: clamp(2.4rem, 6.5vw, 4.4rem);
-  line-height: 1.18;
-  margin: clamp(0.25rem, 2vw, 0.75rem) 0 clamp(0.5rem, 2.5vw, 1rem);
+  font-size: clamp(2rem, 5.4vw, 3.6rem);
+  line-height: 1.2;
+  margin: clamp(0.35rem, 2.2vw, 0.9rem) 0 clamp(0.45rem, 2vw, 0.85rem);
   font-weight: 500;
   text-wrap: balance;
-  color: #3a2630;
+  color: #45303a;
 }
 
 .calendar-primary__cta {
@@ -219,7 +219,7 @@
 
 @media (max-width: 640px) {
   .calendar-video__media {
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 2 / 3;
     border-radius: 0;
     box-shadow: 0 26px 42px -32px rgba(17, 6, 11, 0.32);
   }
@@ -233,6 +233,7 @@
   .calendar-video__wrap.calendar-media-block {
     width: 100vw;
     margin-inline: calc((100% - 100vw) / 2);
+    padding-inline: 0;
   }
 
   .calendar-primary__media-img,
