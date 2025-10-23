@@ -21,11 +21,11 @@
 .calendar-hero__title {
   font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
   font-size: clamp(2.4rem, 6.5vw, 4.4rem);
-  line-height: 1.05;
-  margin: 0;
+  line-height: 1.18;
+  margin: clamp(0.25rem, 2vw, 0.75rem) 0 clamp(0.5rem, 2.5vw, 1rem);
   font-weight: 500;
   text-wrap: balance;
-  color: #221019;
+  color: #3a2630;
 }
 
 .calendar-primary__cta {
@@ -227,7 +227,7 @@
   }
 
   .calendar-video__wrap.calendar-media-block {
-    width: calc(100vw - clamp(3rem, 14vw, 4.75rem));
+    width: calc(100vw - clamp(4rem, 20vw, 6rem));
     margin-inline: auto;
   }
 
