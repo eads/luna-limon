@@ -1,6 +1,5 @@
 .calendar-hero {
   background: #fffdf8;
-  padding: clamp(0.25rem, 2vw, 1rem) clamp(0.5rem, 4vw, 2rem) clamp(1.2rem, 5vw, 2.5rem);
   display: flex;
   justify-content: center;
 }
@@ -9,8 +8,8 @@
   position: relative;
   width: 100%;
   max-width: min(72rem, 86vw);
-  height: clamp(260px, 55vh, 460px);
-  border-radius: clamp(18px, 3vw, 28px);
+  height: clamp(300px, 75vh, 700px);
+  /* border-radius: clamp(14px, 1vw, 28px); */
   overflow: hidden;
   box-shadow: 0 40px 90px -55px rgba(17, 6, 11, 0.35);
 }
@@ -28,21 +27,21 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: top;
   gap: clamp(1.1rem, 3vw, 2.1rem);
   padding: clamp(1.5rem, 6vw, 3rem);
   text-align: center;
   color: #fff9f4;
-  background: linear-gradient(180deg, rgba(25, 12, 18, 0.58) 0%, rgba(25, 12, 18, 0.36) 35%, rgba(25, 12, 18, 0.55) 100%);
+  background: linear-gradient(180deg, rgba(25, 12, 18, 0.55) 0%, rgba(25, 12, 18, 0.4) 35%, rgba(25, 12, 18, 0) 100%);
   transform: translateY(calc(var(--hero-progress, 0) * 32px));
-  opacity: clamp(0.25, 1, 1 - (var(--hero-progress, 0) * 0.95));
+  opacity: clamp(0, 1, 1 - (var(--hero-progress, 0) * 1.5));
 }
 
 .calendar-hero__title {
   font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
   font-size: clamp(2rem, 5vw, 3.4rem);
   line-height: 1.18;
-  margin: clamp(0.35rem, 2vw, 0.9rem) 0 clamp(0.4rem, 1.8vw, 0.8rem);
+  margin: clamp(3rem, 8vw, 8rem) 0 clamp(0.2rem, 1vw, 0.4rem);
   font-weight: 500;
   text-wrap: balance;
   color: inherit;
@@ -52,10 +51,6 @@
 .calendar-primary__cta {
   display: inline-flex;
   justify-content: center;
-}
-
-.calendar-hero__cta {
-  margin-top: clamp(1.5rem, 4vw, 2.75rem);
 }
 
 .calendar-hero__overlay .calendar-primary__button {
