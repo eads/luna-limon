@@ -202,6 +202,11 @@
                 {ctaText}
               </button>
             </div>
+            <div class="calendar-hero__scroll" aria-hidden="true">
+              <svg class="calendar-hero__scroll-icon" viewBox="0 0 24 16" width="24" height="16">
+                <path d="M4.47 4.47a1 1 0 0 1 1.41 0L12 10.59l6.12-6.12a1 1 0 1 1 1.41 1.41l-6.82 6.83a1 1 0 0 1-1.41 0L4.47 5.88a1 1 0 0 1 0-1.41Z" />
+              </svg>
+            </div>
           </div>
         </div>
       </section>
