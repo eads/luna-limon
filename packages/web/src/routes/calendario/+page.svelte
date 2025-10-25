@@ -75,13 +75,17 @@
     }
   ]);
 
-  const formatFeatureTitle = (title: string) => {
-    const trimmed = title?.trim();
-    if (!trimmed) return '';
-    const [first, ...rest] = trimmed.split(/\s+/);
-    if (!first) return trimmed;
-    const restText = rest.join(' ');
-    return `<em>${first}</em>${restText ? ` ${restText}` : ''}`;
+  const renderRich = (input: string | undefined) => {
+    if (!input) return '';
+    let html = input.replace(/\r\n?/g, '\n');
+    html = html.replace(/\*\*(.+?)\*\*/gs, '<strong>$1</strong>');
+    html = html.replace(/__(.+?)__/gs, '<strong>$1</strong>');
+    html = html.replace(/\*(\S[^*]*?\S)\*/g, '<em>$1</em>');
+    html = html.replace(/_(\S[^_]*?\S)_/g, '<em>$1</em>');
+    html = html.replace(/\\([*_])/g, '$1');
+    html = html.replace(/\n{2,}/g, '<br /><br />');
+    html = html.replace(/\n/g, '<br />');
+    return html;
   };
 
   let activeCard = $state('');
@@ -204,7 +208,7 @@
               {#if card.heading}
                 <span class="calendar-background-card__eyebrow">{card.heading}</span>
               {/if}
-              <p class="calendar-background-card__text">{@html card.body}</p>
+              <p class="calendar-background-card__text">{@html renderRich(card.body)}</p>
               <button
                 class="calendar-quote__cta"
                 type="button"
@@ -231,7 +235,7 @@
             {/each}
           </video>
           <div class="calendar-hero__overlay">
-            <h1 class="calendar-hero__title">{@html t('calendario.hero_title')}</h1>
+            <h1 class="calendar-hero__title">{@html renderRich(t('calendario.hero_title'))}</h1>
             <div class="calendar-hero__cta">
               <button
                 class={`calendar-primary__button ${flash ? 'flash' : ''}`}
@@ -284,8 +288,8 @@
                     <img src={card.image} alt={card.title} loading="lazy" />
                   </picture>
                   <div class="calendar-feature__text">
-                    <h3>{@html formatFeatureTitle(card.title)}</h3>
-                    <p>{card.body}</p>
+                    <h3>{@html renderRich(card.title)}</h3>
+                    <p>{@html renderRich(card.body)}</p>
                   </div>
                 </article>
               {/each}
