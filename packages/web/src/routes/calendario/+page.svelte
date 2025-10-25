@@ -1,4 +1,3 @@
-<!-- Calendario showcase -->
 <script lang="ts">
   type Product = {
     id: string;
@@ -7,58 +6,145 @@
     precio: number;
     imagen?: string;
   };
+
   import { cart } from '$lib/cart';
   import { useI18n } from '$lib/i18n/context';
-  const { t } = useI18n();
-  // @ts-expect-error - runtime types not generated yet
-  import { getLocale, localizeHref } from '$lib/paraglide/runtime.js';
   import { goto } from '$app/navigation';
-  import { getResizedImageUrl } from '$lib/utils/images';
-  import { onMount } from 'svelte';
-  import { fade } from 'svelte/transition';
-  import { cubicOut } from 'svelte/easing';
   import { browser } from '$app/environment';
+  // @ts-expect-error - runtime types not generated yet
+  import { localizeHref } from '$lib/paraglide/runtime.js';
+  import { onMount } from 'svelte';
   import './calendario.css';
 
-  const splitFirstWord = (text: string) => {
-    const trimmed = (text ?? '').trimStart();
-    if (!trimmed) return { lead: '', rest: '' };
-    const match = trimmed.match(/^(\S+)([\s\S]*)$/);
-    if (!match) return { lead: trimmed, rest: '' };
-    const lead = match[1];
-    const rest = match[2]?.replace(/^\s*/, ' ');
-    return { lead, rest: rest ?? '' };
-  };
-
-  const nameOf = (p: Product) =>
-    p.nombre[getLocale() as 'es' | 'en'] ?? p.nombre.es ?? p.nombre.en ?? '';
+  const { t } = useI18n();
 
   let { data } = $props<{ data: { products: Product[] } }>();
   const calendar = $derived(data.products?.[0]);
   let flash = $state(false);
 
-  const heroSubtitleText = $derived(t('calendario.hero_subtitle'));
-  const heroSubtitleParts = $derived(splitFirstWord(heroSubtitleText));
+  const ctaText = $derived(t('calendario.buy_simple') ?? t('calendario.buy'));
 
-  const heroImageDesktopLg = getResizedImageUrl('/images/IMG_6395-horizontal.jpg', 2800);
-  const heroImageDesktopMd = getResizedImageUrl('/images/IMG_6395-horizontal.jpg', 2000);
-  const heroImageDesktopSm = getResizedImageUrl('/images/IMG_6395-horizontal.jpg', 1400);
-  const heroImageMobileLg = getResizedImageUrl('/images/IMG_6395-vertical.jpg', 1600);
-  const heroImageMobileSm = getResizedImageUrl('/images/IMG_6395-vertical.jpg', 900);
-  const highlightImageSrc = getResizedImageUrl('/images/IMG_6403.jpg', 1600);
-  const highlightImageSrcSmall = getResizedImageUrl('/images/IMG_6403.jpg', 820);
-  const galleryImageSrc = getResizedImageUrl('/images/IMG_6395.jpg', 1600);
-  const galleryImageSrcSmall = getResizedImageUrl('/images/IMG_6395.jpg', 800);
   const featureVideoSources = [
     { src: '/video/IMG_6469-mobile.webm', type: 'video/webm', media: '(max-width: 640px)' },
-    { src: '/video/IMG_6472-desktop.webm', type: 'video/webm' },
+    { src: '/video/IMG_6472-desktop.webm', type: 'video/webm' }
   ];
 
-  let heroSection: HTMLElement | undefined;
-  let heroProgress = $state(0);
-  let showStickyCta = $state(false);
-  const ctaText = $derived(t('calendario.buy_simple') ?? t('calendario.buy'));
-  const stickyRevealOffset = 120;
+  type BackgroundCard =
+    | { id: string; variant: 'blank'; color: string }
+    | { id: string; variant: 'quote'; heading?: string; body: string }
+    | { id: string; variant: 'affirmation'; heading?: string; lines: string[] };
+
+  const backgroundCards = $derived<BackgroundCard[]>([
+    {
+      id: 'intro',
+      variant: 'blank',
+      color: '#fef6ef'
+    },
+    {
+      id: 'quote',
+      variant: 'quote',
+      heading: t('calendario.story_title') ?? t('calendario.story_placeholder_label') ?? '',
+      body: t('calendario.story_body') ?? ''
+    },
+    {
+      id: 'affirmation',
+      variant: 'affirmation',
+      heading: t('calendario.hero_eyebrow') ?? '',
+      lines: [
+        t('calendario.story_point_1') ?? '',
+        t('calendario.story_point_2') ?? '',
+        t('calendario.story_point_3') ?? ''
+      ]
+    }
+  ]);
+
+  let activeCard = $state('');
+
+  let observer: IntersectionObserver | undefined;
+  const registeredSections = new Set<HTMLElement>();
+
+  function layerTrigger(node: HTMLElement, cardId: string) {
+    node.dataset.cardId = cardId;
+    registeredSections.add(node);
+    if (browser && observer) {
+      observer.observe(node);
+    }
+    return {
+      update(nextId: string) {
+        node.dataset.cardId = nextId;
+        if (browser) {
+          refreshActiveCard();
+        }
+      },
+      destroy() {
+        registeredSections.delete(node);
+        if (browser && observer) {
+          observer.unobserve(node);
+        }
+        delete node.dataset.cardId;
+      }
+    };
+  }
+
+  function refreshActiveCard() {
+    if (!browser) return;
+    let bestId: string | null = null;
+    let bestVisible = 0;
+    const viewportHeight = window.innerHeight || 1;
+    registeredSections.forEach((node) => {
+      const rect = node.getBoundingClientRect();
+      const visible = Math.max(Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0), 0);
+      if (visible > bestVisible) {
+        bestVisible = visible;
+        const id = node.dataset.cardId;
+        if (id) {
+          bestId = id;
+        }
+      }
+    });
+    if (bestId && bestId !== activeCard) {
+      activeCard = bestId;
+    }
+    if (!bestId && activeCard) {
+      activeCard = '';
+    }
+  }
+
+  onMount(() => {
+    if (!browser) return;
+    observer = new IntersectionObserver(() => {
+      refreshActiveCard();
+    }, { threshold: [0.2, 0.5, 0.8] });
+
+    registeredSections.forEach((node) => observer?.observe(node));
+    refreshActiveCard();
+
+    const handleResize = () => refreshActiveCard();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      observer?.disconnect();
+      observer = undefined;
+      window.removeEventListener('resize', handleResize);
+    };
+  });
+
+  $effect(() => {
+    const fallback = backgroundCards[0]?.id;
+    if (!activeCard && fallback) {
+      activeCard = fallback;
+      if (browser) {
+        refreshActiveCard();
+      }
+      return;
+    }
+    if (activeCard && !backgroundCards.some((card) => card.id === activeCard) && fallback) {
+      activeCard = fallback;
+      if (browser) {
+        refreshActiveCard();
+      }
+    }
+  });
 
   function addNow() {
     if (!calendar) return;
@@ -67,171 +153,138 @@
     setTimeout(() => (flash = false), 700);
     goto(localizeHref('/pagar'));
   }
-
-  function fadeIn(node: HTMLElement, options?: { delay?: number }) {
-    if (!browser) return;
-    const delay = options?.delay ?? 0;
-    node.classList.add('fade-ready');
-    node.style.setProperty('--fade-delay', `${delay}ms`);
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        node.classList.add('fade-visible');
-        observer.disconnect();
-      }
-    }, { threshold: 0.15 });
-    observer.observe(node);
-    return {
-      destroy() {
-        observer.disconnect();
-      }
-    };
-  }
-
-  onMount(() => {
-    if (!browser) return;
-    const handle = () => {
-      if (!heroSection) return;
-      const rect = heroSection.getBoundingClientRect();
-      const progress = rect.height > 0 ? Math.min(Math.max(-rect.top / rect.height, 0), 1) : 0;
-      heroProgress = progress;
-      showStickyCta = rect.bottom <= stickyRevealOffset;
-    };
-    handle();
-    window.addEventListener('scroll', handle, { passive: true });
-    window.addEventListener('resize', handle);
-    return () => {
-      window.removeEventListener('scroll', handle);
-      window.removeEventListener('resize', handle);
-    };
-  });
 </script>
 
-<svelte:head>
-  <link
-    rel="preload"
-    as="image"
-    href={heroImageDesktopMd}
-    imagesrcset={`${heroImageDesktopSm} 1400w, ${heroImageDesktopMd} 2000w, ${heroImageDesktopLg} 2800w`}
-    imagesizes="(min-width: 768px) 100vw, 100vw"
-    fetchpriority="high"
-  />
-  <link rel="preload" as="image" href={heroImageMobileLg} media="(max-width: 767px)" />
-</svelte:head>
-
-
 {#if !calendar}
-  <p class="text-gray-500">{t('calendario.vacio')}</p>
+  <p class="calendar-empty">{t('calendario.vacio')}</p>
 {:else}
-  <section
-    class="calendar-hero u-full-bleed"
-    bind:this={heroSection}
-    style={`--hero-progress:${heroProgress}`}
-  >
-    <div class="calendar-hero__frame calendar-media-block" use:fadeIn={{ delay: 60 }}>
-      <video
-        class="calendar-hero__video"
-        playsinline
-        autoplay
-        muted
-        loop
-        preload="metadata"
-      >
-        {#each featureVideoSources as source (source.src)}
-          {#if source.media}
-            <source src={source.src} type={source.type} media={source.media} />
-          {:else}
-            <source src={source.src} type={source.type} />
+  <div class="calendar-layered u-full-bleed">
+    <div class="calendar-layered__background" aria-hidden="true">
+      {#each backgroundCards as card (card.id)}
+        <section
+          class={`calendar-background-card calendar-background-card--${card.variant} ${activeCard === card.id ? 'is-active' : ''}`}
+        >
+          {#if card.variant === 'blank'}
+            <div class="calendar-background-card__swatch" style={`--card-color:${card.color}`}></div>
+          {:else if card.variant === 'quote'}
+            <div class="calendar-background-card__viewport">
+              {#if card.heading}
+                <span class="calendar-background-card__eyebrow">{card.heading}</span>
+              {/if}
+              <p class="calendar-background-card__text">{card.body}</p>
+            </div>
+          {:else if card.variant === 'affirmation'}
+            <div class="calendar-background-card__viewport calendar-background-card__viewport--affirmation">
+              {#if card.heading}
+                <span class="calendar-background-card__eyebrow">{card.heading}</span>
+              {/if}
+              <div class="calendar-background-card__mantras">
+                {#each card.lines as line, index (index)}
+                  <p class="calendar-background-card__mantra">{line}</p>
+                {/each}
+              </div>
+            </div>
           {/if}
-        {/each}
-      </video>
+        </section>
+      {/each}
+    </div>
 
-      <div class="calendar-hero__overlay">
-        <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
-        <div class="calendar-primary__cta calendar-hero__cta" use:fadeIn={{ delay: 120 }}>
-          <button
-            class={`calendar-primary__button ${flash ? 'flash' : ''}`}
-            type="button"
-            onclick={addNow}
-          >
-            {ctaText}
-          </button>
+    <div class="calendar-layered__content">
+      <section class="calendar-section calendar-section--hero" use:layerTrigger={'intro'}>
+        <div class="calendar-section__surface">
+          <div class="calendar-section__inner calendar-section__inner--hero">
+            <div class="calendar-hero__media">
+              <video class="calendar-hero__video" playsinline autoplay muted loop preload="metadata">
+                {#each featureVideoSources as source (source.src)}
+                  {#if source.media}
+                    <source src={source.src} type={source.type} media={source.media} />
+                  {:else}
+                    <source src={source.src} type={source.type} />
+                  {/if}
+                {/each}
+              </video>
+            </div>
+            <div class="calendar-hero__copy">
+              <span class="calendar-hero__eyebrow">{t('calendario.hero_eyebrow')}</span>
+              <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
+              <p class="calendar-hero__subtitle">{t('calendario.hero_subtitle')}</p>
+              <div class="calendar-actions">
+                <button
+                  class={`calendar-primary__button ${flash ? 'flash' : ''}`}
+                  type="button"
+                  onclick={addNow}
+                >
+                  {ctaText}
+                </button>
+                <p class="calendar-hero__note">{t('calendario.preorder')}</p>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </section>
-  {#if showStickyCta}
-    <div class="calendar-sticky-cta" transition:fade={{ duration: 260, easing: cubicOut }}>
-      <button
-        class={`calendar-primary__button ${flash ? 'flash' : ''}`}
-        type="button"
-        onclick={addNow}
-      >
-        {ctaText}
-      </button>
-    </div>
-  {/if}
+      </section>
 
-  <section class="calendar-primary u-full-bleed">
-    <div class="u-content-wrap">
-      <div class="calendar-primary__wrap">
-        <div class="calendar-primary__text" use:fadeIn>
-          
-          <p class="calendar-primary__body">
-            {#if heroSubtitleParts.lead}
-              <span class="calendar-primary__drop">{heroSubtitleParts.lead}</span>{heroSubtitleParts.rest}
-            {:else}
-              {heroSubtitleText}
-            {/if}
-          </p>
+      <section class="calendar-section calendar-section--story" use:layerTrigger={'quote'}>
+        <div class="calendar-section__surface">
+          <div class="calendar-section__inner calendar-section__inner--narrow">
+            <span class="calendar-story__eyebrow">{t('calendario.story_placeholder_label')}</span>
+            <h2 class="calendar-story__title">{t('calendario.story_title')}</h2>
+            <p class="calendar-story__body">{t('calendario.story_body')}</p>
+            <ul class="calendar-story__list" aria-label={t('calendario.story_list_label')}>
+              <li>{t('calendario.story_point_1')}</li>
+              <li>{t('calendario.story_point_2')}</li>
+              <li>{t('calendario.story_point_3')}</li>
+            </ul>
+          </div>
         </div>
-      </div>
-    </div>
-    <picture class="calendar-primary__media" aria-hidden="true" use:fadeIn={{ delay: 120 }}>
-      <source media="(min-width: 768px)" srcset={`${highlightImageSrc} 1600w`} sizes="40vw" />
-      <img class="calendar-primary__media-img" src={highlightImageSrcSmall} alt="" loading="lazy" />
-    </picture>
-  </section>
+      </section>
 
-  <section class="calendar-story u-full-bleed" use:fadeIn>
-    <div class="u-content-wrap">
-      <div class="calendar-story__wrap">
-        <span class="calendar-story__label">{t('calendario.story_placeholder_label')}</span>
-        <p class="calendar-story__body">{t('calendario.story_body')}</p>
-        <ul class="calendar-story__list" aria-label={t('calendario.story_list_label')}>
-          <li>{t('calendario.story_point_1')}</li>
-          <li>{t('calendario.story_point_2')}</li>
-          <li>{t('calendario.story_point_3')}</li>
-        </ul>
-      </div>
+      <section class="calendar-section calendar-section--details" use:layerTrigger={'affirmation'}>
+        <div class="calendar-section__surface">
+          <div class="calendar-section__inner">
+            <div class="calendar-features">
+              <h2 class="calendar-features__title">{t('calendario.titulo')}</h2>
+              <div class="calendar-features__grid">
+                <div class="calendar-features__item">
+                  <h3>{t('calendario.f1_title')}</h3>
+                  <p>{t('calendario.f1_body')}</p>
+                </div>
+                <div class="calendar-features__item">
+                  <h3>{t('calendario.f2_title')}</h3>
+                  <p>{t('calendario.f2_body')}</p>
+                </div>
+                <div class="calendar-features__item">
+                  <h3>{t('calendario.f3_title')}</h3>
+                  <p>{t('calendario.f3_body')}</p>
+                </div>
+                <div class="calendar-features__item">
+                  <h3>{t('calendario.f4_title')}</h3>
+                  <p>{t('calendario.f4_body')}</p>
+                </div>
+              </div>
+              <div class="calendar-features__cta">
+                <button
+                  class={`calendar-primary__button ${flash ? 'flash' : ''}`}
+                  type="button"
+                  onclick={addNow}
+                >
+                  {ctaText}
+                </button>
+                <div class="calendar-features__follow">
+                  <a
+                    class="calendar-features__link"
+                    href="https://www.instagram.com/lunalimon.co"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {t('calendario.follow_cta')}
+                  </a>
+                  <span class="calendar-features__handle">{t('calendario.follow_handle')}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
-  </section>
-  
-  <section class="calendar-gallery u-full-bleed" use:fadeIn={{ delay: 100 }}>
-    <picture class="calendar-gallery__picture calendar-media-block">
-      <source
-        media="(min-width: 1280px)"
-        srcset={`${heroImageDesktopMd} 2000w, ${heroImageDesktopLg} 2800w`}
-        sizes="100vw"
-      />
-      <source
-        media="(min-width: 768px)"
-        srcset={`${heroImageDesktopSm} 1400w, ${heroImageDesktopMd} 2000w`}
-        sizes="100vw"
-      />
-      <source
-        media="(min-width: 480px)"
-        srcset={`${heroImageMobileSm} 900w, ${heroImageMobileLg} 1600w`}
-        sizes="100vw"
-      />
-      <img
-        class="calendar-gallery__image"
-        src={heroImageMobileLg}
-        srcset={`${heroImageMobileSm} 900w, ${heroImageMobileLg} 1600w`}
-        sizes="100vw"
-        alt={nameOf(calendar)}
-        loading="eager"
-        fetchpriority="high"
-      />
-    </picture>
-  </section>
+  </div>
 {/if}
