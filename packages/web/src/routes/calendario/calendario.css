@@ -264,11 +264,25 @@
 }
 
 .calendar-swatches__box--one {
-  width: clamp(150px, 20vmin, 220px);
-  height: clamp(240px, 34vmin, 340px);
+  width: clamp(180px, 22vmin, 260px);
+  height: clamp(200px, 28vmin, 260px);
   top: 6%;
   --swatch-shift: clamp(-280px, -28vw, -170px);
-  background: #fbdcd5;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(4px, 1vw, 10px);
+}
+
+.calendar-swatches__box--one::before {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/romero.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
 }
 
 .calendar-swatches__box--two {
@@ -294,11 +308,25 @@
 }
 
 .calendar-swatches__box--three {
-  width: clamp(150px, 20vmin, 220px);
-  height: clamp(210px, 30vmin, 280px);
+  width: clamp(180px, 22vmin, 260px);
+  height: clamp(200px, 28vmin, 250px);
   top: 46%;
   --swatch-shift: clamp(-210px, -22vw, -120px);
-  background: #ffe6a7;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(4px, 1vw, 10px);
+}
+
+.calendar-swatches__box--three::before {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/Amatista.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
 }
 
 .calendar-swatches__box--four {
@@ -317,7 +345,7 @@
   content: '';
   width: 100%;
   height: 100%;
-  background-image: url('/images/Amatista.png');
+  background-image: url('/images/romero.png');
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
