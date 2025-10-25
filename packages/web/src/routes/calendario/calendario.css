@@ -83,29 +83,6 @@
   letter-spacing: 0.01em;
 }
 
-.calendar-quote__cta {
-  margin: clamp(1.4rem, 4vw, 2rem) auto 0;
-  padding: 0.85rem clamp(2.2rem, 6vw, 3.2rem);
-  border: none;
-  border-radius: 999px;
-  font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  font-size: clamp(0.78rem, 2.2vw, 0.9rem);
-  color: #2c141d;
-  background: #ffffff;
-  cursor: pointer;
-  box-shadow: 0 22px 48px -28px rgba(39, 17, 25, 0.32);
-  transition: transform 160ms ease, box-shadow 200ms ease;
-  pointer-events: auto;
-}
-
-.calendar-quote__cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 28px 54px -24px rgba(39, 17, 25, 0.38);
-}
-
 .calendar-layered__content {
   position: relative;
   z-index: 2;
@@ -614,16 +591,33 @@
   transition: transform 140ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
-.calendar-features__social svg {
-  width: 18px;
-  height: 18px;
-  fill: currentColor;
+.calendar-features__social .ri-instagram-line {
+  font-size: 1.5em;
 }
 
 .calendar-features__social:hover {
   transform: translateY(-2px);
   box-shadow: 0 18px 38px -24px rgba(33, 11, 19, 0.3);
   background: rgba(255, 255, 255, 0.9);
+}
+
+.calendar-sticky-cta {
+  position: fixed;
+  inset-inline: clamp(1rem, 6vw, 2rem);
+  bottom: clamp(1.2rem, 5vh, 2rem);
+  display: flex;
+  justify-content: center;
+  z-index: 8;
+  pointer-events: none;
+}
+
+.calendar-sticky-cta .calendar-primary__button--wide {
+  pointer-events: auto;
+  box-shadow: 0 24px 48px -22px rgba(31, 13, 20, 0.35);
+}
+
+.calendar-sticky-cta .calendar-primary__button--wide:hover {
+  box-shadow: 0 28px 56px -24px rgba(31, 13, 20, 0.4);
 }
 
 .calendar-features__cta {

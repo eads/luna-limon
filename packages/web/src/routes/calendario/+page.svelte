@@ -251,13 +251,6 @@
                 <span class="calendar-background-card__eyebrow">{card.heading}</span>
               {/if}
               <p class="calendar-background-card__text">{@html renderRich(card.body)}</p>
-              <button
-                class="calendar-quote__cta"
-                type="button"
-                onclick={addNow}
-              >
-                {ctaText}
-              </button>
             </div>
           {/if}
         </section>
@@ -292,11 +285,7 @@
                 target="_blank"
                 rel="noreferrer"
               >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7Zm0 2h10c1.66 0 3 1.34 3 3v10c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3Zm11 1.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM12 7.5A4.5 4.5 0 1 0 12 16.5 4.5 4.5 0 0 0 12 7.5Zm0 2A2.5 2.5 0 1 1 12 14a2.5 2.5 0 0 1 0-4.5Z"
-                  />
-                </svg>
+                <i class="ri-instagram-line" aria-hidden="true"></i>
                 <span>@lunalimon.co</span>
               </a>
             </div>
@@ -352,24 +341,13 @@
               {/each}
             </div>
               <div class="calendar-features__cta">
-                <button
-                  class={`calendar-primary__button calendar-primary__button--wide ${flash ? 'flash' : ''}`}
-                  type="button"
-                  onclick={addNow}
-                >
-                  {ctaText}
-                </button>
                 <a
                   class="calendar-features__social"
                   href="https://www.instagram.com/lunalimon.co"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path
-                      d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7Zm0 2h10c1.66 0 3 1.34 3 3v10c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3Zm11 1.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM12 7.5A4.5 4.5 0 1 0 12 16.5 4.5 4.5 0 0 0 12 7.5Zm0 2A2.5 2.5 0 1 1 12 14a2.5 2.5 0 0 1 0-4.5Z"
-                    />
-                  </svg>
+                  <i class="ri-instagram-line" aria-hidden="true"></i>
                   <span>{t('calendario.follow_cta')}</span>
                 </a>
               </div>
