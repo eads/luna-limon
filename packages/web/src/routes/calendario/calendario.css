@@ -467,6 +467,7 @@
   gap: clamp(1.6rem, 4vw, 2.8rem);
 }
 
+.calendar-features__grid {
   display: grid;
   gap: clamp(1.4rem, 3vw, 2.2rem);
 }
