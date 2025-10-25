@@ -93,8 +93,8 @@
 }
 
 .calendar-hero {
-  --calendar-hero-offset: clamp(64px, 12vh, 120px);
-  min-height: max(560px, calc(100vh - var(--calendar-hero-offset)));
+  --calendar-hero-offset: clamp(60px, 10vh, 110px);
+  min-height: clamp(560px, calc(100dvh - var(--calendar-hero-offset)), 900px);
   display: flex;
   align-items: stretch;
   justify-content: stretch;
@@ -103,9 +103,18 @@
 .calendar-hero__frame {
   position: relative;
   width: 100%;
-  height: min(900px, max(560px, calc(100vh - var(--calendar-hero-offset))));
-  max-height: calc(100vh - var(--calendar-hero-offset) + 6vh);
+  height: clamp(560px, calc(100dvh - var(--calendar-hero-offset)), 900px);
   overflow: hidden;
+}
+
+@supports not (height: 1dvh) {
+  .calendar-hero {
+    min-height: clamp(560px, calc(100vh - var(--calendar-hero-offset)), 900px);
+  }
+
+  .calendar-hero__frame {
+    height: clamp(560px, calc(100vh - var(--calendar-hero-offset)), 900px);
+  }
 }
 
 .calendar-hero__overlay {
@@ -425,11 +434,7 @@
 
 @media (max-width: 640px) {
   .calendar-hero {
-    --calendar-hero-offset: clamp(56px, 18vh, 96px);
-  }
-
-  .calendar-hero__frame {
-    height: min(680px, max(520px, calc(100vh - var(--calendar-hero-offset))));
+    --calendar-hero-offset: clamp(48px, 8vh, 80px);
   }
 }
 .calendar-features {
