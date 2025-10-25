@@ -42,7 +42,7 @@
     {
       id: 'quote',
       variant: 'quote',
-      heading: t('calendario.hero_title') ?? '',
+      heading: undefined,
       body: t('calendario.hero_subtitle') ?? ''
     },
     {
@@ -212,11 +212,7 @@
           <div class="calendar-swatches__box calendar-swatches__box--one"></div>
           <div class="calendar-swatches__box calendar-swatches__box--two calendar-swatches__box--under"></div>
           <div class="calendar-swatches__box calendar-swatches__box--three"></div>
-          <div class="calendar-swatches__box calendar-swatches__box--four calendar-swatches__box--under"></div>
-          <div class="calendar-swatches__box calendar-swatches__box--five"></div>
-          <div class="calendar-swatches__box calendar-swatches__box--six"></div>
-          <div class="calendar-swatches__box calendar-swatches__box--seven calendar-swatches__box--under"></div>
-          <div class="calendar-swatches__box calendar-swatches__box--eight"></div>
+          <div class="calendar-swatches__box calendar-swatches__box--four"></div>
         </div>
       </section>
 
