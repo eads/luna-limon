@@ -236,8 +236,8 @@
 .calendar-swatches__box {
   position: absolute;
   left: 50%;
-  border-radius: clamp(18px, 4vw, 28px);
-  box-shadow: 0 30px 80px -48px rgba(20, 8, 14, 0.55);
+  /* border-radius: clamp(18px, 4vw, 28px); */
+  /* box-shadow: 0 30px 80px -48px rgba(20, 8, 14, 0.55); */
   opacity: 0.95;
   will-change: transform;
   transition: transform 220ms ease, filter 220ms ease;
@@ -251,12 +251,6 @@
       0
     )
     scale(var(--swatch-scale, 1));
-}
-
-.calendar-swatches__box:hover {
-  --swatch-rise: -10px;
-  --swatch-scale: 1.03;
-  filter: brightness(1.05);
 }
 
 .calendar-swatches__box--under {
