@@ -62,7 +62,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 4;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .calendar-background-card__eyebrow {
@@ -81,6 +81,28 @@
   line-height: 1.42;
   color: rgba(47, 22, 33, 0.86);
   letter-spacing: 0.01em;
+}
+
+.calendar-quote__cta {
+  margin: clamp(1.4rem, 4vw, 2rem) auto 0;
+  padding: 0.85rem clamp(2.2rem, 6vw, 3.2rem);
+  border: none;
+  border-radius: 999px;
+  font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: clamp(0.78rem, 2.2vw, 0.9rem);
+  color: #2c141d;
+  background: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 22px 48px -28px rgba(39, 17, 25, 0.32);
+  transition: transform 160ms ease, box-shadow 200ms ease;
+}
+
+.calendar-quote__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 28px 54px -24px rgba(39, 17, 25, 0.38);
 }
 
 .calendar-layered__content {
@@ -159,6 +181,7 @@
   color: rgba(255, 245, 240, 0.82);
   text-decoration: none;
   transition: opacity 160ms ease;
+  margin-top: clamp(0.6rem, 2.4vw, 1.2rem);
 }
 
 .calendar-hero__follow:hover {
@@ -222,6 +245,13 @@
   line-height: 1.18;
   margin: 0;
   color: #fff8f3;
+}
+
+.calendar-hero__title em {
+  font-family: 'Etania Ezra Script', 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
+  font-weight: 400;
+  font-size: 1.06em;
+  letter-spacing: 0.02em;
 }
 
 .calendar-primary__button {
@@ -476,6 +506,7 @@
   margin-top: clamp(2.4rem, 6vw, 3.6rem);
   display: grid;
   gap: clamp(1.2rem, 3.4vw, 2rem);
+  justify-items: center;
 }
 
 .calendar-feature {
@@ -519,6 +550,16 @@
   letter-spacing: 0.08em;
 }
 
+.calendar-feature__text h3 em {
+  display: inline-block;
+  font-family: 'Etania Ezra Script', 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 1.35em;
+  margin-right: 0.25rem;
+}
+
 .calendar-feature__text p {
   margin: 0;
   font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
@@ -532,15 +573,15 @@
     gap: clamp(1.4rem, 3.4vw, 2.6rem);
   }
 
-  .calendar-feature:nth-child(even) {
+  .calendar-feature.is-alt {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
   }
 
-  .calendar-feature:nth-child(even) .calendar-feature__media {
+  .calendar-feature.is-alt .calendar-feature__media {
     order: 2;
   }
 
-.calendar-feature:nth-child(even) .calendar-feature__text {
+  .calendar-feature.is-alt .calendar-feature__text {
     order: 1;
   }
 }
@@ -549,6 +590,7 @@
   padding-inline: clamp(2.8rem, 9vw, 4.8rem);
   font-size: clamp(0.9rem, 2.4vw, 1rem);
   letter-spacing: 0.18em;
+  width: min(100%, 360px);
 }
 
 

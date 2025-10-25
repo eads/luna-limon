@@ -52,6 +52,38 @@
     }
   ]);
 
+  const featureCards = $derived([
+    {
+      title: t('calendario.f1_title') ?? '',
+      body: t('calendario.f1_body') ?? '',
+      image: '/images/IMG_6395.jpg'
+    },
+    {
+      title: t('calendario.f2_title') ?? '',
+      body: t('calendario.f2_body') ?? '',
+      image: '/images/IMG_6403.jpg'
+    },
+    {
+      title: t('calendario.f3_title') ?? '',
+      body: t('calendario.f3_body') ?? '',
+      image: '/images/IMG_5882.jpg'
+    },
+    {
+      title: t('calendario.f4_title') ?? '',
+      body: t('calendario.f4_body') ?? '',
+      image: '/images/IMG_6425.jpg'
+    }
+  ]);
+
+  const formatFeatureTitle = (title: string) => {
+    const trimmed = title?.trim();
+    if (!trimmed) return '';
+    const [first, ...rest] = trimmed.split(/\s+/);
+    if (!first) return trimmed;
+    const restText = rest.join(' ');
+    return `<em>${first}</em>${restText ? ` ${restText}` : ''}`;
+  };
+
   let activeCard = $state('');
 
   let observer: IntersectionObserver | undefined;
@@ -172,7 +204,14 @@
               {#if card.heading}
                 <span class="calendar-background-card__eyebrow">{card.heading}</span>
               {/if}
-              <p class="calendar-background-card__text">{card.body}</p>
+              <p class="calendar-background-card__text">{@html card.body}</p>
+              <button
+                class="calendar-quote__cta"
+                type="button"
+                onclick={addNow}
+              >
+                {ctaText}
+              </button>
             </div>
           {/if}
         </section>
@@ -192,34 +231,34 @@
             {/each}
           </video>
           <div class="calendar-hero__overlay">
-            <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
-          <div class="calendar-hero__cta">
-            <button
-              class={`calendar-primary__button ${flash ? 'flash' : ''}`}
-              type="button"
-              onclick={addNow}
-            >
-              {ctaText}
-            </button>
-            <a
-              class="calendar-hero__follow"
-              href="https://www.instagram.com/lunalimon.co"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7Zm0 2h10c1.66 0 3 1.34 3 3v10c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3Zm11 1.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM12 7.5A4.5 4.5 0 1 0 12 16.5 4.5 4.5 0 0 0 12 7.5Zm0 2A2.5 2.5 0 1 1 12 14a2.5 2.5 0 0 1 0-4.5Z"
-                />
+            <h1 class="calendar-hero__title">{@html t('calendario.hero_title')}</h1>
+            <div class="calendar-hero__cta">
+              <button
+                class={`calendar-primary__button ${flash ? 'flash' : ''}`}
+                type="button"
+                onclick={addNow}
+              >
+                {ctaText}
+              </button>
+              <a
+                class="calendar-hero__follow"
+                href="https://www.instagram.com/lunalimon.co"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7Zm0 2h10c1.66 0 3 1.34 3 3v10c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3Zm11 1.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM12 7.5A4.5 4.5 0 1 0 12 16.5 4.5 4.5 0 0 0 12 7.5Zm0 2A2.5 2.5 0 1 1 12 14a2.5 2.5 0 0 1 0-4.5Z"
+                  />
+                </svg>
+                <span>@lunalimon.co</span>
+              </a>
+            </div>
+            <div class="calendar-hero__scroll" aria-hidden="true">
+              <svg class="calendar-hero__scroll-icon" viewBox="0 0 24 16" width="24" height="16">
+                <path d="M4.47 4.47a1 1 0 0 1 1.41 0L12 10.59l6.12-6.12a1 1 0 1 1 1.41 1.41l-6.82 6.83a1 1 0 0 1-1.41 0L4.47 5.88a1 1 0 0 1 0-1.41Z" />
               </svg>
-              <span>@lunalimon.co</span>
-            </a>
-          </div>
-          <div class="calendar-hero__scroll" aria-hidden="true">
-            <svg class="calendar-hero__scroll-icon" viewBox="0 0 24 16" width="24" height="16">
-              <path d="M4.47 4.47a1 1 0 0 1 1.41 0L12 10.59l6.12-6.12a1 1 0 1 1 1.41 1.41l-6.82 6.83a1 1 0 0 1-1.41 0L4.47 5.88a1 1 0 0 1 0-1.41Z" />
-            </svg>
-          </div>
+            </div>
           </div>
         </div>
       </section>
@@ -238,47 +277,19 @@
           <div class="calendar-section__inner">
             <div class="calendar-features">
             <div class="calendar-features__grid">
-              <article class="calendar-feature">
-                <picture class="calendar-feature__media">
-                  <source srcset="/images/IMG_6395.jpg" />
-                  <img src="/images/IMG_6395.jpg" alt={t('calendario.f1_title')} loading="lazy" />
-                </picture>
-                  <div class="calendar-feature__text">
-                    <h3>{t('calendario.f1_title')}</h3>
-                    <p>{t('calendario.f1_body')}</p>
-                  </div>
-                </article>
-                <article class="calendar-feature">
+              {#each featureCards as card, index}
+                <article class={`calendar-feature ${index % 2 ? 'is-alt' : ''}`}>
                   <picture class="calendar-feature__media">
-                    <source srcset="/images/IMG_6403.jpg" />
-                    <img src="/images/IMG_6403.jpg" alt={t('calendario.f2_title')} loading="lazy" />
+                    <source srcset={card.image} />
+                    <img src={card.image} alt={card.title} loading="lazy" />
                   </picture>
                   <div class="calendar-feature__text">
-                    <h3>{t('calendario.f2_title')}</h3>
-                    <p>{t('calendario.f2_body')}</p>
+                    <h3>{@html formatFeatureTitle(card.title)}</h3>
+                    <p>{card.body}</p>
                   </div>
                 </article>
-                <article class="calendar-feature">
-                  <picture class="calendar-feature__media">
-                    <source srcset="/images/IMG_5882.jpg" />
-                    <img src="/images/IMG_5882.jpg" alt={t('calendario.f3_title')} loading="lazy" />
-                  </picture>
-                  <div class="calendar-feature__text">
-                    <h3>{t('calendario.f3_title')}</h3>
-                    <p>{t('calendario.f3_body')}</p>
-                  </div>
-                </article>
-                <article class="calendar-feature">
-                  <picture class="calendar-feature__media">
-                    <source srcset="/images/IMG_6425.jpg" />
-                    <img src="/images/IMG_6425.jpg" alt={t('calendario.f4_title')} loading="lazy" />
-                  </picture>
-                  <div class="calendar-feature__text">
-                    <h3>{t('calendario.f4_title')}</h3>
-                    <p>{t('calendario.f4_body')}</p>
-                  </div>
-                </article>
-              </div>
+              {/each}
+            </div>
               <div class="calendar-features__cta">
                 <button
                   class={`calendar-primary__button calendar-primary__button--wide ${flash ? 'flash' : ''}`}
