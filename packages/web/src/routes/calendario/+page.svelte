@@ -31,8 +31,7 @@
 
   type BackgroundCard =
     | { id: string; variant: 'blank'; color: string }
-    | { id: string; variant: 'quote'; heading?: string; body: string }
-    | { id: string; variant: 'affirmation'; heading?: string; lines: string[] };
+    | { id: string; variant: 'quote'; heading?: string; body: string };
 
   const backgroundCards = $derived<BackgroundCard[]>([
     {
@@ -47,14 +46,9 @@
       body: t('calendario.hero_subtitle') ?? ''
     },
     {
-      id: 'affirmation',
-      variant: 'affirmation',
-      heading: t('calendario.hero_eyebrow') ?? '',
-      lines: [
-        t('calendario.story_point_1') ?? '',
-        t('calendario.story_point_2') ?? '',
-        t('calendario.story_point_3') ?? ''
-      ]
+      id: 'canvas',
+      variant: 'blank',
+      color: '#fdecef'
     }
   ]);
 
@@ -174,17 +168,6 @@
               {/if}
               <p class="calendar-background-card__text">{card.body}</p>
             </div>
-          {:else if card.variant === 'affirmation'}
-            <div class="calendar-background-card__viewport calendar-background-card__viewport--affirmation">
-              {#if card.heading}
-                <span class="calendar-background-card__eyebrow">{card.heading}</span>
-              {/if}
-              <div class="calendar-background-card__mantras">
-                {#each card.lines as line, index (index)}
-                  <p class="calendar-background-card__mantra">{line}</p>
-                {/each}
-              </div>
-            </div>
           {/if}
         </section>
       {/each}
@@ -222,30 +205,17 @@
       <section class="calendar-section calendar-section--swatches" use:layerTrigger={'quote'}>
         <div class="calendar-swatches" aria-hidden="true">
           <div class="calendar-swatches__box calendar-swatches__box--one"></div>
-          <div class="calendar-swatches__box calendar-swatches__box--two"></div>
+          <div class="calendar-swatches__box calendar-swatches__box--two calendar-swatches__box--under"></div>
           <div class="calendar-swatches__box calendar-swatches__box--three"></div>
-          <div class="calendar-swatches__box calendar-swatches__box--four"></div>
+          <div class="calendar-swatches__box calendar-swatches__box--four calendar-swatches__box--under"></div>
           <div class="calendar-swatches__box calendar-swatches__box--five"></div>
           <div class="calendar-swatches__box calendar-swatches__box--six"></div>
+          <div class="calendar-swatches__box calendar-swatches__box--seven calendar-swatches__box--under"></div>
+          <div class="calendar-swatches__box calendar-swatches__box--eight"></div>
         </div>
       </section>
 
-      <section class="calendar-section calendar-section--story" use:layerTrigger={'affirmation'}>
-        <div class="calendar-section__surface">
-          <div class="calendar-section__inner calendar-section__inner--narrow">
-            <span class="calendar-story__eyebrow">{t('calendario.story_placeholder_label')}</span>
-            <h2 class="calendar-story__title">{t('calendario.story_title')}</h2>
-            <p class="calendar-story__body">{t('calendario.story_body')}</p>
-            <ul class="calendar-story__list" aria-label={t('calendario.story_list_label')}>
-              <li>{t('calendario.story_point_1')}</li>
-              <li>{t('calendario.story_point_2')}</li>
-              <li>{t('calendario.story_point_3')}</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section class="calendar-section calendar-section--details" use:layerTrigger={'affirmation'}>
+      <section class="calendar-section calendar-section--details" use:layerTrigger={'canvas'}>
         <div class="calendar-section__surface">
           <div class="calendar-section__inner">
             <div class="calendar-features">

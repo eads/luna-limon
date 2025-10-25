@@ -10,7 +10,6 @@
   isolation: isolate;
   --calendar-backdrop-intro: #fef6ef;
   --calendar-backdrop-quote: radial-gradient(120% 120% at 50% 10%, #ffffff 0%, #f9edff 38%, #f5def5 100%);
-  --calendar-backdrop-affirmation: radial-gradient(140% 140% at 50% 0%, #fff8f4 0%, #ffe4e0 55%, #ffd6e2 100%);
   color: #2b1721;
 }
 
@@ -48,11 +47,6 @@
   color: rgba(41, 19, 34, 0.85);
 }
 
-.calendar-background-card--affirmation {
-  background: var(--calendar-backdrop-affirmation);
-  color: rgba(48, 17, 27, 0.9);
-}
-
 .calendar-background-card__viewport {
   max-width: min(54rem, 82vw);
   text-align: center;
@@ -65,11 +59,6 @@
   backdrop-filter: blur(18px);
 }
 
-.calendar-background-card__viewport--affirmation {
-  background: rgba(255, 255, 255, 0.42);
-  gap: clamp(1rem, 3vw, 2rem);
-}
-
 .calendar-background-card__eyebrow {
   font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
   font-weight: 600;
@@ -79,10 +68,6 @@
   color: rgba(56, 29, 42, 0.6);
 }
 
-.calendar-background-card--affirmation .calendar-background-card__eyebrow {
-  color: rgba(58, 18, 30, 0.58);
-}
-
 .calendar-background-card__text {
   margin: 0;
   font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
@@ -90,21 +75,8 @@
   line-height: 1.5;
 }
 
-.calendar-background-card__mantras {
-  display: grid;
-  gap: clamp(0.6rem, 2vw, 1.2rem);
-}
-
-.calendar-background-card__mantra {
-  margin: 0;
-  font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-size: clamp(1.5rem, 4vw, 2.4rem);
-  line-height: 1.2;
-}
-
 .calendar-layered__content {
   position: relative;
-  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: clamp(4rem, 12vh, 8rem);
@@ -130,13 +102,21 @@
   inset: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: clamp(1rem, 3vw, 1.8rem);
   padding: clamp(2rem, 6vw, 3.5rem);
+  padding-top: clamp(4rem, 18vh, 16rem);
+  padding-bottom: clamp(1.5rem, 6vh, 3rem);
   text-align: center;
   color: #fff7f4;
-  background: rgba(15, 7, 10, 0.36);
+  background: linear-gradient(
+    180deg,
+    rgba(18, 8, 13, 0.68) 0%,
+    rgba(20, 9, 14, 0.32) 38%,
+    rgba(22, 10, 15, 0.12) 64%,
+    rgba(24, 11, 16, 0) 100%
+  );
 }
 
 .calendar-hero__cta {
@@ -166,10 +146,6 @@
   background: rgba(255, 255, 255, 0.76);
   box-shadow: 0 38px 80px -52px rgba(23, 8, 14, 0.42);
   backdrop-filter: blur(14px);
-}
-
-.calendar-section--story .calendar-section__surface {
-  width: min(820px, 90vw);
 }
 
 .calendar-section--details .calendar-section__surface {
@@ -249,132 +225,108 @@
 
 .calendar-section--swatches {
   padding-block: clamp(3rem, 12vh, 6rem);
+  overflow-x: clip;
 }
 
 .calendar-swatches {
   position: relative;
-  width: min(900px, 88vw);
-  height: min(720px, 80vh);
+  width: min(960px, 92vw);
+  height: min(1200px, 170vh);
   margin: 0 auto;
 }
 
 .calendar-swatches__box {
   position: absolute;
-  border-radius: clamp(18px, 4vw, 32px);
-  box-shadow: 0 25px 70px -40px rgba(20, 8, 14, 0.55);
+  left: 50%;
+  border-radius: clamp(18px, 4vw, 28px);
+  box-shadow: 0 30px 80px -48px rgba(20, 8, 14, 0.55);
   opacity: 0.95;
   will-change: transform;
   transition: transform 220ms ease, filter 220ms ease;
+  z-index: 1;
+  --swatch-shift: 0px;
+  --swatch-rise: 0px;
+  --swatch-scale: 1;
+  transform: translate3d(
+      calc(-50% + var(--swatch-shift, 0px)),
+      var(--swatch-rise, 0px),
+      0
+    )
+    scale(var(--swatch-scale, 1));
 }
 
 .calendar-swatches__box:hover {
-  transform: translateY(-6px) scale(1.02);
+  --swatch-rise: -10px;
+  --swatch-scale: 1.03;
   filter: brightness(1.05);
 }
 
+.calendar-swatches__box--under {
+  z-index: -1;
+}
+
 .calendar-swatches__box--one {
-  width: clamp(120px, 18vmin, 180px);
-  height: clamp(120px, 18vmin, 180px);
-  top: 8%;
-  left: 6%;
+  width: clamp(150px, 20vmin, 220px);
+  height: clamp(240px, 34vmin, 340px);
+  top: 2%;
+  --swatch-shift: clamp(-320px, -30vw, -180px);
   background: #fbdcd5;
-  transform: rotate(-4deg);
 }
 
 .calendar-swatches__box--two {
-  width: clamp(110px, 16vmin, 160px);
-  height: clamp(150px, 20vmin, 200px);
-  top: 4%;
-  right: 10%;
+  width: clamp(150px, 19vmin, 210px);
+  height: clamp(190px, 28vmin, 280px);
+  top: 14%;
+  --swatch-shift: clamp(180px, 26vw, 320px);
   background: #bfe3ff;
-  transform: rotate(6deg);
 }
 
 .calendar-swatches__box--three {
-  width: clamp(140px, 18vmin, 190px);
-  height: clamp(100px, 16vmin, 150px);
-  top: 40%;
-  left: 18%;
+  width: clamp(140px, 18vmin, 200px);
+  height: clamp(150px, 24vmin, 210px);
+  top: 30%;
+  --swatch-shift: clamp(-260px, -24vw, -140px);
   background: #ffe6a7;
-  transform: rotate(-8deg);
 }
 
 .calendar-swatches__box--four {
-  width: clamp(120px, 17vmin, 180px);
-  height: clamp(120px, 17vmin, 180px);
-  top: 46%;
-  right: 18%;
+  width: clamp(170px, 21vmin, 230px);
+  height: clamp(210px, 30vmin, 320px);
+  top: 44%;
+  --swatch-shift: clamp(200px, 27vw, 330px);
   background: #ffd1f4;
-  transform: rotate(5deg);
 }
 
 .calendar-swatches__box--five {
-  width: clamp(150px, 20vmin, 210px);
-  height: clamp(130px, 18vmin, 190px);
-  bottom: 12%;
-  left: 10%;
+  width: clamp(150px, 20vmin, 215px);
+  height: clamp(170px, 26vmin, 240px);
+  top: 60%;
+  --swatch-shift: clamp(-220px, -22vw, -130px);
   background: #c9f1d5;
-  transform: rotate(3deg);
 }
 
 .calendar-swatches__box--six {
-  width: clamp(120px, 17vmin, 180px);
-  height: clamp(140px, 19vmin, 200px);
-  bottom: 6%;
-  right: 6%;
+  width: clamp(170px, 22vmin, 240px);
+  height: clamp(230px, 34vmin, 340px);
+  top: 74%;
+  --swatch-shift: clamp(210px, 30vw, 340px);
   background: #ffc9b9;
-  transform: rotate(-5deg);
 }
 
-.calendar-section__inner--narrow {
-  width: min(640px, 86vw);
-  margin: 0 auto;
-  text-align: left;
+.calendar-swatches__box--seven {
+  width: clamp(140px, 18vmin, 200px);
+  height: clamp(160px, 24vmin, 220px);
+  top: 90%;
+  --swatch-shift: clamp(-200px, -20vw, -110px);
+  background: #d9ccff;
 }
 
-.calendar-story__eyebrow {
-  display: inline-block;
-  padding: 0.35rem 0.9rem;
-  border-radius: 999px;
-  background: rgba(190, 180, 210, 0.2);
-  color: #5c4b75;
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
-}
-
-.calendar-story__title {
-  font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-size: clamp(2rem, 5vw, 2.8rem);
-  margin: 0;
-  line-height: 1.2;
-  color: #2f1821;
-}
-
-.calendar-story__body {
-  font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  margin: 0;
-  color: rgba(37, 18, 27, 0.78);
-}
-
-.calendar-story__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.7rem;
-  font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
-  color: rgba(37, 18, 27, 0.78);
-  font-weight: 500;
-}
-
-.calendar-story__list li::before {
-  content: '—';
-  margin-right: 0.75rem;
-  color: #f08264;
+.calendar-swatches__box--eight {
+  width: clamp(160px, 21vmin, 230px);
+  height: clamp(200px, 30vmin, 300px);
+  top: 106%;
+  --swatch-shift: clamp(180px, 26vw, 320px);
+  background: #ffe8cc;
 }
 
 .calendar-features {
