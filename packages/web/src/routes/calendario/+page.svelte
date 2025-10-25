@@ -220,8 +220,8 @@
           <div class="calendar-section__inner">
             <div class="calendar-features">
               <picture class="calendar-features__media">
-                <source srcset="/images/IMG_6395.png" />
-                <img src="/images/IMG_6395.png" alt={t('calendario.titulo')} loading="lazy" />
+                <source srcset="/images/IMG_6395.jpg" />
+                <img src="/images/IMG_6395.jpg" alt={t('calendario.titulo')} loading="lazy" />
               </picture>
               <div class="calendar-features__grid">
                 <div class="calendar-features__item">
