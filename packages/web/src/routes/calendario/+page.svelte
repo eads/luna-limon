@@ -115,6 +115,9 @@
   let activeCard = $state('');
 
   let observer: IntersectionObserver | undefined;
+  let heroCtaEl: HTMLDivElement | null = null;
+  let bottomSection: HTMLElement | null = null;
+  let stickyVisible = $state(false);
   const registeredSections = new Set<HTMLElement>();
 
   function layerTrigger(node: HTMLElement, cardId: string) {
@@ -172,20 +175,35 @@
 
   onMount(() => {
     if (!browser) return;
+    const updateStickyState = () => {
+      if (!browser) return;
+      const ref = heroCtaEl ?? undefined;
+      const refRect = ref?.getBoundingClientRect();
+      stickyVisible = !!refRect && refRect.bottom < 0;
+    };
+
+    const handle = () => {
+      refreshActiveCard();
+      updateStickyState();
+    };
+
     observer = new IntersectionObserver(() => {
       refreshActiveCard();
     }, { threshold: [0.2, 0.5, 0.8] });
 
     registeredSections.forEach((node) => observer?.observe(node));
-    refreshActiveCard();
+    handle();
 
-    const handleResize = () => refreshActiveCard();
+    const handleResize = () => handle();
+    const handleScroll = () => updateStickyState();
     window.addEventListener('resize', handleResize);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
       observer?.disconnect();
       observer = undefined;
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll);
     };
   });
 
@@ -260,7 +278,7 @@
           </video>
           <div class="calendar-hero__overlay">
             <h1 class="calendar-hero__title">{@html renderRich(t('calendario.hero_title'))}</h1>
-            <div class="calendar-hero__cta">
+            <div class="calendar-hero__cta" bind:this={heroCtaEl}>
               <button
                 class={`calendar-primary__button ${flash ? 'flash' : ''}`}
                 type="button"
@@ -300,7 +318,7 @@
         </div>
       </section>
 
-      <section class="calendar-section calendar-section--details" use:layerTrigger={'canvas'}>
+      <section class="calendar-section calendar-section--details" bind:this={bottomSection} use:layerTrigger={'canvas'}>
         <div class="calendar-section__surface">
           <div class="calendar-section__inner">
             <div class="calendar-features">
@@ -361,4 +379,15 @@
       </section>
     </div>
   </div>
+  {#if stickyVisible}
+    <div class="calendar-sticky-cta">
+      <button
+        class={`calendar-primary__button calendar-primary__button--wide ${flash ? 'flash' : ''}`}
+        type="button"
+        onclick={addNow}
+      >
+        {ctaText}
+      </button>
+    </div>
+  {/if}
 {/if}

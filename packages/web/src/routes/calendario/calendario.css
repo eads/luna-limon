@@ -62,7 +62,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 4;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .calendar-background-card__eyebrow {
@@ -98,6 +98,7 @@
   cursor: pointer;
   box-shadow: 0 22px 48px -28px rgba(39, 17, 25, 0.32);
   transition: transform 160ms ease, box-shadow 200ms ease;
+  pointer-events: auto;
 }
 
 .calendar-quote__cta:hover {
