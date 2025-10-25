@@ -439,59 +439,79 @@
 }
 .calendar-features {
   display: grid;
-  gap: clamp(1.5rem, 3vw, 2.4rem);
-}
-
-.calendar-features__media {
-  display: block;
-  width: 100%;
-  overflow: hidden;
-  border-radius: clamp(12px, 4vw, 28px);
-  box-shadow: 0 32px 80px -56px rgba(21, 7, 12, 0.28);
-}
-
-.calendar-features__media img {
-  display: block;
-  width: 100%;
-  height: auto;
-  object-fit: cover;
+  gap: clamp(1.6rem, 4vw, 2.8rem);
 }
 
 .calendar-features__grid {
   display: grid;
-  gap: clamp(1rem, 3vw, 1.5rem);
+  gap: clamp(1.4rem, 3vw, 2.2rem);
 }
 
-@media (min-width: 720px) {
-  .calendar-features__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.calendar-features__item {
-  padding: 1.3rem 1.4rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 24px 60px -48px rgba(33, 11, 19, 0.35);
+.calendar-feature {
   display: grid;
-  gap: 0.6rem;
+  gap: clamp(1rem, 3vw, 1.6rem);
+  align-items: center;
+  background: rgba(255, 255, 255, 0.78);
+  padding: clamp(1.2rem, 3.6vw, 2rem);
+  border-radius: clamp(12px, 3vw, 20px);
+  box-shadow: 0 24px 60px -48px rgba(33, 11, 19, 0.3);
 }
 
-.calendar-features__item h3 {
+.calendar-feature__media {
+  width: 100%;
+  border-radius: clamp(10px, 2.6vw, 18px);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: rgba(255, 255, 255, 0.6);
+  position: relative;
+}
+
+.calendar-feature__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.calendar-feature__text {
+  display: grid;
+  gap: clamp(0.4rem, 2vw, 0.9rem);
+}
+
+.calendar-feature__text h3 {
   margin: 0;
   font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: clamp(1rem, 2.6vw, 1.15rem);
   color: rgba(40, 19, 28, 0.85);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
-.calendar-features__item p {
+.calendar-feature__text p {
   margin: 0;
   font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
-  line-height: 1.6;
+  line-height: 1.65;
   color: rgba(37, 18, 27, 0.75);
+}
+
+@media (min-width: 720px) {
+  .calendar-feature {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: clamp(1.4rem, 3.4vw, 2.6rem);
+  }
+
+  .calendar-feature:nth-child(even) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  }
+
+  .calendar-feature:nth-child(even) .calendar-feature__media {
+    order: 2;
+  }
+
+  .calendar-feature:nth-child(even) .calendar-feature__text {
+    order: 1;
+  }
 }
 
 .calendar-features__cta {

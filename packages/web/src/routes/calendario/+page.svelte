@@ -224,27 +224,47 @@
         <div class="calendar-section__surface">
           <div class="calendar-section__inner">
             <div class="calendar-features">
-              <picture class="calendar-features__media">
-                <source srcset="/images/IMG_6395.jpg" />
-                <img src="/images/IMG_6395.jpg" alt={t('calendario.titulo')} loading="lazy" />
-              </picture>
               <div class="calendar-features__grid">
-                <div class="calendar-features__item">
-                  <h3>{t('calendario.f1_title')}</h3>
-                  <p>{t('calendario.f1_body')}</p>
-                </div>
-                <div class="calendar-features__item">
-                  <h3>{t('calendario.f2_title')}</h3>
-                  <p>{t('calendario.f2_body')}</p>
-                </div>
-                <div class="calendar-features__item">
-                  <h3>{t('calendario.f3_title')}</h3>
-                  <p>{t('calendario.f3_body')}</p>
-                </div>
-                <div class="calendar-features__item">
-                  <h3>{t('calendario.f4_title')}</h3>
-                  <p>{t('calendario.f4_body')}</p>
-                </div>
+                <article class="calendar-feature">
+                  <picture class="calendar-feature__media">
+                    <source srcset="/images/IMG_6395.jpg" />
+                    <img src="/images/IMG_6395.jpg" alt={t('calendario.f1_title')} loading="lazy" />
+                  </picture>
+                  <div class="calendar-feature__text">
+                    <h3>{t('calendario.f1_title')}</h3>
+                    <p>{t('calendario.f1_body')}</p>
+                  </div>
+                </article>
+                <article class="calendar-feature">
+                  <picture class="calendar-feature__media">
+                    <source srcset="/images/IMG_6403.jpg" />
+                    <img src="/images/IMG_6403.jpg" alt={t('calendario.f2_title')} loading="lazy" />
+                  </picture>
+                  <div class="calendar-feature__text">
+                    <h3>{t('calendario.f2_title')}</h3>
+                    <p>{t('calendario.f2_body')}</p>
+                  </div>
+                </article>
+                <article class="calendar-feature">
+                  <picture class="calendar-feature__media">
+                    <source srcset="/images/IMG_5882.jpg" />
+                    <img src="/images/IMG_5882.jpg" alt={t('calendario.f3_title')} loading="lazy" />
+                  </picture>
+                  <div class="calendar-feature__text">
+                    <h3>{t('calendario.f3_title')}</h3>
+                    <p>{t('calendario.f3_body')}</p>
+                  </div>
+                </article>
+                <article class="calendar-feature">
+                  <picture class="calendar-feature__media">
+                    <source srcset="/images/IMG_6425.jpg" />
+                    <img src="/images/IMG_6425.jpg" alt={t('calendario.f4_title')} loading="lazy" />
+                  </picture>
+                  <div class="calendar-feature__text">
+                    <h3>{t('calendario.f4_title')}</h3>
+                    <p>{t('calendario.f4_body')}</p>
+                  </div>
+                </article>
               </div>
               <div class="calendar-features__cta">
                 <button
