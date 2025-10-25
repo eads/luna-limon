@@ -201,7 +201,6 @@
               >
                 {ctaText}
               </button>
-              <p class="calendar-hero__note">{t('calendario.preorder')}</p>
             </div>
           </div>
         </div>
@@ -220,7 +219,10 @@
         <div class="calendar-section__surface">
           <div class="calendar-section__inner">
             <div class="calendar-features">
-              <h2 class="calendar-features__title">{t('calendario.titulo')}</h2>
+              <picture class="calendar-features__media">
+                <source srcset="/images/IMG_6395.png" />
+                <img src="/images/IMG_6395.png" alt={t('calendario.titulo')} loading="lazy" />
+              </picture>
               <div class="calendar-features__grid">
                 <div class="calendar-features__item">
                   <h3>{t('calendario.f1_title')}</h3>

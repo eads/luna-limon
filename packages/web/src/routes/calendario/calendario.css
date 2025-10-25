@@ -9,7 +9,7 @@
   position: relative;
   isolation: isolate;
   --calendar-backdrop-intro: #fef6ef;
-  --calendar-backdrop-quote: radial-gradient(120% 120% at 50% 10%, #ffffff 0%, #f9edff 38%, #f5def5 100%);
+  --calendar-backdrop-quote: radial-gradient(120% 120% at 50% 15%, #fffefd 0%, #fff6f0 60%, #ffeceb 100%);
   color: #2b1721;
 }
 
@@ -52,13 +52,13 @@
   width: min(860px, calc(100vw - 30px));
   text-align: center;
   display: grid;
-  gap: 0;
-  padding: clamp(0.75rem, 2.5vw, 1.6rem) clamp(1.25rem, 3.5vw, 2.3rem);
-  border-radius: clamp(28px, 6vw, 48px);
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 34px 110px -58px rgba(24, 7, 14, 0.32);
+  gap: clamp(0.4rem, 1.8vw, 0.9rem);
+  padding: clamp(0.4rem, 1.6vw, 1.1rem) clamp(1rem, 3vw, 1.9rem);
+  border-radius: clamp(12px, 4vw, 28px);
+  background: transparent;
+  box-shadow: none;
   position: fixed;
-  top: 46%;
+  top: 44%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 4;
@@ -77,10 +77,10 @@
 .calendar-background-card__text {
   margin: 0;
   font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-size: clamp(1.4rem, 4.4vw, 2.8rem);
-  line-height: 1.36;
-  color: rgba(47, 22, 33, 0.9);
-  letter-spacing: 0.008em;
+  font-size: clamp(1.6rem, 5vw, 3rem);
+  line-height: 1.42;
+  color: rgba(47, 22, 33, 0.86);
+  letter-spacing: 0.01em;
 }
 
 .calendar-layered__content {
@@ -130,7 +130,6 @@
 
 .calendar-hero__cta {
   display: grid;
-  gap: 0.9rem;
   justify-items: center;
 }
 
@@ -160,7 +159,11 @@
 }
 
 .calendar-section--details .calendar-section__surface {
-  background: rgba(255, 255, 255, 0.82);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  padding: clamp(1.5rem, 5vw, 3rem) 0;
 }
 
 .calendar-section__inner {
@@ -183,13 +186,6 @@
   color: #fff8f3;
 }
 
-.calendar-hero__note {
-  margin: 0;
-  font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-size: 0.95rem;
-  color: rgba(255, 245, 240, 0.75);
-}
-
 .calendar-primary__button {
   border: none;
   border-radius: 999px;
@@ -199,17 +195,17 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
   font-size: 0.85rem;
-  background: #fbdcd5;
+  background: #ffffff;
   color: #2c141d;
   cursor: pointer;
   transition: transform 160ms ease, box-shadow 200ms ease, filter 200ms ease;
-  box-shadow: 0 20px 40px -24px rgba(182, 86, 112, 0.45);
+  box-shadow: 0 22px 42px -26px rgba(44, 21, 29, 0.3);
 }
 
 .calendar-primary__button:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);
-  box-shadow: 0 26px 50px -24px rgba(182, 86, 112, 0.55);
+  box-shadow: 0 26px 54px -28px rgba(44, 21, 29, 0.36);
 }
 
 .calendar-primary__button:active {
@@ -233,7 +229,7 @@
 .calendar-swatches {
   position: relative;
   width: min(960px, 92vw);
-  height: min(720px, 110vh);
+  height: min(540px, 90vh);
   margin: 0 auto;
 }
 
@@ -264,29 +260,33 @@
 }
 
 .calendar-swatches__box--under {
-  z-index: 5;
+  z-index: 3;
 }
 
 .calendar-swatches__box--one {
   width: clamp(150px, 20vmin, 220px);
   height: clamp(240px, 34vmin, 340px);
   top: 6%;
-  --swatch-shift: clamp(-290px, -28vw, -170px);
+  --swatch-shift: clamp(-280px, -28vw, -170px);
   background: #fbdcd5;
 }
 
 .calendar-swatches__box--two {
-  width: clamp(150px, 19vmin, 210px);
-  height: clamp(190px, 28vmin, 280px);
-  top: 22%;
+  width: clamp(160px, 20vmin, 230px);
+  height: clamp(230px, 32vmin, 320px);
+  top: 16%;
   --swatch-shift: clamp(190px, 26vw, 310px);
-  background: #bfe3ff;
+  background: #ffffff;
+  background-image: url('/images/romero.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .calendar-swatches__box--three {
-  width: clamp(140px, 18vmin, 200px);
+  width: clamp(150px, 20vmin, 220px);
   height: clamp(210px, 30vmin, 280px);
-  top: 48%;
+  top: 46%;
   --swatch-shift: clamp(-210px, -22vw, -120px);
   background: #ffe6a7;
 }
@@ -294,9 +294,13 @@
 .calendar-swatches__box--four {
   width: clamp(170px, 22vmin, 240px);
   height: clamp(230px, 34vmin, 320px);
-  top: 68%;
+  top: 62%;
   --swatch-shift: clamp(200px, 30vw, 340px);
-  background: #ffd1f4;
+  background: #ffffff;
+  background-image: url('/images/Amatista.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .calendar-features {
@@ -304,11 +308,19 @@
   gap: clamp(1.5rem, 3vw, 2.4rem);
 }
 
-.calendar-features__title {
-  font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-size: clamp(2.1rem, 5vw, 3.1rem);
-  margin: 0;
-  color: #2f1821;
+.calendar-features__media {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: clamp(12px, 4vw, 28px);
+  box-shadow: 0 32px 80px -56px rgba(21, 7, 12, 0.28);
+}
+
+.calendar-features__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
 }
 
 .calendar-features__grid {
@@ -323,10 +335,10 @@
 }
 
 .calendar-features__item {
-  padding: 1.4rem 1.6rem;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.76);
-  box-shadow: 0 24px 60px -48px rgba(33, 11, 19, 0.4);
+  padding: 1.3rem 1.4rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 24px 60px -48px rgba(33, 11, 19, 0.35);
   display: grid;
   gap: 0.6rem;
 }
