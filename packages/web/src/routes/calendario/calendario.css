@@ -154,10 +154,10 @@
   color: #fff7f4;
   background: linear-gradient(
     180deg,
-    rgba(18, 8, 13, 0.68) 0%,
-    rgba(20, 9, 14, 0.32) 38%,
-    rgba(22, 10, 15, 0.12) 64%,
-    rgba(24, 11, 16, 0) 100%
+    rgba(18, 8, 13, 0.82) 0%,
+    rgba(20, 9, 14, 0.58) 42%,
+    rgba(22, 10, 15, 0.28) 72%,
+    rgba(24, 11, 16, 0.12) 100%
   );
 }
 
@@ -249,12 +249,9 @@
 
 .calendar-hero__title em {
   font-family: 'Etania Ezra Script', 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-weight: 500;
-  font-size: 1.12em;
+  font-weight: 600;
+  font-size: 1.18em;
   letter-spacing: 0.02em;
-  padding: 0.05em 0.35em;
-  border-radius: 0.6em;
-  background: rgba(255, 236, 235, 0.45);
 }
 
 .calendar-primary__button {
@@ -545,25 +542,21 @@
 
 .calendar-feature__text h3 {
   margin: 0;
-  font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-weight: 600;
-  font-size: clamp(1rem, 2.6vw, 1.15rem);
-  color: rgba(40, 19, 28, 0.85);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
+  font-weight: 500;
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  color: rgba(40, 19, 28, 0.88);
+  letter-spacing: 0.04em;
 }
 
 .calendar-feature__text h3 em {
   display: inline-block;
   font-family: 'Etania Ezra Script', 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: none;
   letter-spacing: 0;
-  font-size: 1.4em;
-  margin-right: 0.35rem;
-  padding: 0.05em 0.3em;
-  border-radius: 0.6em;
-  background: rgba(255, 236, 235, 0.45);
+  font-size: 1.55em;
+  margin-right: 0.4rem;
 }
 
 .calendar-feature__text p {
