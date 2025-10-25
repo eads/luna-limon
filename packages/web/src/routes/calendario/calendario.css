@@ -250,7 +250,7 @@
 .calendar-hero__title em {
   font-family: 'Etania Ezra Script', 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
   font-weight: 600;
-  font-size: 1.18em;
+  font-size: 1.25em;
   letter-spacing: 0.02em;
 }
 
@@ -543,10 +543,10 @@
 .calendar-feature__text h3 {
   margin: 0;
   font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-weight: 500;
-  font-size: clamp(1.2rem, 3vw, 1.6rem);
-  color: rgba(40, 19, 28, 0.88);
-  letter-spacing: 0.04em;
+  font-weight: 700;
+  font-size: clamp(1.35rem, 3.4vw, 2rem);
+  color: rgba(37, 17, 26, 0.92);
+  letter-spacing: 0.02em;
 }
 
 .calendar-feature__text h3 em {
@@ -555,8 +555,8 @@
   font-weight: 600;
   text-transform: none;
   letter-spacing: 0;
-  font-size: 1.55em;
-  margin-right: 0.4rem;
+  font-size: 1.6em;
+  margin-right: 0.35rem;
 }
 
 .calendar-feature__text p {
