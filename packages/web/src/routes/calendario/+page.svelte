@@ -42,7 +42,7 @@
     {
       id: 'quote',
       variant: 'quote',
-      heading: t('calendario.hero_eyebrow') ?? '',
+      heading: t('calendario.hero_title') ?? '',
       body: t('calendario.hero_subtitle') ?? ''
     },
     {
@@ -83,13 +83,19 @@
   function refreshActiveCard() {
     if (!browser) return;
     let bestId: string | null = null;
-    let bestVisible = 0;
+    let bestScore = 0;
     const viewportHeight = window.innerHeight || 1;
+    const coverageTop = viewportHeight * 0.2;
+    const coverageBottom = viewportHeight * 0.9;
+
     registeredSections.forEach((node) => {
       const rect = node.getBoundingClientRect();
-      const visible = Math.max(Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0), 0);
-      if (visible > bestVisible) {
-        bestVisible = visible;
+      const overlap = Math.max(
+        Math.min(rect.bottom, coverageBottom) - Math.max(rect.top, coverageTop),
+        0
+      );
+      if (overlap > bestScore) {
+        bestScore = overlap;
         const id = node.dataset.cardId;
         if (id) {
           bestId = id;
@@ -186,7 +192,6 @@
             {/each}
           </video>
           <div class="calendar-hero__overlay">
-            <span class="calendar-hero__eyebrow">{t('calendario.hero_eyebrow')}</span>
             <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
             <div class="calendar-hero__cta">
               <button
