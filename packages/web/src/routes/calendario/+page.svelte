@@ -43,8 +43,8 @@
     {
       id: 'quote',
       variant: 'quote',
-      heading: t('calendario.story_title') ?? t('calendario.story_placeholder_label') ?? '',
-      body: t('calendario.story_body') ?? ''
+      heading: t('calendario.hero_eyebrow') ?? '',
+      body: t('calendario.hero_subtitle') ?? ''
     },
     {
       id: 'affirmation',
@@ -190,40 +190,46 @@
     </div>
 
     <div class="calendar-layered__content">
-      <section class="calendar-section calendar-section--hero" use:layerTrigger={'intro'}>
-        <div class="calendar-section__surface">
-          <div class="calendar-section__inner calendar-section__inner--hero">
-            <div class="calendar-hero__media">
-              <video class="calendar-hero__video" playsinline autoplay muted loop preload="metadata">
-                {#each featureVideoSources as source (source.src)}
-                  {#if source.media}
-                    <source src={source.src} type={source.type} media={source.media} />
-                  {:else}
-                    <source src={source.src} type={source.type} />
-                  {/if}
-                {/each}
-              </video>
-            </div>
-            <div class="calendar-hero__copy">
-              <span class="calendar-hero__eyebrow">{t('calendario.hero_eyebrow')}</span>
-              <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
-              <p class="calendar-hero__subtitle">{t('calendario.hero_subtitle')}</p>
-              <div class="calendar-actions">
-                <button
-                  class={`calendar-primary__button ${flash ? 'flash' : ''}`}
-                  type="button"
-                  onclick={addNow}
-                >
-                  {ctaText}
-                </button>
-                <p class="calendar-hero__note">{t('calendario.preorder')}</p>
-              </div>
+      <section class="calendar-hero" use:layerTrigger={'intro'}>
+        <div class="calendar-hero__frame">
+          <video class="calendar-hero__video" playsinline autoplay muted loop preload="metadata">
+            {#each featureVideoSources as source (source.src)}
+              {#if source.media}
+                <source src={source.src} type={source.type} media={source.media} />
+              {:else}
+                <source src={source.src} type={source.type} />
+              {/if}
+            {/each}
+          </video>
+          <div class="calendar-hero__overlay">
+            <span class="calendar-hero__eyebrow">{t('calendario.hero_eyebrow')}</span>
+            <h1 class="calendar-hero__title">{t('calendario.hero_title')}</h1>
+            <div class="calendar-hero__cta">
+              <button
+                class={`calendar-primary__button ${flash ? 'flash' : ''}`}
+                type="button"
+                onclick={addNow}
+              >
+                {ctaText}
+              </button>
+              <p class="calendar-hero__note">{t('calendario.preorder')}</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="calendar-section calendar-section--story" use:layerTrigger={'quote'}>
+      <section class="calendar-section calendar-section--swatches" use:layerTrigger={'quote'}>
+        <div class="calendar-swatches" aria-hidden="true">
+          <div class="calendar-swatches__box calendar-swatches__box--one"></div>
+          <div class="calendar-swatches__box calendar-swatches__box--two"></div>
+          <div class="calendar-swatches__box calendar-swatches__box--three"></div>
+          <div class="calendar-swatches__box calendar-swatches__box--four"></div>
+          <div class="calendar-swatches__box calendar-swatches__box--five"></div>
+          <div class="calendar-swatches__box calendar-swatches__box--six"></div>
+        </div>
+      </section>
+
+      <section class="calendar-section calendar-section--story" use:layerTrigger={'affirmation'}>
         <div class="calendar-section__surface">
           <div class="calendar-section__inner calendar-section__inner--narrow">
             <span class="calendar-story__eyebrow">{t('calendario.story_placeholder_label')}</span>
