@@ -142,7 +142,7 @@
 .calendar-hero__cta {
   display: grid;
   justify-items: center;
-  gap: 0.9rem;
+  gap: clamp(1rem, 2.6vw, 1.6rem);
   margin-bottom: clamp(3rem, 10vh, 5rem);
 }
 
@@ -150,13 +150,13 @@
   display: inline-grid;
   grid-auto-flow: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
   font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  font-size: 0.72rem;
-  color: rgba(255, 245, 240, 0.76);
+  font-size: 0.78rem;
+  color: rgba(255, 245, 240, 0.82);
   text-decoration: none;
   transition: opacity 160ms ease;
 }
@@ -166,8 +166,8 @@
 }
 
 .calendar-hero__follow svg {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   fill: currentColor;
 }
 
@@ -473,11 +473,9 @@
 }
 
 .calendar-features__cta {
-  margin-top: clamp(2rem, 5vw, 3rem);
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(1rem, 3vw, 1.6rem);
-  align-items: center;
+  margin-top: clamp(2.4rem, 6vw, 3.6rem);
+  display: grid;
+  gap: clamp(1.2rem, 3.4vw, 2rem);
 }
 
 .calendar-feature {
@@ -548,26 +546,29 @@
 }
 
 .calendar-primary__button--wide {
-  padding-inline: clamp(2.4rem, 7vw, 3.8rem);
+  padding-inline: clamp(2.8rem, 9vw, 4.8rem);
+  font-size: clamp(0.9rem, 2.4vw, 1rem);
+  letter-spacing: 0.18em;
 }
+
 
 .calendar-features__social {
   display: inline-grid;
   grid-auto-flow: column;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.7rem;
   font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
   font-weight: 600;
-  font-size: 0.85rem;
-  letter-spacing: 0.1em;
+  font-size: 0.92rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #26121a;
   text-decoration: none;
-  padding-inline: clamp(1rem, 4vw, 1.6rem);
-  padding-block: 0.8rem;
-  border-radius: 999px;
-  border: 1px solid rgba(38, 18, 26, 0.14);
-  background: rgba(255, 255, 255, 0.72);
+  padding-inline: clamp(1.1rem, 4vw, 1.9rem);
+  padding-block: clamp(0.85rem, 2.4vw, 1.1rem);
+  border-radius: clamp(18px, 4vw, 28px);
+  border: 1px solid rgba(38, 18, 26, 0.16);
+  background: rgba(255, 255, 255, 0.82);
   transition: transform 140ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
