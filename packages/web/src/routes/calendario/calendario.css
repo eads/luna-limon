@@ -263,8 +263,8 @@
   width: clamp(180px, 22vmin, 260px);
   height: clamp(200px, 28vmin, 260px);
   top: 6%;
-  --swatch-shift: clamp(-380px, -34vw, -220px);
-  --swatch-rotate: -4deg;
+  --swatch-shift: -120px;
+  --swatch-rotate: -3deg;
   background: transparent;
   display: flex;
   align-items: center;
@@ -286,7 +286,7 @@
   width: clamp(180px, 22vmin, 260px);
   height: clamp(200px, 28vmin, 260px);
   top: 18%;
-  --swatch-shift: clamp(240px, 30vw, 380px);
+  --swatch-shift: 110px;
   background: transparent;
   display: flex;
   align-items: center;
@@ -308,7 +308,7 @@
   width: clamp(180px, 22vmin, 260px);
   height: clamp(200px, 28vmin, 250px);
   top: 46%;
-  --swatch-shift: clamp(-320px, -30vw, -160px);
+  --swatch-shift: -100px;
   background: transparent;
   display: flex;
   align-items: center;
@@ -330,8 +330,8 @@
   width: clamp(180px, 22vmin, 260px);
   height: clamp(200px, 28vmin, 250px);
   top: 62%;
-  --swatch-shift: clamp(260px, 32vw, 400px);
-  --swatch-rotate: 6deg;
+  --swatch-shift: 100px;
+  --swatch-rotate: 4deg;
   background: transparent;
   display: flex;
   align-items: center;
@@ -349,13 +349,23 @@
   background-position: center;
 }
 
-@media (max-width: 640px) {
+@media (min-width: 900px) {
+  .calendar-swatches__box--one {
+    --swatch-shift: clamp(-380px, -34vw, -220px);
+    --swatch-rotate: -4deg;
+  }
+
+  .calendar-swatches__box--two {
+    --swatch-shift: clamp(240px, 30vw, 380px);
+  }
+
   .calendar-swatches__box--three {
-    --swatch-shift: -40px;
+    --swatch-shift: clamp(-320px, -30vw, -160px);
   }
 
   .calendar-swatches__box--four {
-    --swatch-shift: 15px;
+    --swatch-shift: clamp(260px, 32vw, 400px);
+    --swatch-rotate: 6deg;
   }
 }
 .calendar-features {
