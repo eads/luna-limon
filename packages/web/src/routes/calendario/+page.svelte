@@ -163,9 +163,10 @@
       {#each backgroundCards as card (card.id)}
         <section
           class={`calendar-background-card calendar-background-card--${card.variant} ${activeCard === card.id ? 'is-active' : ''}`}
+          style={card.variant === 'blank' ? `--card-color:${card.color}` : undefined}
         >
           {#if card.variant === 'blank'}
-            <div class="calendar-background-card__swatch" style={`--card-color:${card.color}`}></div>
+            <!-- blank card just sets the backdrop color -->
           {:else if card.variant === 'quote'}
             <div class="calendar-background-card__viewport">
               {#if card.heading}
