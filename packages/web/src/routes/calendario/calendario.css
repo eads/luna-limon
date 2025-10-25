@@ -543,20 +543,20 @@
 .calendar-feature__text h3 {
   margin: 0;
   font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-weight: 700;
-  font-size: clamp(1.35rem, 3.4vw, 2rem);
+  font-weight: 600;
+  font-size: clamp(1.4rem, 3.6vw, 2.2rem);
   color: rgba(37, 17, 26, 0.92);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
 .calendar-feature__text h3 em {
   display: inline-block;
   font-family: 'Etania Ezra Script', 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: none;
   letter-spacing: 0;
-  font-size: 1.6em;
-  margin-right: 0.35rem;
+  font-size: 1.75em;
+  margin-right: 0.4rem;
 }
 
 .calendar-feature__text p {

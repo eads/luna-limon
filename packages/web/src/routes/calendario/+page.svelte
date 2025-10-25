@@ -14,6 +14,7 @@
   // @ts-expect-error - runtime types not generated yet
   import { localizeHref } from '$lib/paraglide/runtime.js';
   import { onMount } from 'svelte';
+  import { getResizedImageUrl } from '$lib/utils/images';
   import './calendario.css';
 
   const { t } = useI18n();
@@ -52,26 +53,49 @@
     }
   ]);
 
+  const featuresImages = $derived([
+    {
+      large: getResizedImageUrl('/images/IMG_6395.jpg', 1200),
+      medium: getResizedImageUrl('/images/IMG_6395.jpg', 760),
+      fallback: '/images/IMG_6395.jpg'
+    },
+    {
+      large: getResizedImageUrl('/images/IMG_6403.jpg', 1200),
+      medium: getResizedImageUrl('/images/IMG_6403.jpg', 760),
+      fallback: '/images/IMG_6403.jpg'
+    },
+    {
+      large: getResizedImageUrl('/images/IMG_5882.jpg', 1200),
+      medium: getResizedImageUrl('/images/IMG_5882.jpg', 760),
+      fallback: '/images/IMG_5882.jpg'
+    },
+    {
+      large: getResizedImageUrl('/images/IMG_6425.jpg', 1200),
+      medium: getResizedImageUrl('/images/IMG_6425.jpg', 760),
+      fallback: '/images/IMG_6425.jpg'
+    }
+  ]);
+
   const featureCards = $derived([
     {
       title: t('calendario.f1_title') ?? '',
       body: t('calendario.f1_body') ?? '',
-      image: '/images/IMG_6395.jpg'
+      image: featuresImages[0]
     },
     {
       title: t('calendario.f2_title') ?? '',
       body: t('calendario.f2_body') ?? '',
-      image: '/images/IMG_6403.jpg'
+      image: featuresImages[1]
     },
     {
       title: t('calendario.f3_title') ?? '',
       body: t('calendario.f3_body') ?? '',
-      image: '/images/IMG_5882.jpg'
+      image: featuresImages[2]
     },
     {
       title: t('calendario.f4_title') ?? '',
       body: t('calendario.f4_body') ?? '',
-      image: '/images/IMG_6425.jpg'
+      image: featuresImages[3]
     }
   ]);
 
@@ -284,8 +308,23 @@
               {#each featureCards as card, index}
                 <article class={`calendar-feature ${index % 2 ? 'is-alt' : ''}`}>
                   <picture class="calendar-feature__media">
-                    <source srcset={card.image} />
-                    <img src={card.image} alt={card.title} loading="lazy" />
+                    <source
+                      media="(min-width: 900px)"
+                      srcset={`${card.image.large} 1200w, ${card.image.medium} 800w`}
+                      sizes="50vw"
+                    />
+                    <source
+                      media="(min-width: 480px)"
+                      srcset={`${card.image.medium} 800w, ${card.image.large} 1200w`}
+                      sizes="90vw"
+                    />
+                    <img
+                      src={card.image.fallback}
+                      srcset={`${card.image.medium} 800w, ${card.image.large} 1200w`}
+                      sizes="90vw"
+                      alt={card.title}
+                      loading="lazy"
+                    />
                   </picture>
                   <div class="calendar-feature__text">
                     <h3>{@html renderRich(card.title)}</h3>
