@@ -613,11 +613,15 @@
 
 .calendar-sticky-cta .calendar-primary__button--wide {
   pointer-events: auto;
-  box-shadow: 0 24px 48px -22px rgba(31, 13, 20, 0.35);
+  box-shadow:
+    0 22px 36px -20px rgba(31, 13, 20, 0.35),
+    0 0 25px rgba(252, 215, 223, 0.6);
 }
 
 .calendar-sticky-cta .calendar-primary__button--wide:hover {
-  box-shadow: 0 28px 56px -24px rgba(31, 13, 20, 0.4);
+  box-shadow:
+    0 26px 44px -18px rgba(31, 13, 20, 0.4),
+    0 0 30px rgba(252, 215, 223, 0.7);
 }
 
 .calendar-features__cta {
