@@ -48,24 +48,43 @@
   color: rgba(41, 19, 34, 0.85);
 }
 
-.calendar-background-card__viewport {
+.calendar-background-card[data-card-id='intro'],
+.calendar-background-card[data-card-id='quote'] {
+  transition: none;
+}
+
+.calendar-quote-card[data-card-id='intro'],
+.calendar-quote-card[data-card-id='quote'] {
+  transition: none;
+}
+
+.calendar-layered__quotes {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.calendar-quote-card {
+  position: fixed;
+  top: 44%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: min(860px, calc(100vw - 30px));
   text-align: center;
   display: grid;
   gap: clamp(0.4rem, 1.8vw, 0.9rem);
   padding: clamp(0.4rem, 1.6vw, 1.1rem) clamp(1rem, 3vw, 1.9rem);
-  border-radius: clamp(12px, 4vw, 28px);
-  background: transparent;
-  box-shadow: none;
-  position: fixed;
-  top: 44%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 4;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 320ms ease;
 }
 
-.calendar-background-card__eyebrow {
+.calendar-quote-card.is-active {
+  opacity: 1;
+}
+
+.calendar-quote-card__eyebrow {
   font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
   font-weight: 400;
   letter-spacing: 0.04em;
@@ -74,7 +93,7 @@
   color: rgba(47, 22, 33, 0.78);
 }
 
-.calendar-background-card__text {
+.calendar-quote-card__text {
   margin: 0;
   font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
   font-size: clamp(1.6rem, 5vw, 3rem);
@@ -85,7 +104,6 @@
 
 .calendar-layered__content {
   position: relative;
-  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: clamp(4rem, 12vh, 8rem);
@@ -98,6 +116,8 @@
   display: flex;
   align-items: stretch;
   justify-content: stretch;
+  position: relative;
+  z-index: 8;
 }
 
 .calendar-hero__frame {
@@ -302,6 +322,8 @@
 .calendar-section--swatches {
   padding-block: clamp(3rem, 12vh, 6rem);
   overflow-x: clip;
+  position: relative;
+  z-index: 4;
 }
 
 .calendar-swatches {

@@ -37,8 +37,9 @@
   const backgroundCards = $derived<BackgroundCard[]>([
     {
       id: 'intro',
-      variant: 'blank',
-      color: '#fef6ef'
+      variant: 'quote',
+      heading: undefined,
+      body: t('calendario.hero_subtitle') ?? ''
     },
     {
       id: 'quote',
@@ -52,6 +53,8 @@
       color: '#fdecef'
     }
   ]);
+
+  const quoteCards = $derived(backgroundCards.filter((card) => card.variant === 'quote'));
 
   const featuresImages = $derived([
     {
@@ -241,18 +244,23 @@
       {#each backgroundCards as card (card.id)}
         <section
           class={`calendar-background-card calendar-background-card--${card.variant} ${activeCard === card.id ? 'is-active' : ''}`}
+          data-card-id={card.id}
           style={card.variant === 'blank' ? `--card-color:${card.color}` : undefined}
         >
-          {#if card.variant === 'blank'}
-            <!-- blank card just sets the backdrop color -->
-          {:else if card.variant === 'quote'}
-            <div class="calendar-background-card__viewport">
-              {#if card.heading}
-                <span class="calendar-background-card__eyebrow">{card.heading}</span>
-              {/if}
-              <p class="calendar-background-card__text">{@html renderRich(card.body)}</p>
-            </div>
+        </section>
+      {/each}
+    </div>
+
+    <div class="calendar-layered__quotes">
+      {#each quoteCards as card (card.id)}
+        <section
+          class={`calendar-quote-card ${activeCard === card.id ? 'is-active' : ''}`}
+          data-card-id={card.id}
+        >
+          {#if card.heading}
+            <span class="calendar-quote-card__eyebrow">{card.heading}</span>
           {/if}
+          <p class="calendar-quote-card__text">{@html renderRich(card.body)}</p>
         </section>
       {/each}
     </div>
