@@ -50,7 +50,7 @@
     {
       id: 'canvas',
       variant: 'blank',
-      color: '#fdecef'
+      color: 'var(--calendar-backdrop-canvas)'
     }
   ]);
 

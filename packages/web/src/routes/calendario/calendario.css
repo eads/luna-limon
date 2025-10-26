@@ -10,6 +10,7 @@
   isolation: isolate;
   --calendar-backdrop-intro: #fef6ef;
   --calendar-backdrop-quote: radial-gradient(120% 120% at 50% 15%, #fffefd 0%, #fff6f0 60%, #ffeceb 100%);
+  --calendar-backdrop-canvas: radial-gradient(130% 160% at 50% 10%, #fff7f2 0%, #fee7ef 46%, #fdecef 100%);
   color: #2b1721;
 }
 
