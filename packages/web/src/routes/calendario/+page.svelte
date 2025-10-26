@@ -103,10 +103,9 @@
     {
       titleKey: 'calendario.feature_guide_title',
       bodyKey: 'calendario.feature_guide_body',
-      fallbackTitle:
-        'Una guía práctica para equilibrarte, manifestar y mantenerte en armonía con tus intenciones.',
+      fallbackTitle: 'Rituales para acompañar tu camino',
       fallbackBody:
-        'Rituales para acompañar tu camino. Incluye 12 rituales mensuales con pasos simples y significativos, diseñados para reconectarte con tu propósito y disfrutar lo cotidiano desde la calma.',
+        'Una guía práctica para equilibrarte, manifestar y mantenerte en armonía con tus intenciones. Incluye 12 rituales mensuales con pasos simples y significativos, diseñados para reconectarte con tu propósito y disfrutar lo cotidiano desde la calma.',
       imageIndex: 2
     },
     {

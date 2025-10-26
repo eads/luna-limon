@@ -32,7 +32,17 @@
     "qty_input": "Cantidad",
     "follow_handle": "@lunalimon.co",
     "story_placeholder_label": "Copy temporal",
-    "buy_simple": "Preordenar"
+    "buy_simple": "Preordenar",
+    "feature_connect_title": "Conecta con la energía de cada mes",
+    "feature_connect_body": "Cada mes te acompaña con reflexiones, preguntas y ejercicios sencillos para vivir cada etapa del año con más conciencia.",
+    "feature_crystals_title": "Cristales para acompañar tu mes",
+    "feature_crystals_body": "Cada mes incluye una sugerencia de cristal que sintoniza con su energía.",
+    "feature_rituals_title": "Rituales para acompañar tu camino",
+    "feature_rituals_body": "Una guía práctica para equilibrarte, manifestar y mantenerte en armonía con tus intenciones. Incluye 12 rituales mensuales con pasos simples y significativos, diseñados para reconectarte con tu propósito y disfrutar lo cotidiano desde la calma.",
+    "feature_notes_title": "Espacios para tus notas y reflexiones",
+    "feature_notes_body": "Cada mes te invita a escribir lo que sientes, lo que aprendes o aquello por lo que quieres agradecer.",
+    "feature_care_title": "Hecho con amor e intención",
+    "feature_care_body": "Hecho con materiales responsables con el planeta, porque cuidar de ti también es cuidar del entorno. Cada detalle fue pensado para que sientas que recibes algo más que un calendario: un recordatorio de que siempre puedes volver a empezar."
   },
   "carrito": {
     "carrito_total": "Total",

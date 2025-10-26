@@ -400,47 +400,31 @@
 
 .calendar-swatches__box--one {
   width: clamp(250px, 32vmin, 360px);
-  --swatch-aspect: 5 / 8;
+  --swatch-aspect: 500 / 599;
   top: 0;
   --swatch-shift: -150px;
 }
 
 .calendar-swatches__box--two {
   width: clamp(180px, 22vmin, 260px);
-  --swatch-aspect: 9 / 10;
+  --swatch-aspect: 257 / 250;
   top: 18%;
   --swatch-shift: 150px;
 }
 
 .calendar-swatches__box--three {
   width: clamp(180px, 22vmin, 260px);
-  --swatch-aspect: 9 / 10;
+  --swatch-aspect: 423 / 300;
   top: 80%;
   --swatch-shift: -140px;
 }
 
 .calendar-swatches__box--four {
   width: clamp(350px, 32vmin, 400px);
-  --swatch-aspect: 3 / 4;
+  --swatch-aspect: 640 / 551;
   top: 70%;
   --swatch-shift: 140px;
   --swatch-rotate: 4deg;
-}
-
-.calendar-swatches__box--five {
-  width: clamp(180px, 22vmin, 260px);
-  --swatch-aspect: 9 / 10;
-  top: 34%;
-  --swatch-shift: 190px;
-  --swatch-rotate: 5deg;
-}
-
-.calendar-swatches__box--six {
-  width: clamp(180px, 22vmin, 260px);
-  --swatch-aspect: 9 / 10;
-  top: 82%;
-  --swatch-shift: -190px;
-  --swatch-rotate: -6deg;
 }
 
 .calendar-swatches__box img {
@@ -467,14 +451,6 @@
   .calendar-swatches__box--four {
     --swatch-shift: clamp(170px, 44vw, 240px);
   }
-
-  .calendar-swatches__box--five {
-    --swatch-shift: clamp(200px, 48vw, 270px);
-  }
-
-  .calendar-swatches__box--six {
-    --swatch-shift: clamp(-220px, -50vw, -170px);
-  }
 }
 
 @media (min-width: 900px) {
@@ -492,51 +468,29 @@
   }
 
   .calendar-swatches__box--one {
-    --swatch-shift: 0;
     --swatch-rotate: -4deg;
     width: clamp(340px, 32vw, 480px);
-    height: clamp(460px, 38vw, 600px);
-    top: -8%;
-    left: clamp(-16vw, -10vw, -60px);
+    top: -6%;
+    left: clamp(-14vw, -8vw, -40px);
   }
 
   .calendar-swatches__box--two {
-    --swatch-shift: 0;
-    width: clamp(180px, 16vw, 260px);
-    top: 12%;
-    right: clamp(-14vw, -8vw, -60px);
+    width: clamp(180px, 16vw, 240px);
+    top: 10%;
+    right: clamp(-12vw, -6vw, -20px);
   }
 
   .calendar-swatches__box--three {
-    --swatch-shift: 0;
-    width: clamp(180px, 16vw, 260px);
-    top: 56%;
-    left: clamp(-10vw, -4vw, -30px);
+    width: clamp(200px, 20vw, 280px);
+    top: 58%;
+    left: clamp(-8vw, -4vw, -20px);
   }
 
   .calendar-swatches__box--four {
     --swatch-rotate: 6deg;
-    --swatch-shift: 0;
-    width: clamp(380px, 34vw, 560px);
-    height: clamp(480px, 42vw, 640px);
-    top: 48%;
-    right: clamp(-18vw, -12vw, -80px);
-  }
-
-  .calendar-swatches__box--five {
-    --swatch-rotate: 8deg;
-    --swatch-shift: 0;
-    width: clamp(200px, 20vw, 300px);
-    top: 2%;
-    right: clamp(-10vw, -4vw, -30px);
-  }
-
-  .calendar-swatches__box--six {
-    --swatch-rotate: -8deg;
-    --swatch-shift: 0;
-    width: clamp(220px, 24vw, 340px);
-    top: 76%;
-    left: clamp(-12vw, -6vw, -40px);
+    width: clamp(360px, 34vw, 520px);
+    top: 44%;
+    right: clamp(-16vw, -10vw, -60px);
   }
 }
 
