@@ -137,8 +137,14 @@
 <style>
 	.home-hero {
 		position: relative;
-		min-height: clamp(520px, 100vh, 860px);
+		min-height: clamp(520px, 100dvh, 860px);
 		overflow: hidden;
+	}
+
+	@supports not (height: 1dvh) {
+		.home-hero {
+			min-height: clamp(520px, 100vh, 860px);
+		}
 	}
 
 	.home-hero__picture,
@@ -271,11 +277,19 @@
 
 	@media (min-width: 768px) {
 		.home-hero {
-			min-height: clamp(580px, 88vh, 920px);
+			min-height: clamp(580px, 88dvh, 920px);
 		}
 
 		.home-hero__content {
 			padding: clamp(2.5rem, 9vw, 4rem) clamp(3rem, 10vw, 6rem);
+		}
+	}
+
+	@supports not (height: 1dvh) {
+		@media (min-width: 768px) {
+			.home-hero {
+				min-height: clamp(580px, 88vh, 920px);
+			}
 		}
 	}
 
