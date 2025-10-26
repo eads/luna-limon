@@ -3,7 +3,6 @@ import { base } from '$lib/server/airtable';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { AIRTABLE_PRODUCTS_TABLE } from '$env/static/private';
-// @ts-expect-error - runtime types not generated yet
 import { getLocale } from '$lib/paraglide/runtime.js';
 
 const COPY_TABLE = process.env.AIRTABLE_COPY_TABLE || process.env.AIRTABLE_TABLE || 'texto';

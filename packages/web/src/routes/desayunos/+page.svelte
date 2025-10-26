@@ -10,9 +10,8 @@
   import { cart } from '$lib/cart';
   import { useI18n } from '$lib/i18n/context';
   const { t } = useI18n();
-  import { getResizedImageUrl } from '$lib/utils/images';
-  // @ts-expect-error - runtime types not generated yet
-  import { getLocale } from '$lib/paraglide/runtime.js';
+import { getResizedImageUrl } from '$lib/utils/images';
+import { getLocale } from '$lib/paraglide/runtime.js';
   const nameOf = (p: Product) => p.nombre[getLocale() as 'es'|'en'] ?? p.nombre.es ?? p.nombre.en ?? '';
   const descOf = (p: Product) => p.descripción[getLocale() as 'es'|'en'] ?? p.descripción.es ?? p.descripción.en ?? '';
   const fmtCOP = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../app.css';
-	// @ts-expect-error - runtime types not generated yet
 	import { locales, getLocale, setLocale, localizeHref } from '$lib/paraglide/runtime.js';
     import { setupI18n, useI18n } from '$lib/i18n/context';
     import { page } from '$app/stores';
@@ -27,14 +26,14 @@ const UMAMI_ID = PUBLIC_UMAMI_SITE_ID || '';
 		pagarHref = localizeHref('/pagar');
 	});
 
-    function onLangChange(e: Event) {
-        const target = e.target as HTMLSelectElement;
-        const next = target.value;
-        selected = next;
-        try { if (browser) localStorage.setItem('preferredLocale', selected); } catch {}
-        // navigate to the localized version of current path to fetch fresh SSR HTML
-        goto(localizeHref(location.pathname));
-    }
+	function onLangChange(e: Event) {
+		const target = e.target as HTMLSelectElement;
+		const next = target.value as Locale;
+		selected = next;
+		try { if (browser) localStorage.setItem('preferredLocale', selected); } catch {}
+		// navigate to the localized version of current path to fetch fresh SSR HTML
+		goto(localizeHref(location.pathname));
+	}
 
     const { t } = useI18n();
     const total = $derived($cart.reduce((sum, item) => sum + item.quantity, 0));
@@ -42,9 +41,9 @@ const UMAMI_ID = PUBLIC_UMAMI_SITE_ID || '';
       if (!browser) return;
       // Apply persisted language preference if present
       try {
-        const stored = localStorage.getItem('preferredLocale');
-        if (stored && stored !== selected) {
-          selected = stored;
+		const stored = localStorage.getItem('preferredLocale');
+		if ((stored === 'es' || stored === 'en') && stored !== selected) {
+			selected = stored;
           // Avoid re-navigation on checkout/success routes to prevent perceived reloads
           if (!location.pathname.startsWith('/pagar')) {
             goto(localizeHref(location.pathname));
@@ -81,13 +80,13 @@ const UMAMI_ID = PUBLIC_UMAMI_SITE_ID || '';
 <nav class="sticky top-0 z-50 bg-white border-b border-black/5 py-4 px-4 shadow-[0_6px_20px_-12px_rgba(0,0,0,0.3)] relative flex items-center gap-3">
   <!-- Language toggle -->
   <div class="flex-1 flex items-center gap-1 text-[11px] font-semibold tracking-[0.1em] uppercase text-slate-600">
-    {#each ['es','en'] as l (l)}
-      <button
-        class={`px-2 py-1 rounded-full border border-transparent transition ${selected === l ? 'text-[#4e4060]' : 'text-slate-400 hover:text-slate-600'}`}
-        aria-pressed={selected === l}
-        onclick={() => { selected = l; try { if (browser) localStorage.setItem('preferredLocale', selected); } catch {}; goto(localizeHref(location.pathname)); }}
-      >{l.toUpperCase()}</button>
-    {/each}
+	{#each (locales as readonly Locale[]) as l (l)}
+		<button
+			class={`px-2 py-1 rounded-full border border-transparent transition ${selected === l ? 'text-[#4e4060]' : 'text-slate-400 hover:text-slate-600'}`}
+			aria-pressed={selected === l}
+			onclick={() => { selected = l; try { if (browser) localStorage.setItem('preferredLocale', selected); } catch {}; goto(localizeHref(location.pathname)); }}
+		>{l.toUpperCase()}</button>
+	{/each}
   </div>
   <!-- Centered brand logo -->
   <a

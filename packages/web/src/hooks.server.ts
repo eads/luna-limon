@@ -19,7 +19,7 @@ const paraglideHandle: Handle = async ({ event, resolve }) => {
 		});
 	}
 
-	return paraglideMiddleware(event.request, ({ request: localizedRequest, locale }) => {
+	return paraglideMiddleware(event.request, ({ request: localizedRequest, locale }: { request: Request; locale: Locale }) => {
 		event.request = localizedRequest;
 		return resolve(event, {
 			transformPageChunk: ({ html }) => html.replace('%lang%', locale)

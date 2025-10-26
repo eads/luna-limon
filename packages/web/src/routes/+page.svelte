@@ -16,7 +16,6 @@
 	
 	let { data } = $props<{ data: { products: Product[] } }>();
 	// current locale used to pick fields inline
-	// @ts-expect-error - runtime types not generated yet
 	import { getLocale } from '$lib/paraglide/runtime.js';
 	const nameOf = (p: Product) => p.nombre[getLocale() as 'es'|'en'] ?? p.nombre.es ?? p.nombre.en ?? '';
 	const descOf = (p: Product) => p.descripción[getLocale() as 'es'|'en'] ?? p.descripción.es ?? p.descripción.en ?? '';

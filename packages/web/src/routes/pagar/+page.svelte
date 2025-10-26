@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { cart, type Product as CartProduct } from '$lib/cart';
-  import { goto } from '$app/navigation';
-  import { useI18n } from '$lib/i18n/context';
-  const { t } = useI18n();
-  // locale-based selectors for product fields
-  // @ts-expect-error - runtime types not generated yet
-  import { getLocale } from '$lib/paraglide/runtime.js';
+import { cart, type Product as CartProduct } from '$lib/cart';
+import { goto } from '$app/navigation';
+import { useI18n } from '$lib/i18n/context';
+import Icon from '@iconify/svelte';
+import whatsappIcon from '@iconify-icons/mdi/whatsapp';
+const { t } = useI18n();
+// locale-based selectors for product fields
+import { getLocale } from '$lib/paraglide/runtime.js';
   const nameOf = (p: CartProduct) => {
     const n: any = (p as any)?.nombre;
     if (!n) return '';
@@ -311,7 +312,10 @@
   </label>
 
   <label class="block">
-    <span class="text-base text-gray-800">{t('carrito.checkout.whatsapp')}</span>
+    <span class="flex items-center gap-2 text-base text-gray-800">
+      <Icon icon={whatsappIcon} class="h-5 w-5 text-emerald-500" aria-hidden="true" />
+      {t('carrito.checkout.whatsapp')}
+    </span>
     <input id="fld-whatsapp" name="tel" type="tel" inputmode="numeric" autocomplete="tel" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okPhone} bind:value={numero_whatsapp} placeholder={t('carrito.checkout.placeholder.whatsapp')} disabled={!$cart.length} onblur={() => { numero_whatsapp = normalizePhoneCO(numero_whatsapp); persistToStorage(); }} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okPhone}
       <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.invalid_phone')}</p>

@@ -11,10 +11,11 @@
   import { useI18n } from '$lib/i18n/context';
   import { goto } from '$app/navigation';
   import { browser } from '$app/environment';
-  // @ts-expect-error - runtime types not generated yet
   import { localizeHref } from '$lib/paraglide/runtime.js';
   import { onMount } from 'svelte';
   import { getResizedImageUrl } from '$lib/utils/images';
+  import Icon from '@iconify/svelte';
+  import instagramIcon from '@iconify-icons/mdi/instagram';
   import './calendario.css';
 
   const { t } = useI18n();
@@ -118,8 +119,8 @@
   let activeCard = $state('');
 
   let observer: IntersectionObserver | undefined;
-  let heroCtaEl: HTMLDivElement | null = null;
-  let bottomSection: HTMLElement | null = null;
+  let heroCtaEl = $state<HTMLDivElement | null>(null);
+  let bottomSection = $state<HTMLElement | null>(null);
   let stickyVisible = $state(false);
   const registeredSections = new Set<HTMLElement>();
 
@@ -279,6 +280,7 @@
           </video>
           <div class="calendar-hero__overlay">
             <h1 class="calendar-hero__title">{@html renderRich(t('calendario.hero_title'))}</h1>
+            <p class="calendar-hero__subtitle">12 meses para reconectar con tu magia</p>
             <div class="calendar-hero__cta" bind:this={heroCtaEl}>
               <button
                 class={`calendar-primary__button ${flash ? 'flash' : ''}`}
@@ -287,16 +289,17 @@
               >
                 {ctaText}
               </button>
-              <a
-                class="calendar-hero__follow"
-                href="https://www.instagram.com/lunalimon.co"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <i class="ri-instagram-line" aria-hidden="true"></i>
-                <span>@lunalimon.co</span>
-              </a>
+              <span class="calendar-hero__note">Edición limitada · Entregas a partir de diciembre 2025</span>
             </div>
+            <a
+              class="calendar-hero__follow"
+              href="https://www.instagram.com/lunalimon.co"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon icon={instagramIcon} class="calendar-social-icon" aria-hidden="true" />
+              <span>lunalimon.co</span>
+            </a>
             <div class="calendar-hero__scroll" aria-hidden="true">
               <svg class="calendar-hero__scroll-icon" viewBox="0 0 24 16" width="24" height="16">
                 <path d="M4.47 4.47a1 1 0 0 1 1.41 0L12 10.59l6.12-6.12a1 1 0 1 1 1.41 1.41l-6.82 6.83a1 1 0 0 1-1.41 0L4.47 5.88a1 1 0 0 1 0-1.41Z" />
@@ -309,11 +312,11 @@
       <section class="calendar-section calendar-section--swatches" use:layerTrigger={'quote'}>
         <div class="calendar-swatches" aria-hidden="true">
           <div class="calendar-swatches__box calendar-swatches__box--one"></div>
-          <div class="calendar-swatches__box calendar-swatches__box--two calendar-swatches__box--under"></div>
+          <div class="calendar-swatches__box calendar-swatches__box--two"></div>
           <div class="calendar-swatches__box calendar-swatches__box--three"></div>
           <div class="calendar-swatches__box calendar-swatches__box--four"></div>
-          <div class="calendar-swatches__box calendar-swatches__box--five calendar-swatches__box--under"></div>
-          <div class="calendar-swatches__box calendar-swatches__box--six"></div>
+          <!-- <div class="calendar-swatches__box calendar-swatches__box--five"></div> -->
+          <!-- <div class="calendar-swatches__box calendar-swatches__box--six"></div> -->
         </div>
       </section>
 
@@ -357,7 +360,7 @@
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <i class="ri-instagram-line" aria-hidden="true"></i>
+                  <Icon icon={instagramIcon} class="calendar-social-icon" aria-hidden="true" />
                   <span>{t('calendario.follow_cta')}</span>
                 </a>
               </div>

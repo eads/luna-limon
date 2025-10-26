@@ -6,7 +6,6 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    
     "texto:seed": "tsx scripts/seedTexto.ts",
     "texto:sync": "tsx scripts/syncTexto.ts",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -16,7 +15,9 @@
     "setup:webhook": "tsx scripts/setupAirtableWebhook.ts"
   },
   "dependencies": {
+    "@iconify-icons/mdi": "^1.2.48",
     "@iconify-json/mdi": "^1.2.3",
+    "@iconify/svelte": "^5.0.2",
     "@inlang/paraglide-js": "^2.2.0",
     "@sveltejs/kit": "^2.16.0",
     "airtable": "^0.12.2",
