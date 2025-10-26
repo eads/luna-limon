@@ -102,6 +102,12 @@
   letter-spacing: 0.01em;
 }
 
+@media (min-width: 900px) {
+  .calendar-quote-card__text {
+    font-size: clamp(1.4rem, 4.2vw, 2.55rem);
+  }
+}
+
 .calendar-layered__content {
   position: relative;
   display: flex;
@@ -152,10 +158,10 @@
   color: #fff7f4;
   background: linear-gradient(
     180deg,
-    rgba(18, 8, 13, 0.7) 0%,
-    rgba(20, 9, 14, 0.12) 32%,
-    rgba(22, 10, 15, 0.08) 48%,
-    rgba(24, 11, 16, 0.04) 100%
+    rgba(18, 8, 13, 0.72) 0%,
+    rgba(20, 9, 14, 0.22) 42%,
+    rgba(22, 10, 15, 0.08) 60%,
+    rgba(24, 11, 16, 0.03) 100%
   );
 }
 
@@ -363,7 +369,7 @@
   width: clamp(180px, 22vmin, 260px);
   height: clamp(200px, 28vmin, 260px);
   top: 6%;
-  --swatch-shift: -120px;
+  --swatch-shift: -150px;
   --swatch-rotate: -3deg;
   background: transparent;
   display: flex;
@@ -386,7 +392,7 @@
   width: clamp(180px, 22vmin, 260px);
   height: clamp(200px, 28vmin, 260px);
   top: 18%;
-  --swatch-shift: 110px;
+  --swatch-shift: 150px;
   background: transparent;
   display: flex;
   align-items: center;
@@ -408,7 +414,7 @@
   width: clamp(180px, 22vmin, 260px);
   height: clamp(200px, 28vmin, 250px);
   top: 46%;
-  --swatch-shift: -100px;
+  --swatch-shift: -140px;
   background: transparent;
   display: flex;
   align-items: center;
@@ -430,7 +436,7 @@
   width: clamp(180px, 22vmin, 260px);
   height: clamp(200px, 28vmin, 250px);
   top: 62%;
-  --swatch-shift: 100px;
+  --swatch-shift: 140px;
   --swatch-rotate: 4deg;
   background: transparent;
   display: flex;
@@ -449,13 +455,59 @@
   background-position: center;
 }
 
+.calendar-swatches__box--five {
+  width: clamp(180px, 22vmin, 260px);
+  height: clamp(200px, 28vmin, 250px);
+  top: 34%;
+  --swatch-shift: 190px;
+  --swatch-rotate: 5deg;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(4px, 1vw, 10px);
+}
+
+.calendar-swatches__box--five::before {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/romero.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.calendar-swatches__box--six {
+  width: clamp(180px, 22vmin, 260px);
+  height: clamp(200px, 28vmin, 240px);
+  top: 82%;
+  --swatch-shift: -190px;
+  --swatch-rotate: -6deg;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(4px, 1vw, 10px);
+}
+
+.calendar-swatches__box--six::before {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/Amatista.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
 @media (max-width: 640px) {
   .calendar-swatches__box--one {
-    --swatch-shift: clamp(-220px, -48vw, -160px);
+    --swatch-shift: clamp(-220px, -48vw, -170px);
   }
 
   .calendar-swatches__box--two {
-    --swatch-shift: clamp(180px, 46vw, 240px);
+    --swatch-shift: clamp(180px, 46vw, 250px);
   }
 
   .calendar-swatches__box--three {
@@ -463,27 +515,45 @@
   }
 
   .calendar-swatches__box--four {
-    --swatch-shift: clamp(170px, 44vw, 230px);
+    --swatch-shift: clamp(170px, 44vw, 240px);
+  }
+
+  .calendar-swatches__box--five {
+    --swatch-shift: clamp(200px, 48vw, 270px);
+  }
+
+  .calendar-swatches__box--six {
+    --swatch-shift: clamp(-220px, -50vw, -170px);
   }
 }
 
 @media (min-width: 900px) {
   .calendar-swatches__box--one {
-    --swatch-shift: clamp(-380px, -34vw, -220px);
+    --swatch-shift: clamp(-440px, -38vw, -260px);
     --swatch-rotate: -4deg;
   }
 
   .calendar-swatches__box--two {
-    --swatch-shift: clamp(240px, 30vw, 380px);
+    --swatch-shift: clamp(300px, 36vw, 520px);
   }
 
   .calendar-swatches__box--three {
-    --swatch-shift: clamp(-320px, -30vw, -160px);
+    --swatch-shift: clamp(-420px, -34vw, -220px);
   }
 
   .calendar-swatches__box--four {
-    --swatch-shift: clamp(260px, 32vw, 400px);
+    --swatch-shift: clamp(340px, 38vw, 560px);
     --swatch-rotate: 6deg;
+  }
+
+  .calendar-swatches__box--five {
+    --swatch-shift: clamp(360px, 40vw, 580px);
+    --swatch-rotate: 8deg;
+  }
+
+  .calendar-swatches__box--six {
+    --swatch-shift: clamp(-480px, -42vw, -260px);
+    --swatch-rotate: -8deg;
   }
 }
 

@@ -312,6 +312,8 @@
           <div class="calendar-swatches__box calendar-swatches__box--two calendar-swatches__box--under"></div>
           <div class="calendar-swatches__box calendar-swatches__box--three"></div>
           <div class="calendar-swatches__box calendar-swatches__box--four"></div>
+          <div class="calendar-swatches__box calendar-swatches__box--five calendar-swatches__box--under"></div>
+          <div class="calendar-swatches__box calendar-swatches__box--six"></div>
         </div>
       </section>
 
