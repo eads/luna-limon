@@ -146,16 +146,16 @@
   align-items: center;
   gap: clamp(1rem, 3vw, 1.8rem);
   padding: clamp(2rem, 6vw, 3.5rem);
-  padding-top: clamp(4rem, 18vh, 16rem);
+  padding-top: clamp(3rem, 14vh, 12rem);
   padding-bottom: clamp(1.5rem, 6vh, 3rem);
   text-align: center;
   color: #fff7f4;
   background: linear-gradient(
     180deg,
-    rgba(18, 8, 13, 0.82) 0%,
-    rgba(20, 9, 14, 0.58) 42%,
-    rgba(22, 10, 15, 0.28) 72%,
-    rgba(24, 11, 16, 0.12) 100%
+    rgba(18, 8, 13, 0.7) 0%,
+    rgba(20, 9, 14, 0.12) 32%,
+    rgba(22, 10, 15, 0.08) 48%,
+    rgba(24, 11, 16, 0.04) 100%
   );
 }
 
@@ -543,8 +543,8 @@
 .calendar-feature__text h3 {
   margin: 0;
   font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
-  font-weight: 600;
-  font-size: clamp(1.4rem, 3.6vw, 2.2rem);
+  font-weight: 500;
+  font-size: clamp(1.55rem, 3.9vw, 2.4rem);
   color: rgba(37, 17, 26, 0.92);
   letter-spacing: 0.01em;
 }
@@ -555,7 +555,7 @@
   font-weight: 700;
   text-transform: none;
   letter-spacing: 0;
-  font-size: 1.75em;
+  font-size: 1.85em;
   margin-right: 0.4rem;
 }
 
@@ -586,10 +586,10 @@
 }
 
 .calendar-primary__button--wide {
-  padding-inline: clamp(2.8rem, 9vw, 4.8rem);
+  padding-inline: clamp(2.2rem, 7vw, 3.8rem);
   font-size: clamp(0.9rem, 2.4vw, 1rem);
   letter-spacing: 0.18em;
-  width: min(100%, 360px);
+  width: min(100%, 320px);
 }
 
 
