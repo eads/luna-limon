@@ -366,8 +366,8 @@
 
 .calendar-swatches {
   position: relative;
-  width: min(960px, 92vw);
-  height: min(540px, 90vh);
+  width: min(1040px, 95vw);
+  height: min(560px, 92vh);
   margin: 0 auto;
 }
 
@@ -528,7 +528,7 @@
 
 @media (max-width: 640px) {
   .calendar-swatches__box--one {
-    --swatch-shift: clamp(-220px, -48vw, -170px);
+    --swatch-shift: clamp(-150px, -48vw, -170px);
   }
 
   .calendar-swatches__box--two {
@@ -536,7 +536,7 @@
   }
 
   .calendar-swatches__box--three {
-    --swatch-shift: clamp(-210px, -52vw, -160px);
+    --swatch-shift: clamp(-180px, -52vw, -160px);
   }
 
   .calendar-swatches__box--four {
@@ -553,32 +553,68 @@
 }
 
 @media (min-width: 900px) {
+  .calendar-swatches {
+    width: min(1440px, 100vw);
+    height: min(640px, 92vh);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .calendar-swatches__box {
+    left: auto;
+    transform: translate3d(0, var(--swatch-rise, 0px), 0) rotate(var(--swatch-rotate, 0deg)) scale(var(--swatch-scale, 1));
+  }
+
   .calendar-swatches__box--one {
-    --swatch-shift: clamp(-440px, -38vw, -260px);
+    --swatch-shift: 0;
     --swatch-rotate: -4deg;
+    width: clamp(320px, 28vw, 420px);
+    height: clamp(440px, 34vw, 560px);
+    top: -6%;
+    left: clamp(2vw, 8vw, 110px);
   }
 
   .calendar-swatches__box--two {
-    --swatch-shift: clamp(300px, 36vw, 520px);
+    --swatch-shift: 0;
+    width: clamp(220px, 20vw, 320px);
+    height: clamp(260px, 26vw, 360px);
+    top: 14%;
+    right: clamp(4vw, 10vw, 140px);
   }
 
   .calendar-swatches__box--three {
-    --swatch-shift: clamp(-420px, -34vw, -220px);
+    --swatch-shift: 0;
+    width: clamp(220px, 21vw, 320px);
+    height: clamp(240px, 26vw, 340px);
+    top: 54%;
+    left: clamp(10vw, 16vw, 220px);
   }
 
   .calendar-swatches__box--four {
-    --swatch-shift: clamp(340px, 38vw, 560px);
     --swatch-rotate: 6deg;
+    --swatch-shift: 0;
+    width: clamp(360px, 32vw, 520px);
+    height: clamp(460px, 40vw, 620px);
+    top: 46%;
+    right: clamp(6vw, 14vw, 200px);
   }
 
   .calendar-swatches__box--five {
-    --swatch-shift: clamp(360px, 40vw, 580px);
     --swatch-rotate: 8deg;
+    --swatch-shift: 0;
+    width: clamp(220px, 22vw, 320px);
+    height: clamp(240px, 24vw, 340px);
+    top: 4%;
+    right: clamp(2vw, 6vw, 90px);
   }
 
   .calendar-swatches__box--six {
-    --swatch-shift: clamp(-480px, -42vw, -260px);
     --swatch-rotate: -8deg;
+    --swatch-shift: 0;
+    width: clamp(220px, 24vw, 340px);
+    height: clamp(240px, 26vw, 360px);
+    top: 74%;
+    left: clamp(4vw, 10vw, 140px);
   }
 }
 
@@ -684,7 +720,7 @@
   padding-inline: clamp(2.2rem, 7vw, 3.8rem);
   font-size: clamp(0.9rem, 2.4vw, 1rem);
   letter-spacing: 0.18em;
-  width: min(100%, 320px);
+  width: min(100%, 360px);
 }
 
 

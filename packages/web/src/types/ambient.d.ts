@@ -63,9 +63,15 @@ declare module '$lib/paraglide/runtime.js' {
 }
 
 declare module '$lib/paraglide/server' {
-  export const paraglideMiddleware: (request: Request, handler: (context: { request: Request; locale: Locale }) => unknown) => Promise<unknown>;
+  export const paraglideMiddleware: (
+    request: Request,
+    handler: (context: { request: Request; locale: Locale }) => MaybePromise<Response>
+  ) => Promise<Response>;
 }
 
+declare module '$lib/paraglide/runtime' {
+  export const deLocalizeUrl: (url: string | URL) => URL;
+}
 
 declare module '$env/static/private' {
   export const RESIZER_URL: string;
@@ -73,4 +79,5 @@ declare module '$env/static/private' {
 
 declare global {
   type Locale = 'es' | 'en';
+  type MaybePromise<T> = T | Promise<T>;
 }

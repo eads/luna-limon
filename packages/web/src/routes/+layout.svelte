@@ -10,6 +10,7 @@ import { cart } from '$lib/cart';
 import MdiCartOutline from 'virtual:icons/mdi/cart-outline';
 import { PUBLIC_UMAMI_SITE_ID } from '$env/static/public';
 const UMAMI_ID = PUBLIC_UMAMI_SITE_ID || '';
+	type Locale = 'es' | 'en';
 
 	let { children, data } = $props<{ children: any; data: { locale: string; messages: any } }>();
 	let selected = $state(getLocale());
