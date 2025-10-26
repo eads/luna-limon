@@ -385,6 +385,10 @@
   --swatch-aspect: 1 / 1;
   aspect-ratio: var(--swatch-aspect);
   height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(4px, 1vw, 10px);
   transform: translate3d(
       calc(-50% + var(--swatch-shift, 0px)),
       var(--swatch-rise, 0px),
@@ -399,21 +403,6 @@
   --swatch-aspect: 5 / 8;
   top: 0;
   --swatch-shift: -150px;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(4px, 1vw, 10px);
-}
-
-.calendar-swatches__box--one::before {
-  content: '';
-  width: 100%;
-  height: 100%;
-  background-image: url('/images/vela-hojas.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
 }
 
 .calendar-swatches__box--two {
@@ -421,21 +410,6 @@
   --swatch-aspect: 9 / 10;
   top: 18%;
   --swatch-shift: 150px;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(4px, 1vw, 10px);
-}
-
-.calendar-swatches__box--two::before {
-  content: '';
-  width: 100%;
-  height: 100%;
-  background-image: url('/images/cristale-2.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
 }
 
 .calendar-swatches__box--three {
@@ -443,21 +417,6 @@
   --swatch-aspect: 9 / 10;
   top: 80%;
   --swatch-shift: -140px;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(4px, 1vw, 10px);
-}
-
-.calendar-swatches__box--three::before {
-  content: '';
-  width: 100%;
-  height: 100%;
-  background-image: url('/images/Amatista.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
 }
 
 .calendar-swatches__box--four {
@@ -466,45 +425,14 @@
   top: 70%;
   --swatch-shift: 140px;
   --swatch-rotate: 4deg;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(4px, 1vw, 10px);
-}
-
-.calendar-swatches__box--four::before {
-  content: '';
-  width: 100%;
-  height: 100%;
-  background-image: url('/images/romero-logo.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
 }
 
 .calendar-swatches__box--five {
   width: clamp(180px, 22vmin, 260px);
   --swatch-aspect: 9 / 10;
-  height: clamp(200px, 28vmin, 250px);
   top: 34%;
   --swatch-shift: 190px;
   --swatch-rotate: 5deg;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(4px, 1vw, 10px);
-}
-
-.calendar-swatches__box--five::before {
-  content: '';
-  width: 100%;
-  height: 100%;
-  background-image: url('/images/romero.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
 }
 
 .calendar-swatches__box--six {
@@ -513,22 +441,15 @@
   top: 82%;
   --swatch-shift: -190px;
   --swatch-rotate: -6deg;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(4px, 1vw, 10px);
 }
 
-.calendar-swatches__box--six::before {
-  content: '';
+.calendar-swatches__box img {
   width: 100%;
-  height: 100%;
-  background-image: url('/images/Amatista.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
+  height: auto;
+  display: block;
+  pointer-events: none;
 }
+
 
 @media (max-width: 640px) {
   .calendar-swatches__box--one {

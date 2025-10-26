@@ -57,51 +57,83 @@
 
   const quoteCards = $derived(backgroundCards.filter((card) => card.variant === 'quote'));
 
-  const featuresImages = $derived([
-    {
-      large: getResizedImageUrl('/images/IMG_6395.jpg', 1200),
-      medium: getResizedImageUrl('/images/IMG_6395.jpg', 760),
-      fallback: '/images/IMG_6395.jpg'
-    },
-    {
-      large: getResizedImageUrl('/images/IMG_6403.jpg', 1200),
-      medium: getResizedImageUrl('/images/IMG_6403.jpg', 760),
-      fallback: '/images/IMG_6403.jpg'
-    },
-    {
-      large: getResizedImageUrl('/images/IMG_5882.jpg', 1200),
-      medium: getResizedImageUrl('/images/IMG_5882.jpg', 760),
-      fallback: '/images/IMG_5882.jpg'
-    },
-    {
-      large: getResizedImageUrl('/images/IMG_6425.jpg', 1200),
-      medium: getResizedImageUrl('/images/IMG_6425.jpg', 760),
-      fallback: '/images/IMG_6425.jpg'
-    }
-  ]);
+  const featuresImages = $derived((() => {
+    const items = [
+      {
+        large: getResizedImageUrl('/images/IMG_6395.jpg', 1200),
+        medium: getResizedImageUrl('/images/IMG_6395.jpg', 760),
+        fallback: '/images/IMG_6395.jpg'
+      },
+      {
+        large: getResizedImageUrl('/images/IMG_6403.jpg', 1200),
+        medium: getResizedImageUrl('/images/IMG_6403.jpg', 760),
+        fallback: '/images/IMG_6403.jpg'
+      },
+      {
+        large: getResizedImageUrl('/images/IMG_5882.jpg', 1200),
+        medium: getResizedImageUrl('/images/IMG_5882.jpg', 760),
+        fallback: '/images/IMG_5882.jpg'
+      },
+      {
+        large: getResizedImageUrl('/images/IMG_6425.jpg', 1200),
+        medium: getResizedImageUrl('/images/IMG_6425.jpg', 760),
+        fallback: '/images/IMG_6425.jpg'
+      }
+    ];
+    items.push(items[1]);
+    return items;
+  })());
 
-  const featureCards = $derived([
+  const featureContent = [
     {
-      title: t('calendario.f1_title') ?? '',
-      body: t('calendario.f1_body') ?? '',
-      image: featuresImages[0]
+      titleKey: 'calendario.feature_connect_title',
+      bodyKey: 'calendario.feature_connect_body',
+      fallbackTitle: 'Conecta con la energía de cada mes',
+      fallbackBody:
+        'Cada mes te acompaña con reflexiones, preguntas y ejercicios sencillos para vivir cada etapa del año con más conciencia.',
+      imageIndex: 0
     },
     {
-      title: t('calendario.f2_title') ?? '',
-      body: t('calendario.f2_body') ?? '',
-      image: featuresImages[1]
+      titleKey: 'calendario.feature_crystals_title',
+      bodyKey: 'calendario.feature_crystals_body',
+      fallbackTitle: 'Cristales para acompañar tu mes',
+      fallbackBody: 'Cada mes incluye una sugerencia de cristal que sintoniza con su energía.',
+      imageIndex: 1
     },
     {
-      title: t('calendario.f3_title') ?? '',
-      body: t('calendario.f3_body') ?? '',
-      image: featuresImages[2]
+      titleKey: 'calendario.feature_guide_title',
+      bodyKey: 'calendario.feature_guide_body',
+      fallbackTitle:
+        'Una guía práctica para equilibrarte, manifestar y mantenerte en armonía con tus intenciones.',
+      fallbackBody:
+        'Rituales para acompañar tu camino. Incluye 12 rituales mensuales con pasos simples y significativos, diseñados para reconectarte con tu propósito y disfrutar lo cotidiano desde la calma.',
+      imageIndex: 2
     },
     {
-      title: t('calendario.f4_title') ?? '',
-      body: t('calendario.f4_body') ?? '',
-      image: featuresImages[3]
+      titleKey: 'calendario.feature_notes_title',
+      bodyKey: 'calendario.feature_notes_body',
+      fallbackTitle: 'Espacios para tus notas y reflexiones',
+      fallbackBody:
+        'Cada mes te invita a escribir lo que sientes, lo que aprendes o aquello por lo que quieres agradecer.',
+      imageIndex: 3
+    },
+    {
+      titleKey: 'calendario.feature_care_title',
+      bodyKey: 'calendario.feature_care_body',
+      fallbackTitle: 'Hecho con amor e intención',
+      fallbackBody:
+        'Hecho con materiales responsables con el planeta, porque cuidar de ti también es cuidar del entorno. Cada detalle fue pensado para que sientas que recibes algo más que un calendario: un recordatorio de que siempre puedes volver a empezar.',
+      imageIndex: 4
     }
-  ]);
+  ];
+
+  const featureCards = $derived(
+    featureContent.map((feature) => ({
+      title: t(feature.titleKey) ?? feature.fallbackTitle,
+      body: t(feature.bodyKey) ?? feature.fallbackBody,
+      image: featuresImages[feature.imageIndex % featuresImages.length]
+    }))
+  );
 
   const renderRich = (input: string | undefined) => {
     if (!input) return '';
@@ -311,12 +343,24 @@
 
       <section class="calendar-section calendar-section--swatches" use:layerTrigger={'quote'}>
         <div class="calendar-swatches" aria-hidden="true">
-          <div class="calendar-swatches__box calendar-swatches__box--one"></div>
-          <div class="calendar-swatches__box calendar-swatches__box--two"></div>
-          <div class="calendar-swatches__box calendar-swatches__box--three"></div>
-          <div class="calendar-swatches__box calendar-swatches__box--four"></div>
-          <!-- <div class="calendar-swatches__box calendar-swatches__box--five"></div> -->
-          <!-- <div class="calendar-swatches__box calendar-swatches__box--six"></div> -->
+          <div class="calendar-swatches__box calendar-swatches__box--one">
+            <img src="/images/vela-hojas.png" alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="calendar-swatches__box calendar-swatches__box--two">
+            <img src="/images/cristale-2.png" alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="calendar-swatches__box calendar-swatches__box--three">
+            <img src="/images/Amatista.png" alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="calendar-swatches__box calendar-swatches__box--four">
+            <img src="/images/romero-logo.png" alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="calendar-swatches__box calendar-swatches__box--five">
+            <img src="/images/romero.png" alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="calendar-swatches__box calendar-swatches__box--six">
+            <img src="/images/Amatista.png" alt="" loading="lazy" decoding="async" />
+          </div>
         </div>
       </section>
 
