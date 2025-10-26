@@ -382,6 +382,9 @@
   --swatch-rise: 0px;
   --swatch-scale: 1;
   --swatch-rotate: 0deg;
+  --swatch-aspect: 1 / 1;
+  aspect-ratio: var(--swatch-aspect);
+  height: auto;
   transform: translate3d(
       calc(-50% + var(--swatch-shift, 0px)),
       var(--swatch-rise, 0px),
@@ -393,7 +396,7 @@
 
 .calendar-swatches__box--one {
   width: clamp(250px, 32vmin, 360px);
-  height: clamp(400px, 40vmin, 500px);
+  --swatch-aspect: 5 / 8;
   top: 0;
   --swatch-shift: -150px;
   background: transparent;
@@ -415,6 +418,7 @@
 
 .calendar-swatches__box--two {
   width: clamp(180px, 22vmin, 260px);
+  --swatch-aspect: 9 / 10;
   top: 18%;
   --swatch-shift: 150px;
   background: transparent;
@@ -436,6 +440,7 @@
 
 .calendar-swatches__box--three {
   width: clamp(180px, 22vmin, 260px);
+  --swatch-aspect: 9 / 10;
   top: 80%;
   --swatch-shift: -140px;
   background: transparent;
@@ -457,7 +462,7 @@
 
 .calendar-swatches__box--four {
   width: clamp(350px, 32vmin, 400px);
-  height: clamp(500px, 40vmin, 600px);
+  --swatch-aspect: 3 / 4;
   top: 70%;
   --swatch-shift: 140px;
   --swatch-rotate: 4deg;
@@ -480,6 +485,7 @@
 
 .calendar-swatches__box--five {
   width: clamp(180px, 22vmin, 260px);
+  --swatch-aspect: 9 / 10;
   height: clamp(200px, 28vmin, 250px);
   top: 34%;
   --swatch-shift: 190px;
@@ -503,6 +509,7 @@
 
 .calendar-swatches__box--six {
   width: clamp(180px, 22vmin, 260px);
+  --swatch-aspect: 9 / 10;
   top: 82%;
   --swatch-shift: -190px;
   --swatch-rotate: -6deg;
