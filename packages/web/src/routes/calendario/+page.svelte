@@ -355,12 +355,6 @@
           <div class="calendar-swatches__box calendar-swatches__box--four">
             <img src="/images/romero-logo.png" alt="" loading="lazy" decoding="async" />
           </div>
-          <div class="calendar-swatches__box calendar-swatches__box--five">
-            <img src="/images/romero.png" alt="" loading="lazy" decoding="async" />
-          </div>
-          <div class="calendar-swatches__box calendar-swatches__box--six">
-            <img src="/images/Amatista.png" alt="" loading="lazy" decoding="async" />
-          </div>
         </div>
       </section>
 
