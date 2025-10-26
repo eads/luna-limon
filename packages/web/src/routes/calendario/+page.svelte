@@ -97,15 +97,16 @@
       titleKey: 'calendario.feature_crystals_title',
       bodyKey: 'calendario.feature_crystals_body',
       fallbackTitle: 'Cristales para acompañar tu mes',
-      fallbackBody: 'Cada mes incluye una sugerencia de cristal que sintoniza con su energía.',
+      fallbackBody:
+        'Cada mes incluye una sugerencia de cristal que sintoniza con su energía.\n\nUna guía práctica para equilibrarte, manifestar y mantenerte en armonía con tus intenciones.',
       imageIndex: 1
     },
     {
-      titleKey: 'calendario.feature_guide_title',
-      bodyKey: 'calendario.feature_guide_body',
+      titleKey: 'calendario.feature_rituals_title',
+      bodyKey: 'calendario.feature_rituals_body',
       fallbackTitle: 'Rituales para acompañar tu camino',
       fallbackBody:
-        'Una guía práctica para equilibrarte, manifestar y mantenerte en armonía con tus intenciones. Incluye 12 rituales mensuales con pasos simples y significativos, diseñados para reconectarte con tu propósito y disfrutar lo cotidiano desde la calma.',
+        'Incluye 12 rituales mensuales con pasos simples y significativos, diseñados para reconectarte con tu propósito y disfrutar lo cotidiano desde la calma.',
       imageIndex: 2
     },
     {
@@ -113,7 +114,7 @@
       bodyKey: 'calendario.feature_notes_body',
       fallbackTitle: 'Espacios para tus notas y reflexiones',
       fallbackBody:
-        'Cada mes te invita a escribir lo que sientes, lo que aprendes o aquello por lo que quieres agradecer.',
+        'Cada mes te invita a escribir lo que sientes, lo que aprendes o aquello por lo que quieres agradecer.\n\nHecho con materiales responsables con el planeta, porque cuidar de ti también es cuidar del entorno.',
       imageIndex: 3
     },
     {
@@ -121,18 +122,10 @@
       bodyKey: 'calendario.feature_care_body',
       fallbackTitle: 'Hecho con amor e intención',
       fallbackBody:
-        'Hecho con materiales responsables con el planeta, porque cuidar de ti también es cuidar del entorno. Cada detalle fue pensado para que sientas que recibes algo más que un calendario: un recordatorio de que siempre puedes volver a empezar.',
+        'Cada detalle fue pensado para que sientas que estás recibiendo algo más que un calendario: un recordatorio de que siempre puedes volver a empezar.',
       imageIndex: 4
     }
   ];
-
-  const featureCards = $derived(
-    featureContent.map((feature) => ({
-      title: t(feature.titleKey) ?? feature.fallbackTitle,
-      body: t(feature.bodyKey) ?? feature.fallbackBody,
-      image: featuresImages[feature.imageIndex % featuresImages.length]
-    }))
-  );
 
   const renderRich = (input: string | undefined) => {
     if (!input) return '';
@@ -146,6 +139,61 @@
     html = html.replace(/\n/g, '<br />');
     return html;
   };
+
+  const toParagraphs = (input: string | undefined) => {
+    if (!input) return [];
+    const parts = input
+      .split(/\n{2,}/)
+      .map((part) => part.trim())
+      .filter(Boolean);
+    return parts.length ? parts : [input];
+  };
+
+  const toLines = (input: string | undefined) => {
+    if (!input) return [];
+    return input
+      .split(/\n+/)
+      .map((part) => part.trim())
+      .filter(Boolean);
+  };
+
+  const storyContent = $derived(
+    (() => {
+      const eyebrow = t('calendario.story_eyebrow') ?? '✨ Calendario 2026 · Nuevos Comienzos';
+      const intro = toParagraphs(
+        t('calendario.story_intro') ??
+          'Más que una herramienta de organización, este calendario es una guía para acompañarte durante el año, rodeada de magia, rituales, cristales y momentos para reconectar contigo.\n\nCada mes te invita a hacer pausas, estar más presente y honrar tu propio ritmo, con prácticas simples que nutren tu mente, cuerpo y espíritu.'
+      );
+      const manifestoHeading =
+        t('calendario.story_manifesto_heading') ?? 'Hecho para quienes buscan equilibrio';
+      const manifestoLines = toLines(
+        t('calendario.story_manifesto') ??
+          'Para ti, que quieres transformar lo cotidiano en algo especial.\nPara quienes creen en la magia de los pequeños gestos: una palabra, una pausa, una respiración profunda.\nEste calendario fue creado para recordarte eso, día a día.'
+      );
+      const includesHeading = t('calendario.story_includes_heading') ?? 'Incluye:';
+      const includesItems = toLines(
+        t('calendario.story_includes_list') ??
+          '12 meses con información para vivir cada etapa de forma más consciente, acompañados de cristales, checklist y preguntas para mirar hacia tu interior.\n12 rituales mensuales para conectar con tu energía y renovar tus intenciones.\nPlaneadores mensuales para organizar tus días desde la calma.\nEspacio para notas, ideal para reflexiones, gratitud o momentos especiales del mes.\nNotas adhesivas para destacar lo importante.\n1 taco para que escribas tus propias frases o afirmaciones, las que te inspiran y elevan tu energía cada día.\n2 hojas de stickers para acompañar tu experiencia y darle color a tus días.'
+      );
+
+      return {
+        eyebrow,
+        intro,
+        manifestoHeading,
+        manifestoLines,
+        includesHeading,
+        includesItems
+      };
+    })()
+  );
+
+  const featureCards = $derived(
+    featureContent.map((feature) => ({
+      title: t(feature.titleKey) ?? feature.fallbackTitle,
+      bodyParagraphs: toParagraphs(t(feature.bodyKey) ?? feature.fallbackBody),
+      image: featuresImages[feature.imageIndex % featuresImages.length]
+    }))
+  );
 
   let activeCard = $state('');
 
@@ -357,11 +405,40 @@
         </div>
       </section>
 
+      <section class="calendar-section calendar-section--story" use:layerTrigger={'canvas'}>
+        <div class="calendar-section__surface calendar-section__surface--story">
+          <article class="calendar-story">
+            <span class="calendar-story__eyebrow">{@html renderRich(storyContent.eyebrow)}</span>
+            <div class="calendar-story__intro">
+              {#each storyContent.intro as paragraph}
+                <p>{@html renderRich(paragraph)}</p>
+              {/each}
+            </div>
+            <div class="calendar-story__manifesto">
+              <h3 class="calendar-story__heading">{@html renderRich(storyContent.manifestoHeading)}</h3>
+              <ul>
+                {#each storyContent.manifestoLines as line}
+                  <li>{@html renderRich(line)}</li>
+                {/each}
+              </ul>
+            </div>
+            <div class="calendar-story__includes">
+              <h4>{@html renderRich(storyContent.includesHeading)}</h4>
+              <ul>
+                {#each storyContent.includesItems as item}
+                  <li>{@html renderRich(item)}</li>
+                {/each}
+              </ul>
+            </div>
+          </article>
+        </div>
+      </section>
+
       <section class="calendar-section calendar-section--details" bind:this={bottomSection} use:layerTrigger={'canvas'}>
         <div class="calendar-section__surface">
           <div class="calendar-section__inner">
             <div class="calendar-features">
-            <div class="calendar-features__grid">
+              <div class="calendar-features__grid">
               {#each featureCards as card, index}
                 <article class={`calendar-feature ${index % 2 ? 'is-alt' : ''}`}>
                   <picture class="calendar-feature__media">
@@ -385,11 +462,13 @@
                   </picture>
                   <div class="calendar-feature__text">
                     <h3>{@html renderRich(card.title)}</h3>
-                    <p>{@html renderRich(card.body)}</p>
+                    {#each card.bodyParagraphs as paragraph}
+                      <p>{@html renderRich(paragraph)}</p>
+                    {/each}
                   </div>
                 </article>
               {/each}
-            </div>
+              </div>
               <div class="calendar-features__cta">
                 <a
                   class="calendar-features__social"
