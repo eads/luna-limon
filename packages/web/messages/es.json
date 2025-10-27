@@ -48,7 +48,29 @@
     "story_manifesto_heading": "Hecho para quienes buscan equilibrio",
     "story_manifesto": "Para ti, que quieres transformar lo cotidiano en algo especial.\nPara quienes creen en la magia de los pequeños gestos: una palabra, una pausa, una respiración profunda.\nEste calendario fue creado para recordarte eso, día a día.",
     "story_includes_heading": "Incluye:",
-    "story_includes_list": "12 meses con información para vivir cada etapa de forma más consciente, acompañados de cristales, checklist y preguntas para mirar hacia tu interior.\n12 rituales mensuales para conectar con tu energía y renovar tus intenciones.\nPlaneadores mensuales para organizar tus días desde la calma.\nEspacio para notas, ideal para reflexiones, gratitud o momentos especiales del mes.\nNotas adhesivas para destacar lo importante.\n1 taco para que escribas tus propias frases o afirmaciones, las que te inspiran y elevan tu energía cada día.\n2 hojas de stickers para acompañar tu experiencia y darle color a tus días."
+    "story_includes_list": "12 meses con información para vivir cada etapa de forma más consciente, acompañados de cristales, checklist y preguntas para mirar hacia tu interior.\n12 rituales mensuales para conectar con tu energía y renovar tus intenciones.\nPlaneadores mensuales para organizar tus días desde la calma.\nEspacio para notas, ideal para reflexiones, gratitud o momentos especiales del mes.\nNotas adhesivas para destacar lo importante.\n1 taco para que escribas tus propias frases o afirmaciones, las que te inspiran y elevan tu energía cada día.\n2 hojas de stickers para acompañar tu experiencia y darle color a tus días.",
+    "comprar": "Reserva el tuyo",
+    "comprar_simple": "Reserva el tuyo",
+    "beneficio_conecta_titulo": "Conecta con la energía de cada mes",
+    "beneficio_conecta_texto": "Cada mes te acompaña con reflexiones, preguntas y ejercicios sencillos para vivir cada etapa del año con más conciencia.",
+    "beneficio_cristales_titulo": "Cristales para acompañar tu mes",
+    "beneficio_cristales_texto": "Cada mes incluye una sugerencia de cristal que sintoniza con su energía.\n\nUna guía práctica para equilibrarte, manifestar y mantenerte en armonía con tus intenciones.",
+    "beneficio_rituales_titulo": "Rituales para acompañar tu camino",
+    "beneficio_rituales_texto": "Incluye 12 rituales mensuales con pasos simples y significativos, diseñados para reconectarte con tu propósito y disfrutar lo cotidiano desde la calma.",
+    "beneficio_notas_titulo": "Espacios para tus notas y reflexiones",
+    "beneficio_notas_texto": "Cada mes te invita a escribir lo que sientes, lo que aprendes o aquello por lo que quieres agradecer.\n\nHecho con materiales responsables con el planeta, porque cuidar de ti también es cuidar del entorno.",
+    "beneficio_cuidado_titulo": "Hecho con amor e intención",
+    "beneficio_cuidado_texto": "Cada detalle fue pensado para que sientas que estás recibiendo algo más que un calendario: un recordatorio de que siempre puedes volver a empezar.",
+    "cta_seguir": "Sigue la preventa en Instagram",
+    "hero_titulo": "Un calendario para vivir tu año con intención",
+    "hero_subtitulo": "El Calendario Nuevos Comienzos 2026 es más que fechas: cada mes te ofrece rituales, cristales y reflexiones para vivir con claridad, gratitud y propósito. Una guía práctica y cercana para cuidarte y conectar contigo durante todo el año.",
+    "historia_etiqueta": "✨ Calendario 2026 · Nuevos Comienzos",
+    "historia_intro": "Más que una herramienta de organización, este calendario es una guía para acompañarte durante el año, rodeada de magia, rituales, cristales y momentos para reconectar contigo.\n\nCada mes te invita a hacer pausas, estar más presente y honrar tu propio ritmo, con prácticas simples que nutren tu mente, cuerpo y espíritu.",
+    "historia_manifesto_titulo": "Hecho para quienes buscan equilibrio",
+    "historia_manifesto_texto": "Para ti, que quieres transformar lo cotidiano en algo especial.\nPara quienes creen en la magia de los pequeños gestos: una palabra, una pausa, una respiración profunda.\nEste calendario fue creado para recordarte eso, día a día.",
+    "historia_incluye_titulo": "Incluye:",
+    "historia_incluye_lista": "12 meses con información para vivir cada etapa de forma más consciente, acompañados de cristales, checklist y preguntas para mirar hacia tu interior.\n12 rituales mensuales para conectar con tu energía y renovar tus intenciones.\nPlaneadores mensuales para organizar tus días desde la calma.\nEspacio para notas, ideal para reflexiones, gratitud o momentos especiales del mes.\nNotas adhesivas para destacar lo importante.\n1 taco para que escribas tus propias frases o afirmaciones, las que te inspiran y elevan tu energía cada día.\n2 hojas de stickers para acompañar tu experiencia y darle color a tus días.",
+    "estado_vacio": "No hay productos de calendario."
   },
   "carrito": {
     "carrito_total": "Total",
@@ -101,7 +123,14 @@
     "finalizar_compra": "Finalizar compra"
   },
   "desayuno": {
-    "etiqueta_catalogo": "Elija su desayuno"
+    "etiqueta_catalogo": "Elija su desayuno",
+    "hero": {
+      "eyebrow": "Desayunos artesanales",
+      "title": "Flores, colores y el saborcito que enamora",
+      "copy": "Comienza el día con bandejas hechas a mano, ingredientes frescos y detalles que celebran cada momento especial.",
+      "cta": "Ver el menú",
+      "image_alt": "Bandeja de desayuno artesanal de Luna Limón junto a flores y frutas"
+    }
   },
   "inicio": {
     "hero": {

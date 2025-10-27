@@ -1,13 +1,13 @@
-import type { LayoutServerLoad } from './$types';
 import { base } from '$lib/server/airtable';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { AIRTABLE_PRODUCTS_TABLE } from '$env/static/private';
 import { getLocale } from '$lib/paraglide/runtime.js';
+import type { LayoutServerLoad } from './$types';
 
 const COPY_TABLE = process.env.AIRTABLE_COPY_TABLE || process.env.AIRTABLE_TABLE || 'texto';
 
-export const load: LayoutServerLoad = async ({ setHeaders }) => {
+export const load: LayoutServerLoad = async ({ setHeaders, url }) => {
   const locale: 'en' | 'es' = getLocale();
   const stage = process.env.SST_STAGE ?? 'staging';
   const isProd = stage === 'prod' || stage === 'production';
@@ -67,5 +67,22 @@ export const load: LayoutServerLoad = async ({ setHeaders }) => {
     console.error('Failed to load i18n messages from Airtable', err);
   }
 
-  return { locale, messages };
+  const debugFlags = new Set<string>();
+  url.searchParams.forEach((value, key) => {
+    if (key === 'debug') {
+      value
+        .split(',')
+        .map((token) => token.trim().toLowerCase())
+        .filter(Boolean)
+        .forEach((token) => debugFlags.add(token));
+    }
+  });
+  const copyDebug =
+    url.searchParams.has('copydebug') ||
+    url.searchParams.get('copydebug') === '1' ||
+    debugFlags.has('copy') ||
+    debugFlags.has('i18n') ||
+    debugFlags.has('texto');
+
+  return { locale, messages, copyDebug };
 };

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import '../app.css';
 	import { locales, getLocale, setLocale, localizeHref } from '$lib/paraglide/runtime.js';
-    import { setupI18n, useI18n } from '$lib/i18n/context';
-    import { page } from '$app/stores';
+	import { setupI18n, useI18n } from '$lib/i18n/context';
+	import { page } from '$app/stores';
 import { browser } from '$app/environment';
 import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
@@ -12,13 +12,13 @@ import { PUBLIC_UMAMI_SITE_ID } from '$env/static/public';
 const UMAMI_ID = PUBLIC_UMAMI_SITE_ID || '';
 	type Locale = 'es' | 'en';
 
-	let { children, data } = $props<{ children: any; data: { locale: string; messages: any } }>();
+	let { children, data } = $props<{ children: any; data: { locale: string; messages: any; copyDebug: boolean } }>();
 	let selected = $state(getLocale());
 	let logoHref = $state(localizeHref('/'));
 	let pagarHref = $state(localizeHref('/pagar'));
 
 	// Seed per-request i18n context for SSR/CSR
-	setupI18n(data.messages);
+	setupI18n(data.messages, { debug: data.copyDebug });
 
 	$effect(() => {
 		setLocale(selected);
@@ -36,22 +36,36 @@ const UMAMI_ID = PUBLIC_UMAMI_SITE_ID || '';
 		goto(localizeHref(location.pathname));
 	}
 
-    const { t } = useI18n();
-    const total = $derived($cart.reduce((sum, item) => sum + item.quantity, 0));
-    onMount(() => {
-      if (!browser) return;
-      // Apply persisted language preference if present
-      try {
-		const stored = localStorage.getItem('preferredLocale');
-		if ((stored === 'es' || stored === 'en') && stored !== selected) {
-			selected = stored;
-          // Avoid re-navigation on checkout/success routes to prevent perceived reloads
-          if (!location.pathname.startsWith('/pagar')) {
-            goto(localizeHref(location.pathname));
-          }
-        }
-      } catch {}
-    });
+	const { t, annotateDebug } = useI18n();
+	const total = $derived($cart.reduce((sum, item) => sum + item.quantity, 0));
+	onMount(() => {
+		if (!browser) return;
+		// Apply persisted language preference if present
+		try {
+			const stored = localStorage.getItem('preferredLocale');
+			if ((stored === 'es' || stored === 'en') && stored !== selected) {
+				selected = stored;
+				// Avoid re-navigation on checkout/success routes to prevent perceived reloads
+				if (!location.pathname.startsWith('/pagar')) {
+					goto(localizeHref(location.pathname));
+				}
+			}
+		} catch {}
+
+		if (data.copyDebug && annotateDebug) {
+			const run = () => annotateDebug(document.body);
+			run();
+			const observer = new MutationObserver(() => run());
+			observer.observe(document.body, { childList: true, subtree: true });
+			const unsubscribe = page.subscribe(() => {
+				requestAnimationFrame(run);
+			});
+			return () => {
+				observer.disconnect();
+				unsubscribe();
+			};
+		}
+	});
 </script>
 
 <svelte:head>
@@ -75,6 +89,54 @@ const UMAMI_ID = PUBLIC_UMAMI_SITE_ID || '';
       src="https://cloud.umami.is/script.js"
       data-website-id={UMAMI_ID}
     ></script>
+  {/if}
+  {#if data.copyDebug}
+    <style>
+      .i18n-debug-label {
+        position: relative;
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 0.25em;
+        padding: 0.05em 0.15em;
+        background: rgba(32, 28, 34, 0.08);
+        border-radius: 0.28em;
+        vertical-align: baseline;
+        line-height: 1.1;
+      }
+
+      .i18n-debug-label::before {
+        content: attr(data-i18n-key);
+        font-size: clamp(9px, 0.42em, 0.7em);
+        font-family: 'JetBrains Mono', 'SFMono-Regular', 'Menlo', monospace;
+        font-weight: 700;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        padding: 0.12em 0.3em;
+        border-radius: 999px;
+        background: rgba(248, 18, 116, 0.22);
+        color: rgba(248, 18, 116, 0.88);
+        border: 1px solid rgba(248, 18, 116, 0.38);
+        white-space: nowrap;
+      }
+
+      .i18n-debug-label > span,
+      .i18n-debug-label > strong,
+      .i18n-debug-label > em,
+      .i18n-debug-label > a,
+      .i18n-debug-label > p,
+      .i18n-debug-label > div,
+      .i18n-debug-label > * {
+        line-height: inherit;
+      }
+
+      @media (min-width: 900px) {
+        .i18n-debug-label::before {
+          font-size: clamp(10px, 0.36em, 0.6em);
+          padding: 0.1em 0.26em;
+          letter-spacing: 0.3em;
+        }
+      }
+    </style>
   {/if}
 </svelte:head>
 

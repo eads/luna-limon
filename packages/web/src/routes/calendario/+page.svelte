@@ -24,7 +24,7 @@
   const calendar = $derived(data.products?.[0]);
   let flash = $state(false);
 
-  const ctaText = $derived(t('calendario.buy_simple') ?? t('calendario.buy'));
+  const ctaText = $derived(t('calendario.comprar_simple') ?? t('calendario.comprar'));
 
   const featureVideoSources = [
     { src: '/video/IMG_6469-mobile.webm', type: 'video/webm', media: '(max-width: 640px)' },
@@ -40,7 +40,7 @@
       id: 'intro',
       variant: 'quote',
       heading: undefined,
-      body: t('calendario.hero_subtitle') ?? ''
+      body: t('calendario.hero_subtitulo') ?? ''
     },
     {
       id: 'quote',
@@ -86,40 +86,40 @@
 
   const featureContent = [
     {
-      titleKey: 'calendario.feature_connect_title',
-      bodyKey: 'calendario.feature_connect_body',
+      titleKey: 'calendario.beneficio_conecta_titulo',
+      bodyKey: 'calendario.beneficio_conecta_texto',
       fallbackTitle: 'Conecta con la energía de cada mes',
       fallbackBody:
         'Cada mes te acompaña con reflexiones, preguntas y ejercicios sencillos para vivir cada etapa del año con más conciencia.',
       imageIndex: 0
     },
     {
-      titleKey: 'calendario.feature_crystals_title',
-      bodyKey: 'calendario.feature_crystals_body',
+      titleKey: 'calendario.beneficio_cristales_titulo',
+      bodyKey: 'calendario.beneficio_cristales_texto',
       fallbackTitle: 'Cristales para acompañar tu mes',
       fallbackBody:
         'Cada mes incluye una sugerencia de cristal que sintoniza con su energía.\n\nUna guía práctica para equilibrarte, manifestar y mantenerte en armonía con tus intenciones.',
       imageIndex: 1
     },
     {
-      titleKey: 'calendario.feature_rituals_title',
-      bodyKey: 'calendario.feature_rituals_body',
+      titleKey: 'calendario.beneficio_rituales_titulo',
+      bodyKey: 'calendario.beneficio_rituales_texto',
       fallbackTitle: 'Rituales para acompañar tu camino',
       fallbackBody:
         'Incluye 12 rituales mensuales con pasos simples y significativos, diseñados para reconectarte con tu propósito y disfrutar lo cotidiano desde la calma.',
       imageIndex: 2
     },
     {
-      titleKey: 'calendario.feature_notes_title',
-      bodyKey: 'calendario.feature_notes_body',
+      titleKey: 'calendario.beneficio_notas_titulo',
+      bodyKey: 'calendario.beneficio_notas_texto',
       fallbackTitle: 'Espacios para tus notas y reflexiones',
       fallbackBody:
         'Cada mes te invita a escribir lo que sientes, lo que aprendes o aquello por lo que quieres agradecer.\n\nHecho con materiales responsables con el planeta, porque cuidar de ti también es cuidar del entorno.',
       imageIndex: 3
     },
     {
-      titleKey: 'calendario.feature_care_title',
-      bodyKey: 'calendario.feature_care_body',
+      titleKey: 'calendario.beneficio_cuidado_titulo',
+      bodyKey: 'calendario.beneficio_cuidado_texto',
       fallbackTitle: 'Hecho con amor e intención',
       fallbackBody:
         'Cada detalle fue pensado para que sientas que estás recibiendo algo más que un calendario: un recordatorio de que siempre puedes volver a empezar.',
@@ -159,33 +159,38 @@
 
   const storyContent = $derived(
     (() => {
-      const eyebrow = t('calendario.story_eyebrow') ?? '✨ Calendario 2026 · Nuevos Comienzos';
+      const eyebrow = t('calendario.historia_etiqueta') ?? '✨ Calendario 2026 · Nuevos Comienzos';
       const intro = toParagraphs(
-        t('calendario.story_intro') ??
+        t('calendario.historia_intro') ??
           'Más que una herramienta de organización, este calendario es una guía para acompañarte durante el año, rodeada de magia, rituales, cristales y momentos para reconectar contigo.\n\nCada mes te invita a hacer pausas, estar más presente y honrar tu propio ritmo, con prácticas simples que nutren tu mente, cuerpo y espíritu.'
       );
       const manifestoHeading =
-        t('calendario.story_manifesto_heading') ?? 'Hecho para quienes buscan equilibrio';
+        t('calendario.historia_manifesto_titulo') ?? 'Hecho para quienes buscan equilibrio';
       const manifestoLines = toLines(
-        t('calendario.story_manifesto') ??
+        t('calendario.historia_manifesto_texto') ??
           'Para ti, que quieres transformar lo cotidiano en algo especial.\nPara quienes creen en la magia de los pequeños gestos: una palabra, una pausa, una respiración profunda.\nEste calendario fue creado para recordarte eso, día a día.'
       );
-      const includesHeading = t('calendario.story_includes_heading') ?? 'Incluye:';
-      const includesItems = toLines(
-        t('calendario.story_includes_list') ??
-          '12 meses con información para vivir cada etapa de forma más consciente, acompañados de cristales, checklist y preguntas para mirar hacia tu interior.\n12 rituales mensuales para conectar con tu energía y renovar tus intenciones.\nPlaneadores mensuales para organizar tus días desde la calma.\nEspacio para notas, ideal para reflexiones, gratitud o momentos especiales del mes.\nNotas adhesivas para destacar lo importante.\n1 taco para que escribas tus propias frases o afirmaciones, las que te inspiran y elevan tu energía cada día.\n2 hojas de stickers para acompañar tu experiencia y darle color a tus días.'
-      );
+    const includesHeading = t('calendario.historia_incluye_titulo') ?? 'Incluye:';
+    const includesItems = toLines(
+      t('calendario.historia_incluye_lista') ??
+        '12 meses con información para vivir cada etapa de forma más consciente, acompañados de cristales, checklist y preguntas para mirar hacia tu interior.\n12 rituales mensuales para conectar con tu energía y renovar tus intenciones.\nPlaneadores mensuales para organizar tus días desde la calma.\nEspacio para notas, ideal para reflexiones, gratitud o momentos especiales del mes.\nNotas adhesivas para destacar lo importante.\n1 taco para que escribas tus propias frases o afirmaciones, las que te inspiran y elevan tu energía cada día.\n2 hojas de stickers para acompañar tu experiencia y darle color a tus días.'
+    );
+    const detailLines = [
+      t('calendario.tamano') ?? 'TAMAÑO: 30cm ancho x 17.5 alto cm',
+      t('calendario.base') ?? 'Base rígida y resistente, ideal para escritorio o repisa'
+    ].filter(Boolean);
 
-      return {
-        eyebrow,
-        intro,
-        manifestoHeading,
-        manifestoLines,
-        includesHeading,
-        includesItems
-      };
-    })()
-  );
+    return {
+      eyebrow,
+      intro,
+      manifestoHeading,
+      manifestoLines,
+      includesHeading,
+      includesItems,
+      detailLines
+    };
+  })()
+);
 
   const featureCards = $derived(
     featureContent.map((feature) => ({
@@ -317,7 +322,7 @@
 </script>
 
 {#if !calendar}
-  <p class="calendar-empty">{t('calendario.vacio')}</p>
+  <p class="calendar-empty">{t('calendario.estado_vacio')}</p>
 {:else}
   <div class="calendar-layered u-full-bleed">
     <div class="calendar-layered__background" aria-hidden="true">
@@ -358,7 +363,7 @@
             {/each}
           </video>
           <div class="calendar-hero__overlay">
-            <h1 class="calendar-hero__title">{@html renderRich(t('calendario.hero_title'))}</h1>
+            <h1 class="calendar-hero__title">{@html renderRich(t('calendario.hero_titulo'))}</h1>
             <p class="calendar-hero__subtitle">12 meses para reconectar con tu magia</p>
             <div class="calendar-hero__cta" bind:this={heroCtaEl}>
               <button
@@ -415,16 +420,23 @@
               {/each}
             </div>
             <div class="calendar-story__manifesto">
-              <h3 class="calendar-story__heading">{@html renderRich(storyContent.manifestoHeading)}</h3>
-              <ul>
+              <h4 class="calendar-story__subheading">{@html renderRich(storyContent.manifestoHeading)}</h4>
+              <div class="calendar-story__manifesto-list">
                 {#each storyContent.manifestoLines as line}
-                  <li>{@html renderRich(line)}</li>
+                  <p>{@html renderRich(line)}</p>
                 {/each}
-              </ul>
+              </div>
             </div>
+            {#if storyContent.detailLines.length}
+              <div class="calendar-story__details">
+                {#each storyContent.detailLines as detail}
+                  <p>{@html renderRich(detail)}</p>
+                {/each}
+              </div>
+            {/if}
             <div class="calendar-story__includes">
-              <h4>{@html renderRich(storyContent.includesHeading)}</h4>
-              <ul>
+              <h4 class="calendar-story__subheading">{@html renderRich(storyContent.includesHeading)}</h4>
+              <ul class="calendar-story__includes-list">
                 {#each storyContent.includesItems as item}
                   <li>{@html renderRich(item)}</li>
                 {/each}
@@ -477,7 +489,7 @@
                   rel="noreferrer"
                 >
                   <Icon icon={instagramIcon} class="calendar-social-icon" aria-hidden="true" />
-                  <span>{t('calendario.follow_cta')}</span>
+                  <span>{t('calendario.cta_seguir')}</span>
                 </a>
               </div>
             </div>
