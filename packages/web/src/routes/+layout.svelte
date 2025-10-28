@@ -96,8 +96,9 @@ const UMAMI_ID = PUBLIC_UMAMI_SITE_ID || '';
         position: relative;
         display: inline-flex;
         flex-wrap: wrap;
+        align-items: center;
         gap: 0.25em;
-        padding: 0.05em 0.15em;
+        padding: 0.05em 0.18em;
         background: rgba(32, 28, 34, 0.08);
         border-radius: 0.28em;
         vertical-align: baseline;
@@ -117,6 +118,7 @@ const UMAMI_ID = PUBLIC_UMAMI_SITE_ID || '';
         color: rgba(248, 18, 116, 0.88);
         border: 1px solid rgba(248, 18, 116, 0.38);
         white-space: nowrap;
+        align-self: center;
       }
 
       .i18n-debug-label > span,

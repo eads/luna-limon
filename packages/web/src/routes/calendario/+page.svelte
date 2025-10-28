@@ -29,7 +29,9 @@
   const calendar = $derived(data.products?.[0]);
   let flash = $state(false);
 
-  const ctaText = $derived(t('calendario.comprar_simple') ?? t('calendario.comprar'));
+  const ctaText = $derived(() =>
+    translate('calendario.comprar_simple', translate('calendario.comprar', 'Reserva el tuyo')) || 'Reserva el tuyo'
+  );
 
   const featureVideoSources = [
     { src: '/video/IMG_6469-mobile.webm', type: 'video/webm', media: '(max-width: 640px)' },

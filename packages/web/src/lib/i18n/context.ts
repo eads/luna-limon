@@ -52,7 +52,8 @@ function escapeAttr(s: string): string {
 }
 
 function wrapDebugHtml(key: string, html: string, trusted: boolean): string {
-  const open = `<span class="i18n-debug-label" data-i18n-key="${escapeAttr(key)}">`;
+  const display = formatDisplayKey(key);
+  const open = `<span class="i18n-debug-label" data-i18n-key="${escapeAttr(display)}">`;
   const close = '</span>';
   return trusted ? `${open}${html}${close}` : `${open}${html}${close}`;
 }
@@ -66,7 +67,10 @@ function buildLookup(messages: Messages): LookupIndex {
     for (const variant of buildVariants(value)) {
       if (!variant) continue;
       const bucket = map.get(variant) ?? [];
-      if (!bucket.includes(key)) bucket.push(key);
+      if (!bucket.includes(key)) {
+        if (key.includes('.')) bucket.unshift(key);
+        else bucket.push(key);
+      }
       map.set(variant, bucket);
     }
     const normalized = normalizeText(value);
@@ -130,8 +134,8 @@ function annotateTree(root: ParentNode, lookup: LookupIndex) {
     const parent = node.parentElement;
     if (!parent) continue;
         const span = document.createElement('span');
-        span.className = 'i18n-debug-label';
-        span.dataset.i18nKey = key;
+    span.className = 'i18n-debug-label';
+    span.dataset.i18nKey = formatDisplayKey(key);
         span.textContent = original;
         parent.replaceChild(span, node);
         seen.add(span);
@@ -196,4 +200,12 @@ function extractSegments(value: string): string[] {
 
 function normalizeText(value: string): string {
   return stripFormatting(value).replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function formatDisplayKey(key: string): string {
+  const dotIndex = key.indexOf('.');
+  if (dotIndex === -1) return `global|${key}`;
+  const namespace = key.slice(0, dotIndex);
+  const rest = key.slice(dotIndex + 1);
+  return `${namespace}|${rest}`;
 }
