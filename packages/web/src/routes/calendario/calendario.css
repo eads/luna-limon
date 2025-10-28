@@ -172,6 +172,14 @@
   );
 }
 
+.calendar-hero__eyebrow {
+  font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
+  font-size: clamp(0.7rem, 2.2vw, 0.85rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 245, 240, 0.75);
+}
+
 .calendar-hero__cta {
   display: grid;
   justify-items: center;

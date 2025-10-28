@@ -35,25 +35,31 @@
     | { id: string; variant: 'blank'; color: string }
     | { id: string; variant: 'quote'; heading?: string; body: string };
 
-  const backgroundCards = $derived<BackgroundCard[]>([
-    {
-      id: 'intro',
-      variant: 'quote',
-      heading: undefined,
-      body: t('calendario.hero_subtitulo') ?? ''
-    },
-    {
-      id: 'quote',
-      variant: 'quote',
-      heading: undefined,
-      body: t('calendario.hero_subtitle') ?? ''
-    },
-    {
-      id: 'canvas',
-      variant: 'blank',
-      color: 'var(--calendar-backdrop-canvas)'
-    }
-  ]);
+  const backgroundCards = $derived<BackgroundCard[]>(
+    (() => {
+      const heroSubtitle = translate('calendario.hero_subtitulo');
+      const storyIntro = translate('calendario.historia_intro');
+      return [
+        {
+          id: 'intro',
+          variant: 'quote',
+          heading: undefined,
+          body: heroSubtitle || storyIntro
+        },
+        {
+          id: 'quote',
+          variant: 'quote',
+          heading: undefined,
+          body: storyIntro || heroSubtitle
+        },
+        {
+          id: 'canvas',
+          variant: 'blank',
+          color: 'var(--calendar-backdrop-canvas)'
+        }
+      ];
+    })()
+  );
 
   const quoteCards = $derived(backgroundCards.filter((card) => card.variant === 'quote'));
 
@@ -159,43 +165,30 @@
 
   const storyContent = $derived(
     (() => {
-      const eyebrow = t('calendario.historia_etiqueta') ?? '✨ Calendario 2026 · Nuevos Comienzos';
-      const intro = toParagraphs(
-        t('calendario.historia_intro') ??
-          'Más que una herramienta de organización, este calendario es una guía para acompañarte durante el año, rodeada de magia, rituales, cristales y momentos para reconectar contigo.\n\nCada mes te invita a hacer pausas, estar más presente y honrar tu propio ritmo, con prácticas simples que nutren tu mente, cuerpo y espíritu.'
-      );
-      const manifestoHeading =
-        t('calendario.historia_manifesto_titulo') ?? 'Hecho para quienes buscan equilibrio';
-      const manifestoLines = toLines(
-        t('calendario.historia_manifesto_texto') ??
-          'Para ti, que quieres transformar lo cotidiano en algo especial.\nPara quienes creen en la magia de los pequeños gestos: una palabra, una pausa, una respiración profunda.\nEste calendario fue creado para recordarte eso, día a día.'
-      );
-    const includesHeading = t('calendario.historia_incluye_titulo') ?? 'Incluye:';
-    const includesItems = toLines(
-      t('calendario.historia_incluye_lista') ??
-        '12 meses con información para vivir cada etapa de forma más consciente, acompañados de cristales, checklist y preguntas para mirar hacia tu interior.\n12 rituales mensuales para conectar con tu energía y renovar tus intenciones.\nPlaneadores mensuales para organizar tus días desde la calma.\nEspacio para notas, ideal para reflexiones, gratitud o momentos especiales del mes.\nNotas adhesivas para destacar lo importante.\n1 taco para que escribas tus propias frases o afirmaciones, las que te inspiran y elevan tu energía cada día.\n2 hojas de stickers para acompañar tu experiencia y darle color a tus días.'
-    );
-    const detailLines = [
-      t('calendario.tamano') ?? 'TAMAÑO: 30cm ancho x 17.5 alto cm',
-      t('calendario.base') ?? 'Base rígida y resistente, ideal para escritorio o repisa'
-    ].filter(Boolean);
+      const eyebrow = translate('calendario.historia_etiqueta');
+      const intro = toParagraphs(translate('calendario.historia_intro'));
+      const manifestoHeading = translate('calendario.historia_manifesto_titulo');
+      const manifestoLines = toLines(translate('calendario.historia_manifesto_texto'));
+      const includesHeading = translate('calendario.historia_incluye_titulo', 'Incluye:');
+      const includesItems = toLines(translate('calendario.historia_incluye_lista'));
+      const detailLines = [translate('calendario.tamano'), translate('calendario.base')].filter(Boolean);
 
-    return {
-      eyebrow,
-      intro,
-      manifestoHeading,
-      manifestoLines,
-      includesHeading,
-      includesItems,
-      detailLines
-    };
-  })()
-);
+      return {
+        eyebrow,
+        intro,
+        manifestoHeading,
+        manifestoLines,
+        includesHeading,
+        includesItems,
+        detailLines
+      };
+    })()
+  );
 
   const featureCards = $derived(
     featureContent.map((feature) => ({
-      title: t(feature.titleKey) ?? feature.fallbackTitle,
-      bodyParagraphs: toParagraphs(t(feature.bodyKey) ?? feature.fallbackBody),
+      title: translate(feature.titleKey, feature.fallbackTitle),
+      bodyParagraphs: toParagraphs(translate(feature.bodyKey, feature.fallbackBody)),
       image: featuresImages[feature.imageIndex % featuresImages.length]
     }))
   );
@@ -322,7 +315,7 @@
 </script>
 
 {#if !calendar}
-  <p class="calendar-empty">{t('calendario.estado_vacio')}</p>
+  <p class="calendar-empty">{translate('calendario.estado_vacio')}</p>
 {:else}
   <div class="calendar-layered u-full-bleed">
     <div class="calendar-layered__background" aria-hidden="true">
@@ -363,8 +356,11 @@
             {/each}
           </video>
           <div class="calendar-hero__overlay">
-            <h1 class="calendar-hero__title">{@html renderRich(t('calendario.hero_titulo'))}</h1>
-            <p class="calendar-hero__subtitle">12 meses para reconectar con tu magia</p>
+            {#if translate('calendario.hero_ceja')}
+              <span class="calendar-hero__eyebrow">{@html renderRich(translate('calendario.hero_ceja'))}</span>
+            {/if}
+            <h1 class="calendar-hero__title">{@html renderRich(translate('calendario.hero_titulo'))}</h1>
+            <p class="calendar-hero__subtitle">{@html renderRich(translate('calendario.hero_subtitulo'))}</p>
             <div class="calendar-hero__cta" bind:this={heroCtaEl}>
               <button
                 class={`calendar-primary__button ${flash ? 'flash' : ''}`}
@@ -373,7 +369,6 @@
               >
                 {ctaText}
               </button>
-              <span class="calendar-hero__note">Edición limitada · Entregas a partir de diciembre 2025</span>
             </div>
             <a
               class="calendar-hero__follow"
@@ -489,7 +484,7 @@
                   rel="noreferrer"
                 >
                   <Icon icon={instagramIcon} class="calendar-social-icon" aria-hidden="true" />
-                  <span>{t('calendario.cta_seguir')}</span>
+                  <span>{translate('calendario.cta_seguir')}</span>
                 </a>
               </div>
             </div>
