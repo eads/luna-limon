@@ -20,6 +20,11 @@
 
   const { t } = useI18n();
 
+  const translate = (key: string, fallback = '') => {
+    const value = t(key);
+    return value === key ? fallback : value;
+  };
+
   let { data } = $props<{ data: { products: Product[] } }>();
   const calendar = $derived(data.products?.[0]);
   let flash = $state(false);
