@@ -219,7 +219,7 @@ import { getLocale } from '$lib/paraglide/runtime.js';
         goto(`/pagar/exito${id}`);
       }
     } catch (err) {
-      // Flag the error; the rendered message uses t('checkout.error')
+      // Flag the error; the rendered message uses t('pagar.error')
       errorMsg = (err as any)?.message || 'error';
     } finally {
       submitting = false;
@@ -228,7 +228,7 @@ import { getLocale } from '$lib/paraglide/runtime.js';
 </script>
 
   <div class="max-w-md mx-auto pt-6 px-4 md:px-0 pb-16">
-<h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">{t('carrito.checkout.title')}</h1>
+<h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">{t('pagar.titulo')}</h1>
 
 {#if renderItems.length}
   <!-- Order summary first with warm backdrop and fewer lines -->
@@ -283,7 +283,7 @@ import { getLocale } from '$lib/paraglide/runtime.js';
         {/each}
       </ul>
       <div class="mt-2 pt-3 border-t border-gray-200 text-right">
-        <div class="text-sm text-gray-700">{t('carrito.checkout.total')}</div>
+        <div class="text-sm text-gray-700">{t('pagar.total')}</div>
         <div class="font-semibold text-gray-900 text-2xl">{fmtCOP.format(total)}</div>
       </div>
     </section>
@@ -291,34 +291,34 @@ import { getLocale } from '$lib/paraglide/runtime.js';
 {/if}
 
 {#if !$cart.length}
-  <div class="mt-4 p-3 text-center text-gray-700 bg-white/70 border rounded-lg">{t('carrito_vacio')}</div>
+  <div class="mt-4 p-3 text-center text-gray-700 bg-white/70 border rounded-lg">{t('carrito.vacio')}</div>
 {/if}
 
   <div class="grid gap-3 mb-5" class:opacity-60={!$cart.length}>
   <label class="block">
-    <span class="text-base text-gray-800">{t('carrito.checkout.name')}</span>
-    <input id="fld-nombre" name="name" autocomplete="name" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okNombre} bind:value={nombre} placeholder={t('carrito.checkout.placeholder.name')} disabled={!$cart.length} oninput={persistToStorage} />
+    <span class="text-base text-gray-800">{t('pagar.nombre')}</span>
+    <input id="fld-nombre" name="name" autocomplete="name" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okNombre} bind:value={nombre} placeholder={t('pagar.placeholder.nombre')} disabled={!$cart.length} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okNombre}
-      <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.required')}</p>
+      <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.requerido')}</p>
     {/if}
   </label>
 
   <label class="block">
-    <span class="text-base text-gray-800">{t('carrito.checkout.email')}</span>
-    <input id="fld-correo" name="email" autocomplete="email" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okEmail} type="email" bind:value={correo_electronico} placeholder={t('carrito.checkout.placeholder.email')} disabled={!$cart.length} oninput={persistToStorage} />
+    <span class="text-base text-gray-800">{t('pagar.correo')}</span>
+    <input id="fld-correo" name="email" autocomplete="email" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okEmail} type="email" bind:value={correo_electronico} placeholder={t('pagar.placeholder.correo')} disabled={!$cart.length} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okEmail}
-      <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.invalid_email')}</p>
+      <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.correo_invalido')}</p>
     {/if}
   </label>
 
   <label class="block">
     <span class="flex items-center gap-2 text-base text-gray-800">
       <Icon icon={whatsappIcon} class="h-5 w-5 text-emerald-500" aria-hidden="true" />
-      {t('carrito.checkout.whatsapp')}
+      {t('pagar.whatsapp')}
     </span>
-    <input id="fld-whatsapp" name="tel" type="tel" inputmode="numeric" autocomplete="tel" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okPhone} bind:value={numero_whatsapp} placeholder={t('carrito.checkout.placeholder.whatsapp')} disabled={!$cart.length} onblur={() => { numero_whatsapp = normalizePhoneCO(numero_whatsapp); persistToStorage(); }} oninput={persistToStorage} />
+    <input id="fld-whatsapp" name="tel" type="tel" inputmode="numeric" autocomplete="tel" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okPhone} bind:value={numero_whatsapp} placeholder={t('pagar.placeholder.whatsapp')} disabled={!$cart.length} onblur={() => { numero_whatsapp = normalizePhoneCO(numero_whatsapp); persistToStorage(); }} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okPhone}
-      <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.invalid_phone')}</p>
+      <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.telefono_invalido')}</p>
     {/if}
   </label>
 
@@ -326,42 +326,40 @@ import { getLocale } from '$lib/paraglide/runtime.js';
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
     <label class="block">
-      <span class="text-base text-gray-800">{t('carrito.checkout.city')}</span>
-      <input id="fld-ciudad" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okCiudad} bind:value={ciudad} placeholder={t('carrito.checkout.placeholder.city')} disabled={!$cart.length} oninput={persistToStorage} />
+      <span class="text-base text-gray-800">{t('pagar.ciudad')}</span>
+      <input id="fld-ciudad" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okCiudad} bind:value={ciudad} placeholder={t('pagar.placeholder.ciudad')} disabled={!$cart.length} oninput={persistToStorage} />
       {#if submitAttempted && !validateAll().okCiudad}
-        <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.required')}</p>
+        <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.requerido')}</p>
       {/if}
     </label>
     <label class="block">
-      <span class="text-base text-gray-800">{t('carrito.checkout.state')}</span>
-      <input id="fld-departamento" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDepto} bind:value={departamento} placeholder={t('carrito.checkout.placeholder.state')} disabled={!$cart.length} oninput={persistToStorage} />
+      <span class="text-base text-gray-800">{t('pagar.departamento')}</span>
+      <input id="fld-departamento" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDepto} bind:value={departamento} placeholder={t('pagar.placeholder.departamento')} disabled={!$cart.length} oninput={persistToStorage} />
       {#if submitAttempted && !validateAll().okDepto}
-        <p class="text-sm text-red-600 mt-1">{t('carrito.checkout.validation.required')}</p>
+        <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.requerido')}</p>
       {/if}
     </label>
   </div>
   <label class="block">
-    <span class="text-base text-gray-800">{t('carrito.checkout.postal_code')}</span>
-    <input id="fld-codpostal" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" bind:value={codigo_postal} placeholder={t('carrito.checkout.placeholder.postal_code')} disabled={!$cart.length} oninput={persistToStorage} />
+    <span class="text-base text-gray-800">{t('pagar.codigo_postal')}</span>
+    <input id="fld-codpostal" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" bind:value={codigo_postal} placeholder={t('pagar.placeholder.codigo_postal')} disabled={!$cart.length} oninput={persistToStorage} />
   </label>
 
   <label class="block">
-    <span class="text-base text-gray-800">{t('carrito.checkout.notes')}</span>
-    <textarea name="notes" autocomplete="off" class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" rows="3" bind:value={notas_cliente} placeholder={t('carrito.checkout.placeholder.notes')} disabled={!$cart.length}></textarea>
+    <span class="text-base text-gray-800">{t('pagar.notas')}</span>
+    <textarea name="notes" autocomplete="off" class="mt-1 w-full rounded-xl border border-gray-400 p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" rows="3" bind:value={notas_cliente} placeholder={t('pagar.placeholder.notas')} disabled={!$cart.length}></textarea>
   </label>
   {#if errorMsg}
-    <p class="text-red-600 mb-1 text-sm">{t('carrito.checkout.error')}: {errorMsg}</p>
+    <p class="text-red-600 mb-1 text-sm">{t('pagar.error')}: {errorMsg}</p>
   {/if}
 </div>
-
-
 
 <button
   class="w-full rounded-lg bg-emerald-600 disabled:bg-emerald-300 text-white py-3 px-4 shadow-sm"
   onclick={placeOrder}
   disabled={submitting || $cart.length === 0}
 >
-  {submitting ? t('carrito.checkout.processing') : t('carrito.checkout.place_order')}
+  {submitting ? t('pagar.procesando') : t('pagar.realizar_pedido')}
 </button>
 
 </div>
