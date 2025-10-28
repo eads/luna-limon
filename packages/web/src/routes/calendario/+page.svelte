@@ -361,9 +361,6 @@
             {/each}
           </video>
           <div class="calendar-hero__overlay">
-            {#if translate('calendario.hero_ceja')}
-              <span class="calendar-hero__eyebrow">{@html renderRich(translate('calendario.hero_ceja'))}</span>
-            {/if}
             <h1 class="calendar-hero__title">{@html renderRich(translate('calendario.hero_titulo'))}</h1>
             <p class="calendar-hero__subtitle">{@html renderRich(translate('calendario.hero_subtitulo'))}</p>
             <div class="calendar-hero__cta" bind:this={heroCtaEl}>
