@@ -79,17 +79,17 @@
 		<img
 			class="home-hero__image"
 			src={heroImageLg}
-			alt={t('inicio.hero.image_alt')}
+			alt={t('desayuno.hero.image_alt')}
 			loading="eager"
 			fetchpriority="high"
 		/>
 	</picture>
 	<div class="home-hero__scrim" aria-hidden="true"></div>
 	<div class="home-hero__content">
-		<p class="home-hero__eyebrow">{t('inicio.hero.eyebrow')}</p>
-		<h1 class="home-hero__title">{t('inicio.hero.title')}</h1>
-		<p class="home-hero__copy">{t('inicio.hero.copy')}</p>
-		<a class="home-hero__cta" href="#catalogo">{t('inicio.hero.cta')}</a>
+	<p class="home-hero__eyebrow">{t('desayuno.hero.eyebrow')}</p>
+	<h1 class="home-hero__title">{t('desayuno.hero.title')}</h1>
+	<p class="home-hero__copy">{t('desayuno.hero.copy')}</p>
+	<a class="home-hero__cta" href="#catalogo">{t('desayuno.hero.cta')}</a>
 	</div>
 	<picture class="home-hero__accent" aria-hidden="true">
 		<source media="(min-width: 768px)" srcset={`${heroAccentLg} 1100w`} sizes="40vw" />
@@ -98,7 +98,7 @@
 </section>
 
 <section class="home-catalog u-content-wrap" id="catalogo">
-	<h2 class="home-catalog__heading">{t('etiqueta_catalogo')}</h2>
+	<h2 class="home-catalog__heading">{t('desayuno.etiqueta_catalogo')}</h2>
 	<ul class="home-catalog__grid">
 	{#each data.products as product (product.id)}
 		<li class="border rounded-lg shadow-md p-4 flex flex-col gap-2 bg-white">
