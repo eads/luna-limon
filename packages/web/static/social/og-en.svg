@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg-en" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF6F0"/>
+      <stop offset="100%" stop-color="#FFEFF5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg-en)"/>
+  <rect x="80" y="80" width="1040" height="470" rx="48" fill="rgba(255,255,255,0.82)"/>
+  <text x="120" y="240" font-family="Montserrat, 'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="88" fill="#2B1721">
+    Luna Limón
+  </text>
+  <text x="120" y="320" font-family="'Etania Ezra Script', 'Elgraine', 'Montserrat', cursive" font-size="64" fill="#B44B5F">
+    a spark of magic
+  </text>
+  <text x="120" y="400" font-family="Montserrat, 'Helvetica Neue', Arial, sans-serif" font-size="32" fill="rgba(43,23,33,0.75)">
+    Handcrafted breakfasts, rituals &amp; heartfelt gifts made in Colombia.
+  </text>
+  <text x="120" y="460" font-family="Montserrat, 'Helvetica Neue', Arial, sans-serif" font-size="28" fill="rgba(43,23,33,0.55)">
+    Bogotá · Cundinamarca · Colombia
+  </text>
+</svg>

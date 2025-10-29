@@ -84,5 +84,5 @@ export const load: LayoutServerLoad = async ({ setHeaders, url }) => {
     debugFlags.has('i18n') ||
     debugFlags.has('texto');
 
-  return { locale, messages, copyDebug };
+  return { locale, messages, copyDebug, origin: url.origin };
 };
