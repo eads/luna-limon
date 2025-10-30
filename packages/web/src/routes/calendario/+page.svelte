@@ -70,49 +70,18 @@
 
   const quoteCards = $derived(backgroundCards.filter((card) => card.variant === 'quote'));
 
-  const featuresImages = $derived((() => {
-    const items = [
-      {
-        large: getResizedImageUrl('/images/IMG_6395.jpg', 1200),
-        medium: getResizedImageUrl('/images/IMG_6395.jpg', 760),
-        fallback: '/images/IMG_6395.jpg'
-      },
-      {
-        large: getResizedImageUrl('/images/IMG_6403.jpg', 1200),
-        medium: getResizedImageUrl('/images/IMG_6403.jpg', 760),
-        fallback: '/images/IMG_6403.jpg'
-      },
-      {
-        large: getResizedImageUrl('/images/IMG_5882.jpg', 1200),
-        medium: getResizedImageUrl('/images/IMG_5882.jpg', 760),
-        fallback: '/images/IMG_5882.jpg'
-      },
-      {
-        large: getResizedImageUrl('/images/IMG_6425.jpg', 1200),
-        medium: getResizedImageUrl('/images/IMG_6425.jpg', 760),
-        fallback: '/images/IMG_6425.jpg'
-      }
-    ];
-    items.push(items[1]);
-    return items;
-  })());
-
-  const featureContent = [
+  const featureSections = [
     {
       titleKey: 'calendario.beneficio_conecta_titulo',
       bodyKey: 'calendario.beneficio_conecta_texto',
       fallbackTitle: 'Conecta con la energía de cada mes',
       fallbackBody:
         'Cada mes te acompaña con reflexiones, preguntas y ejercicios sencillos para vivir cada etapa del año con más conciencia.',
-      imageIndex: 0
-    },
-    {
-      titleKey: 'calendario.beneficio_cristales_titulo',
-      bodyKey: 'calendario.beneficio_cristales_texto',
-      fallbackTitle: 'Cristales para acompañar tu mes',
-      fallbackBody:
-        'Cada mes incluye una sugerencia de cristal que sintoniza con su energía.\n\nUna guía práctica para equilibrarte, manifestar y mantenerte en armonía con tus intenciones.',
-      imageIndex: 1
+      image: {
+        large: getResizedImageUrl('/images/Planeador.jpg', 1200),
+        medium: getResizedImageUrl('/images/Planeador.jpg', 760),
+        fallback: '/images/Planeador.jpg'
+      }
     },
     {
       titleKey: 'calendario.beneficio_rituales_titulo',
@@ -120,7 +89,11 @@
       fallbackTitle: 'Rituales para acompañar tu camino',
       fallbackBody:
         'Incluye 12 rituales mensuales con pasos simples y significativos, diseñados para reconectarte con tu propósito y disfrutar lo cotidiano desde la calma.',
-      imageIndex: 2
+      image: {
+        large: getResizedImageUrl('/images/Ritual.jpg', 1200),
+        medium: getResizedImageUrl('/images/Ritual.jpg', 760),
+        fallback: '/images/Ritual.jpg'
+      }
     },
     {
       titleKey: 'calendario.beneficio_notas_titulo',
@@ -128,7 +101,11 @@
       fallbackTitle: 'Espacios para tus notas y reflexiones',
       fallbackBody:
         'Cada mes te invita a escribir lo que sientes, lo que aprendes o aquello por lo que quieres agradecer.\n\nHecho con materiales responsables con el planeta, porque cuidar de ti también es cuidar del entorno.',
-      imageIndex: 3
+      image: {
+        large: getResizedImageUrl('/images/Mes.jpg', 1200),
+        medium: getResizedImageUrl('/images/Mes.jpg', 760),
+        fallback: '/images/Mes.jpg'
+      }
     },
     {
       titleKey: 'calendario.beneficio_cuidado_titulo',
@@ -136,7 +113,7 @@
       fallbackTitle: 'Hecho con amor e intención',
       fallbackBody:
         'Cada detalle fue pensado para que sientas que estás recibiendo algo más que un calendario: un recordatorio de que siempre puedes volver a empezar.',
-      imageIndex: 4
+      image: null
     }
   ];
 
@@ -193,10 +170,10 @@
   );
 
   const featureCards = $derived(
-    featureContent.map((feature) => ({
+    featureSections.map((feature) => ({
       title: translate(feature.titleKey, feature.fallbackTitle),
       bodyParagraphs: toParagraphs(translate(feature.bodyKey, feature.fallbackBody)),
-      image: featuresImages[feature.imageIndex % featuresImages.length]
+      image: feature.image
     }))
   );
 
@@ -451,26 +428,28 @@
             <div class="calendar-features">
               <div class="calendar-features__grid">
               {#each featureCards as card, index}
-                <article class={`calendar-feature ${index % 2 ? 'is-alt' : ''}`}>
-                  <picture class="calendar-feature__media">
-                    <source
-                      media="(min-width: 900px)"
-                      srcset={`${card.image.large} 1200w, ${card.image.medium} 800w`}
-                      sizes="50vw"
-                    />
-                    <source
-                      media="(min-width: 480px)"
-                      srcset={`${card.image.medium} 800w, ${card.image.large} 1200w`}
-                      sizes="90vw"
-                    />
-                    <img
-                      src={card.image.fallback}
-                      srcset={`${card.image.medium} 800w, ${card.image.large} 1200w`}
-                      sizes="90vw"
-                      alt={card.title}
-                      loading="lazy"
-                    />
-                  </picture>
+                <article class={`calendar-feature ${index % 2 ? 'is-alt' : ''} ${card.image ? '' : 'is-text-only'}`}>
+                  {#if card.image}
+                    <picture class="calendar-feature__media">
+                      <source
+                        media="(min-width: 900px)"
+                        srcset={`${card.image.large} 1200w, ${card.image.medium} 800w`}
+                        sizes="50vw"
+                      />
+                      <source
+                        media="(min-width: 480px)"
+                        srcset={`${card.image.medium} 800w, ${card.image.large} 1200w`}
+                        sizes="90vw"
+                      />
+                      <img
+                        src={card.image.fallback}
+                        srcset={`${card.image.medium} 800w, ${card.image.large} 1200w`}
+                        sizes="90vw"
+                        alt={card.title}
+                        loading="lazy"
+                      />
+                    </picture>
+                  {/if}
                   <div class="calendar-feature__text">
                     <h3>{@html renderRich(card.title)}</h3>
                     {#each card.bodyParagraphs as paragraph}
