@@ -655,6 +655,8 @@
 .calendar-feature__text {
   display: grid;
   gap: clamp(0.6rem, 2vw, 1.3rem);
+  text-align: justify;
+  text-align-last: start;
 }
 
 .calendar-feature__text h3 {
@@ -681,6 +683,7 @@
   font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
   line-height: 1.68;
   color: rgba(37, 18, 27, 0.75);
+  text-align: justify;
 }
 
 .calendar-feature__text p + p {
@@ -691,6 +694,7 @@
   .calendar-feature {
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
     gap: clamp(1.4rem, 3.4vw, 2.6rem);
+    align-items: center;
   }
 
   .calendar-feature.is-alt {

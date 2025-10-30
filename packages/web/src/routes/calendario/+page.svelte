@@ -78,9 +78,9 @@
       fallbackBody:
         'Cada mes te acompaña con reflexiones, preguntas y ejercicios sencillos para vivir cada etapa del año con más conciencia.',
       image: {
-        large: getResizedImageUrl('/images/Planeador.jpg', 1200),
-        medium: getResizedImageUrl('/images/Planeador.jpg', 760),
-        fallback: '/images/Planeador.jpg'
+        large: getResizedImageUrl('/images/Mes.jpg', 1200),
+        medium: getResizedImageUrl('/images/Mes.jpg', 760),
+        fallback: '/images/Mes.jpg'
       }
     },
     {
@@ -102,9 +102,9 @@
       fallbackBody:
         'Cada mes te invita a escribir lo que sientes, lo que aprendes o aquello por lo que quieres agradecer.\n\nHecho con materiales responsables con el planeta, porque cuidar de ti también es cuidar del entorno.',
       image: {
-        large: getResizedImageUrl('/images/Mes.jpg', 1200),
-        medium: getResizedImageUrl('/images/Mes.jpg', 760),
-        fallback: '/images/Mes.jpg'
+        large: getResizedImageUrl('/images/Planeador.jpg', 1200),
+        medium: getResizedImageUrl('/images/Planeador.jpg', 760),
+        fallback: '/images/Planeador.jpg'
       }
     },
     {
