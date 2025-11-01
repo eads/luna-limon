@@ -228,7 +228,7 @@ import { getLocale } from '$lib/paraglide/runtime.js';
 </script>
 
   <div class="max-w-md mx-auto pt-6 px-4 md:px-0 pb-16">
-<h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">{t('pagar.titulo')}</h1>
+<h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 pagar-title">{t('pagar.titulo')}</h1>
 
 {#if renderItems.length}
   <!-- Order summary first with warm backdrop and fewer lines -->
@@ -240,11 +240,11 @@ import { getLocale } from '$lib/paraglide/runtime.js';
             <!-- Image only; proportional container with generous max-width -->
             <div class="flex-1 min-w-0 max-w-[30rem] sm:max-w-[38rem] flex flex-col items-start">
               {#if imageFor(product)}
-                <div class="relative w-full aspect-[5/3]">
+                <div class="preview-image-wrapper">
                   <img
                     src={getResizedImageUrl(imageFor(product), 600)}
                     alt={nameOf(product)}
-                    class="absolute inset-0 w-full h-full object-cover rounded-xl"
+                    class="w-full h-auto object-cover rounded-xl"
                     loading="lazy"
                   />
                 </div>
@@ -363,3 +363,20 @@ import { getLocale } from '$lib/paraglide/runtime.js';
 </button>
 
 </div>
+
+<style>
+  .pagar-title {
+    font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
+    font-weight: 500;
+  }
+
+  .preview-image-wrapper {
+    width: 100%;
+    border-radius: clamp(12px, 3vw, 20px);
+    overflow: hidden;
+  }
+
+  .preview-image-wrapper img {
+    display: block;
+  }
+</style>
