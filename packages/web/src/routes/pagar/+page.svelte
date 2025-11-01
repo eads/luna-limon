@@ -244,7 +244,7 @@ import { getLocale } from '$lib/paraglide/runtime.js';
                   <img
                     src={getResizedImageUrl(imageFor(product), 600)}
                     alt={nameOf(product)}
-                    class="w-full h-auto object-cover rounded-xl"
+                    class="w-full h-auto object-cover"
                     loading="lazy"
                   />
                 </div>
@@ -371,12 +371,19 @@ import { getLocale } from '$lib/paraglide/runtime.js';
   }
 
   .preview-image-wrapper {
+    position: relative;
     width: 100%;
     border-radius: clamp(12px, 3vw, 20px);
     overflow: hidden;
+    box-shadow:
+      0 24px 40px -28px rgba(25, 15, 20, 0.45),
+      0 10px 24px -18px rgba(25, 15, 20, 0.35),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.6);
   }
 
   .preview-image-wrapper img {
     display: block;
+    width: 100%;
+    height: auto;
   }
 </style>
