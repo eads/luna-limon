@@ -112,7 +112,10 @@
       "delivery_date_hint": "Optional — if you don't select a date, we'll ship as soon as possible.",
       "city": "City",
       "state": "State / Department",
-      "postal_code": "Postal code"
+      "postal_code": "Postal code",
+      "labels": {
+        "quantity": "Quantity"
+      }
     },
     "carrito_label": "Cart",
     "carrito_vacio": "Cart is empty",
