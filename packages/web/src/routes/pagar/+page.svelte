@@ -498,7 +498,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
 
   <div class="grid gap-3 mb-5" class:opacity-60={!$cart.length}>
   <label class="block">
-    <span class="text-base text-gray-800">{t('pagar.nombre')}</span>
+    <span class="text-base text-gray-800">{t('pagar.nombre')}<span class="required-marker">*</span></span>
     <input id="fld-nombre" name="name" autocomplete="name" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okNombre} bind:value={nombre} placeholder={t('pagar.placeholder.nombre')} disabled={!$cart.length} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okNombre}
       <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.requerido')}</p>
@@ -506,7 +506,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
   </label>
 
   <label class="block">
-    <span class="text-base text-gray-800">{t('pagar.correo')}</span>
+    <span class="text-base text-gray-800">{t('pagar.correo')}<span class="required-marker">*</span></span>
     <input id="fld-correo" name="email" autocomplete="email" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okEmail} type="email" bind:value={correo_electronico} placeholder={t('pagar.placeholder.correo')} disabled={!$cart.length} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okEmail}
       <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.correo_invalido')}</p>
@@ -516,7 +516,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
   <label class="block">
     <span class="flex items-center gap-2 text-base text-gray-800">
       <Icon icon={whatsappIcon} class="h-5 w-5 text-emerald-500" aria-hidden="true" />
-      {t('pagar.whatsapp')}
+      {t('pagar.whatsapp')}<span class="required-marker">*</span>
     </span>
     <input id="fld-whatsapp" name="tel" type="tel" inputmode="numeric" autocomplete="tel" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okPhone} bind:value={numero_whatsapp} placeholder={t('pagar.placeholder.whatsapp')} disabled={!$cart.length} onblur={() => { numero_whatsapp = normalizePhoneCO(numero_whatsapp); persistToStorage(); }} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okPhone}
@@ -525,7 +525,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
   </label>
 
   <label class="block">
-    <span class="text-base text-gray-800">{t('pagar.direccion_envio')}</span>
+    <span class="text-base text-gray-800">{t('pagar.direccion_envio')}<span class="required-marker">*</span></span>
     <div class="direccion-field">
       <input
         id="fld-direccion"
@@ -552,7 +552,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
     <label class="block">
-      <span class="text-base text-gray-800">{t('pagar.ciudad')}</span>
+      <span class="text-base text-gray-800">{t('pagar.ciudad')}<span class="required-marker">*</span></span>
       <input
         id="fld-ciudad"
         name="city"
@@ -561,7 +561,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
         class:border-red-500={submitAttempted && !validateAll().okCiudad}
         bind:value={ciudad}
         placeholder={t('pagar.placeholder.ciudad')}
-        disabled={!$cart.length}
+        disabled={!$cart.length || !direccion_envio}
         oninput={persistToStorage}
       />
       {#if submitAttempted && !validateAll().okCiudad}
@@ -569,16 +569,16 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
       {/if}
     </label>
     <label class="block">
-      <span class="text-base text-gray-800">{t('pagar.departamento')}</span>
-      <input id="fld-departamento" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDepto} bind:value={departamento} placeholder={t('pagar.placeholder.departamento')} disabled={!$cart.length} oninput={persistToStorage} />
+      <span class="text-base text-gray-800">{t('pagar.departamento')}<span class="required-marker">*</span></span>
+      <input id="fld-departamento" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDepto} bind:value={departamento} placeholder={t('pagar.placeholder.departamento')} disabled={!$cart.length || !direccion_envio} oninput={persistToStorage} />
       {#if submitAttempted && !validateAll().okDepto}
         <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.requerido')}</p>
       {/if}
     </label>
   </div>
   <label class="block">
-    <span class="text-base text-gray-800">{t('pagar.codigo_postal')}</span>
-    <input id="fld-codpostal" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" bind:value={codigo_postal} placeholder={t('pagar.placeholder.codigo_postal')} disabled={!$cart.length} oninput={persistToStorage} />
+    <span class="text-base text-gray-800">{t('pagar.codigo_postal')}<span class="required-marker">*</span></span>
+    <input id="fld-codpostal" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus-border-amber-300" bind:value={codigo_postal} placeholder={t('pagar.placeholder.codigo_postal')} disabled={!$cart.length || !direccion_envio} oninput={persistToStorage} />
   </label>
 
   <label class="block">
