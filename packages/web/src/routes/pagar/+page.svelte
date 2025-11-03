@@ -768,8 +768,8 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
   }
 
   .checkout-input {
-    padding: clamp(0.85rem, 1.4vw, 1rem) clamp(1.05rem, 1.8vw, 1.25rem);
-    font-size: clamp(1.04rem, 1.8vw, 1.2rem);
+    padding: clamp(0.82rem, 1.35vw, 0.95rem) clamp(1.05rem, 1.7vw, 1.25rem);
+    font-size: clamp(1.1rem, 2vw, 1.26rem);
     color: #2b211b;
   }
 
@@ -792,8 +792,8 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
     width: 100%;
     border-radius: 0.9rem;
     border: 1px solid rgba(43, 33, 27, 0.2);
-    padding: clamp(0.85rem, 1.4vw, 1rem) clamp(1.35rem, 2.4vw, 1.85rem) clamp(0.85rem, 1.4vw, 1rem) clamp(1.1rem, 1.8vw, 1.35rem);
-    font-size: clamp(1.06rem, 1.9vw, 1.24rem);
+    padding: clamp(0.82rem, 1.32vw, 0.95rem) clamp(1.4rem, 2.45vw, 1.9rem) clamp(0.82rem, 1.32vw, 0.95rem) clamp(1.15rem, 1.9vw, 1.4rem);
+    font-size: clamp(1.12rem, 2.05vw, 1.3rem);
     color: #2b211b;
     background: #fff;
     transition: border-color 140ms ease, box-shadow 140ms ease;
