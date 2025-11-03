@@ -231,8 +231,18 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
     if (sublocality && normalizeText(sublocality) !== normalizeText(parts[parts.length - 1] ?? '')) {
       parts.push(sublocality);
     }
-    const line = parts.filter(Boolean).join(', ').trim();
-    return line || null;
+  const line = parts.filter(Boolean).join(', ').trim();
+  return line || null;
+}
+
+  function clearDireccion() {
+    direccion_envio = '';
+    ciudad = '';
+    departamento = '';
+    codigo_postal = '';
+    if (direccionInputEl) direccionInputEl.value = '';
+    persistToStorage();
+    direccionInputEl?.focus();
   }
 
   onMount(() => {
@@ -516,18 +526,28 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
 
   <label class="block">
     <span class="text-base text-gray-800">{t('pagar.direccion_envio')}</span>
-    <input
-      id="fld-direccion"
-      name="street-address"
-      type="text"
-      autocomplete="street-address"
-      class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300"
-      bind:this={direccionInputEl}
-      bind:value={direccion_envio}
-      placeholder={t('pagar.placeholder.direccion')}
-      disabled={!$cart.length}
-      oninput={persistToStorage}
-    />
+    <div class="direccion-field">
+      <input
+        id="fld-direccion"
+        name="street-address"
+        type="text"
+        autocomplete="street-address"
+        class="direccion-input"
+        bind:this={direccionInputEl}
+        bind:value={direccion_envio}
+        placeholder={t('pagar.placeholder.direccion')}
+        disabled={!$cart.length}
+        oninput={persistToStorage}
+      />
+      {#if direccion_envio && $cart.length}
+        <button
+          type="button"
+          class="direccion-clear"
+          aria-label={t('pagar.direccion_limpiar') ?? 'Limpiar dirección'}
+          onclick={clearDireccion}
+        >×</button>
+      {/if}
+    </div>
   </label>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -745,6 +765,62 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
     color: #2b211b;
     margin-left: auto;
     text-align: right;
+  }
+
+  .direccion-field {
+    position: relative;
+    margin-top: 0.3rem;
+  }
+
+  .direccion-input {
+    width: 100%;
+    border-radius: 0.85rem;
+    border: 1px solid rgba(43, 33, 27, 0.2);
+    padding: 1rem 3rem 1rem 1.05rem;
+    font-size: 1rem;
+    color: #2b211b;
+    background: #fff;
+    transition: border-color 140ms ease, box-shadow 140ms ease;
+  }
+
+  .direccion-input:focus {
+    outline: none;
+    border-color: rgba(243, 163, 97, 0.85);
+    box-shadow: 0 0 0 3px rgba(243, 163, 97, 0.19);
+  }
+
+  .direccion-input:disabled {
+    background: rgba(243, 240, 238, 0.8);
+    cursor: not-allowed;
+  }
+
+  .direccion-clear {
+    position: absolute;
+    top: 50%;
+    right: 0.85rem;
+    transform: translateY(-50%);
+    border: none;
+    background: rgba(43, 33, 27, 0.08);
+    color: #2b211b;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 999px;
+    font-size: 1.05rem;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background-color 120ms ease, transform 120ms ease;
+  }
+
+  .direccion-clear:hover {
+    background: rgba(243, 163, 97, 0.25);
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .direccion-clear:focus-visible {
+    outline: 2px solid rgba(243, 163, 97, 0.8);
+    outline-offset: 2px;
   }
 
   .preview-image-wrapper {
