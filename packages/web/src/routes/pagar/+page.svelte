@@ -208,29 +208,6 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
       console.info('[checkout]', ...args);
     }
   };
-  type CityDirectoryEntry = { ciudad: string; departamento: string };
-  const CITY_DIRECTORY: CityDirectoryEntry[] = [
-    { ciudad: 'Bogotá', departamento: 'Cundinamarca' },
-    { ciudad: 'Medellín', departamento: 'Antioquia' },
-    { ciudad: 'Cali', departamento: 'Valle del Cauca' },
-    { ciudad: 'Barranquilla', departamento: 'Atlántico' },
-    { ciudad: 'Cartagena', departamento: 'Bolívar' },
-    { ciudad: 'Bucaramanga', departamento: 'Santander' },
-    { ciudad: 'Manizales', departamento: 'Caldas' },
-    { ciudad: 'Pereira', departamento: 'Risaralda' },
-    { ciudad: 'Cúcuta', departamento: 'Norte de Santander' },
-    { ciudad: 'Ibagué', departamento: 'Tolima' },
-    { ciudad: 'Santa Marta', departamento: 'Magdalena' },
-    { ciudad: 'Villavicencio', departamento: 'Meta' },
-    { ciudad: 'Neiva', departamento: 'Huila' },
-    { ciudad: 'Tunja', departamento: 'Boyacá' },
-    { ciudad: 'Popayán', departamento: 'Cauca' },
-    { ciudad: 'Armenia', departamento: 'Quindío' },
-    { ciudad: 'Sincelejo', departamento: 'Sucre' },
-    { ciudad: 'Montería', departamento: 'Córdoba' },
-    { ciudad: 'Pasto', departamento: 'Nariño' },
-    { ciudad: 'Valledupar', departamento: 'Cesar' }
-  ];
   const normalizeText = (value: string): string =>
     (value || '')
       .normalize('NFD')
@@ -238,31 +215,24 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
       .replace(/\s+/g, ' ')
       .toLowerCase()
       .trim();
-  const lookupCity = (value: string): CityDirectoryEntry | undefined => {
-    const normalized = normalizeText(value);
-    if (!normalized) return undefined;
-    return CITY_DIRECTORY.find((entry) => {
-      const city = normalizeText(entry.ciudad);
-      const combined = normalizeText(`${entry.ciudad}, ${entry.departamento}`);
-      return normalized === city || normalized === combined;
-    });
-  };
-  function handleCityInputEvent(event: Event) {
-    const inputEl = event.currentTarget as HTMLInputElement;
-    const value = inputEl.value;
-    const match = lookupCity(value);
-    if (match) {
-      if (normalizeText(ciudad) !== normalizeText(match.ciudad)) {
-        ciudad = match.ciudad;
-      }
-      if (!departamento || normalizeText(departamento) !== normalizeText(match.departamento)) {
-        departamento = match.departamento;
-      }
-      if (inputEl.value !== match.ciudad) {
-        inputEl.value = match.ciudad;
-      }
+  function streetAddressFrom(place: any): string | null {
+    const components = (place?.address_components ?? []) as Array<{ long_name?: string; types?: string[] }>;
+    if (!components.length) return null;
+    const find = (type: string) => components.find((c) => (c.types ?? []).includes(type))?.long_name;
+    const number = find('street_number');
+    const route = find('route');
+    const sublocality = find('sublocality_level_1') ?? find('neighborhood') ?? find('sublocality');
+    const parts: string[] = [];
+    if (route) {
+      parts.push(number ? `${route} ${number}` : route);
+    } else if (number) {
+      parts.push(number);
     }
-    persistToStorage();
+    if (sublocality && normalizeText(sublocality) !== normalizeText(parts[parts.length - 1] ?? '')) {
+      parts.push(sublocality);
+    }
+    const line = parts.filter(Boolean).join(', ').trim();
+    return line || null;
   }
 
   onMount(() => {
@@ -308,11 +278,14 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
 
         const handlePlace = (place: any) => {
           checkoutLog('Autocomplete selection', place?.formatted_address ?? '(sin dirección)');
-          if (place?.formatted_address) {
+          const line = streetAddressFrom(place);
+          if (line) {
+            direccion_envio = line;
+          } else if (place?.formatted_address) {
             direccion_envio = place.formatted_address;
-            if (direccionInputEl) {
-              direccionInputEl.value = place.formatted_address;
-            }
+          }
+          if (direccionInputEl) {
+            direccionInputEl.value = direccion_envio;
           }
           if (place?.address_components) {
             type AddressComponent = { long_name?: string; types?: string[] };
@@ -569,14 +542,8 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
         bind:value={ciudad}
         placeholder={t('pagar.placeholder.ciudad')}
         disabled={!$cart.length}
-        list="checkout-city-options"
-        oninput={handleCityInputEvent}
+        oninput={persistToStorage}
       />
-      <datalist id="checkout-city-options">
-        {#each CITY_DIRECTORY as option (option.ciudad)}
-          <option value={`${option.ciudad}, ${option.departamento}`}></option>
-        {/each}
-      </datalist>
       {#if submitAttempted && !validateAll().okCiudad}
         <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.requerido')}</p>
       {/if}
