@@ -64,6 +64,10 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
     currency: 'COP',
     maximumFractionDigits: 0
   });
+  const withFallback = (key: string, fallback: string) => {
+    const value = t(key);
+    return value && value !== key ? value : fallback;
+  };
 
   // Customer fields
   let nombre = $state('');
@@ -535,7 +539,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
         class="direccion-input"
         bind:this={direccionInputEl}
         bind:value={direccion_envio}
-        placeholder={t('pagar.placeholder.direccion')}
+        placeholder={withFallback('pagar.placeholder.direccion', 'Dirección de entrega')}
         disabled={!$cart.length}
         oninput={persistToStorage}
       />
@@ -560,7 +564,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
         class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300"
         class:border-red-500={submitAttempted && !validateAll().okCiudad}
         bind:value={ciudad}
-        placeholder={t('pagar.placeholder.ciudad')}
+        placeholder={withFallback('pagar.placeholder.ciudad', 'Ciudad')}
         disabled={!$cart.length || !direccion_envio}
         oninput={persistToStorage}
       />
@@ -570,7 +574,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
     </label>
     <label class="block">
       <span class="text-base text-gray-800">{t('pagar.departamento')}<span class="required-marker">*</span></span>
-      <input id="fld-departamento" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDepto} bind:value={departamento} placeholder={t('pagar.placeholder.departamento')} disabled={!$cart.length || !direccion_envio} oninput={persistToStorage} />
+      <input id="fld-departamento" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDepto} bind:value={departamento} placeholder={withFallback('pagar.placeholder.departamento', 'Departamento')} disabled={!$cart.length || !direccion_envio} oninput={persistToStorage} />
       {#if submitAttempted && !validateAll().okDepto}
         <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.requerido')}</p>
       {/if}
@@ -578,7 +582,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
   </div>
   <label class="block">
     <span class="text-base text-gray-800">{t('pagar.codigo_postal')}<span class="required-marker">*</span></span>
-    <input id="fld-codpostal" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus-border-amber-300" bind:value={codigo_postal} placeholder={t('pagar.placeholder.codigo_postal')} disabled={!$cart.length || !direccion_envio} oninput={persistToStorage} />
+    <input id="fld-codpostal" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus-border-amber-300" bind:value={codigo_postal} placeholder={withFallback('pagar.placeholder.codigo_postal', 'Código postal')} disabled={!$cart.length || !direccion_envio} oninput={persistToStorage} />
   </label>
 
   <label class="block">
