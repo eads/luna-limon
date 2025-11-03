@@ -1,4 +1,5 @@
 <script lang="ts">
+import { onMount } from 'svelte';
 import { cart, type Product as CartProduct } from '$lib/cart';
 import { goto } from '$app/navigation';
 import { useI18n } from '$lib/i18n/context';
@@ -7,6 +8,8 @@ import whatsappIcon from '@iconify-icons/mdi/whatsapp';
 const { t } = useI18n();
 // locale-based selectors for product fields
 import { getLocale } from '$lib/paraglide/runtime.js';
+import { loadGooglePlaces } from '$lib/utils/googlePlaces';
+import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
   const nameOf = (p: CartProduct) => {
     const n: any = (p as any)?.nombre;
     if (!n) return '';
@@ -73,6 +76,9 @@ import { getLocale } from '$lib/paraglide/runtime.js';
   let codigo_postal = $state('');
   let notas_cliente = $state('');
 
+  let direccionInputEl: HTMLInputElement | null = null;
+  let detachAddressAutocomplete: (() => void) | null = null;
+
   let submitting = $state(false);
   let errorMsg = $state('');
   let submitAttempted = $state(false);
@@ -89,6 +95,9 @@ import { getLocale } from '$lib/paraglide/runtime.js';
       if (obj.correo_electronico) correo_electronico = obj.correo_electronico;
       if (obj.numero_whatsapp) numero_whatsapp = obj.numero_whatsapp;
       if (obj.direccion_envio) direccion_envio = obj.direccion_envio;
+      if (obj.ciudad) ciudad = obj.ciudad;
+      if (obj.departamento) departamento = obj.departamento;
+      if (obj.codigo_postal) codigo_postal = obj.codigo_postal;
       // Do not restore delivery date to avoid accidental reuse
       if (obj.notas_cliente) notas_cliente = obj.notas_cliente;
     } catch {}
@@ -101,6 +110,9 @@ import { getLocale } from '$lib/paraglide/runtime.js';
         correo_electronico,
         numero_whatsapp,
         direccion_envio,
+        ciudad,
+        departamento,
+        codigo_postal,
         // Do not persist delivery date to encourage fresh intent each time
         notas_cliente
       };
@@ -178,6 +190,224 @@ import { getLocale } from '$lib/paraglide/runtime.js';
   const total = $derived(items.reduce((sum, i) => sum + i.product.precio * i.quantity, 0));
   // No auto-add; we show a zero-qty preview when cart is empty
 
+  const BASE_QUANTITY_OPTIONS = Array.from({ length: 13 }, (_, i) => i);
+  const MAX_BASE_QUANTITY = BASE_QUANTITY_OPTIONS[BASE_QUANTITY_OPTIONS.length - 1];
+  const quantityText = $derived(() => {
+    const raw = t('carrito.checkout.labels.quantity');
+    if (raw && raw.trim().length) return raw;
+    return 'Cantidad';
+  });
+  const checkoutLog = (...args: unknown[]) => {
+    if (import.meta.env.DEV) {
+      console.info('[checkout]', ...args);
+      return;
+    }
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.getAll('debug').includes('checkout')) {
+      console.info('[checkout]', ...args);
+    }
+  };
+  type CityDirectoryEntry = { ciudad: string; departamento: string };
+  const CITY_DIRECTORY: CityDirectoryEntry[] = [
+    { ciudad: 'Bogotá', departamento: 'Cundinamarca' },
+    { ciudad: 'Medellín', departamento: 'Antioquia' },
+    { ciudad: 'Cali', departamento: 'Valle del Cauca' },
+    { ciudad: 'Barranquilla', departamento: 'Atlántico' },
+    { ciudad: 'Cartagena', departamento: 'Bolívar' },
+    { ciudad: 'Bucaramanga', departamento: 'Santander' },
+    { ciudad: 'Manizales', departamento: 'Caldas' },
+    { ciudad: 'Pereira', departamento: 'Risaralda' },
+    { ciudad: 'Cúcuta', departamento: 'Norte de Santander' },
+    { ciudad: 'Ibagué', departamento: 'Tolima' },
+    { ciudad: 'Santa Marta', departamento: 'Magdalena' },
+    { ciudad: 'Villavicencio', departamento: 'Meta' },
+    { ciudad: 'Neiva', departamento: 'Huila' },
+    { ciudad: 'Tunja', departamento: 'Boyacá' },
+    { ciudad: 'Popayán', departamento: 'Cauca' },
+    { ciudad: 'Armenia', departamento: 'Quindío' },
+    { ciudad: 'Sincelejo', departamento: 'Sucre' },
+    { ciudad: 'Montería', departamento: 'Córdoba' },
+    { ciudad: 'Pasto', departamento: 'Nariño' },
+    { ciudad: 'Valledupar', departamento: 'Cesar' }
+  ];
+  const normalizeText = (value: string): string =>
+    (value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ')
+      .toLowerCase()
+      .trim();
+  const lookupCity = (value: string): CityDirectoryEntry | undefined => {
+    const normalized = normalizeText(value);
+    if (!normalized) return undefined;
+    return CITY_DIRECTORY.find((entry) => {
+      const city = normalizeText(entry.ciudad);
+      const combined = normalizeText(`${entry.ciudad}, ${entry.departamento}`);
+      return normalized === city || normalized === combined;
+    });
+  };
+  function handleCityInputEvent(event: Event) {
+    const inputEl = event.currentTarget as HTMLInputElement;
+    const value = inputEl.value;
+    const match = lookupCity(value);
+    if (match) {
+      if (normalizeText(ciudad) !== normalizeText(match.ciudad)) {
+        ciudad = match.ciudad;
+      }
+      if (!departamento || normalizeText(departamento) !== normalizeText(match.departamento)) {
+        departamento = match.departamento;
+      }
+      if (inputEl.value !== match.ciudad) {
+        inputEl.value = match.ciudad;
+      }
+    }
+    persistToStorage();
+  }
+
+  onMount(() => {
+    if (typeof window === 'undefined') return;
+    const envKey = (PUBLIC_GOOGLE_PLACES_KEY || '').trim();
+    const runtimeKey =
+      (import.meta.env.PUBLIC_GOOGLE_PLACES_KEY as string | undefined) ??
+      (import.meta.env.PUBLIC_GOOGLE_MAPS_KEY as string | undefined) ??
+      '';
+    const apiKey = envKey || (runtimeKey || '').trim();
+    checkoutLog(
+      'Initializing Google Places autocomplete',
+      envKey ? '(static env key found)' : '(static env key missing)'
+    );
+    if (!apiKey) {
+      checkoutLog('Google Places API key missing; autocomplete disabled.');
+      return () => {
+        detachAddressAutocomplete?.();
+      };
+    }
+    let disposed = false;
+    checkoutLog('Loading Google Places SDK…');
+    loadGooglePlaces(apiKey)
+      .then((google) => {
+        if (disposed) {
+          checkoutLog('Google Places resolved after teardown; skipping setup.');
+          return;
+        }
+        if (!direccionInputEl) {
+          checkoutLog('Address input element not ready; cannot attach autocomplete.');
+          return;
+        }
+        checkoutLog('Google Places SDK ready; attaching autocomplete.');
+        const placesNs = google.maps?.places ?? {};
+        checkoutLog(
+          'places namespace keys',
+          Object.keys(placesNs ?? {}).join(',') || '(none)'
+        );
+        const AutocompleteCtor =
+          (placesNs && typeof placesNs.Autocomplete === 'function'
+            ? placesNs.Autocomplete
+            : undefined);
+
+        const handlePlace = (place: any) => {
+          checkoutLog('Autocomplete selection', place?.formatted_address ?? '(sin dirección)');
+          if (place?.formatted_address) {
+            direccion_envio = place.formatted_address;
+            if (direccionInputEl) {
+              direccionInputEl.value = place.formatted_address;
+            }
+          }
+          if (place?.address_components) {
+            type AddressComponent = { long_name?: string; types?: string[] };
+            const components = place.address_components as AddressComponent[];
+            const cityComp = components.find((component) =>
+              (component.types ?? []).includes('locality')
+            );
+            const departmentComp =
+              components.find((component) =>
+                (component.types ?? []).includes('administrative_area_level_1')
+              ) ??
+              components.find((component) => (component.types ?? []).includes('political'));
+            const postalComp = components.find((component) =>
+              (component.types ?? []).includes('postal_code')
+            );
+            if (cityComp?.long_name) {
+              ciudad = cityComp.long_name;
+            }
+            if (departmentComp?.long_name) {
+              departamento = departmentComp.long_name;
+            }
+            if (postalComp?.long_name) {
+              codigo_postal = postalComp.long_name;
+            }
+          } else {
+            checkoutLog('Autocomplete place missing address_components.');
+          }
+          persistToStorage();
+        };
+
+        if (!AutocompleteCtor) {
+          checkoutLog('Autocomplete constructor not available; aborting attachment.');
+          return;
+        }
+
+        let autocomplete: any;
+        try {
+          autocomplete = new AutocompleteCtor(direccionInputEl, {
+            componentRestrictions: { country: ['co'] },
+            fields: ['formatted_address', 'address_components'],
+            types: ['geocode']
+          });
+        } catch (err) {
+          checkoutLog('Failed to instantiate Autocomplete', err);
+          return;
+        }
+        const handleChange = () => {
+          const place = autocomplete.getPlace ? autocomplete.getPlace() : null;
+          handlePlace(place);
+        };
+        const listener =
+          typeof autocomplete.addListener === 'function'
+            ? autocomplete.addListener('place_changed', handleChange)
+            : google.maps?.event?.addListener?.(autocomplete, 'place_changed', handleChange);
+        detachAddressAutocomplete = () => {
+          if (listener?.remove) {
+            listener.remove();
+          } else if (listener && google.maps?.event?.removeListener) {
+            google.maps.event.removeListener(listener);
+          }
+          checkoutLog('Google Places listener detached.');
+          detachAddressAutocomplete = null;
+        };
+
+        checkoutLog('Google Places autocomplete attached.');
+      })
+      .catch((err) => {
+        // silence errors; autocomplete is optional
+        checkoutLog('Failed to load Google Places SDK', err);
+      });
+
+    return () => {
+      disposed = true;
+      checkoutLog('Tearing down Google Places autocomplete.');
+      detachAddressAutocomplete?.();
+    };
+  });
+  function optionsForQuantity(current: number): number[] {
+    if (current <= MAX_BASE_QUANTITY) {
+      return BASE_QUANTITY_OPTIONS;
+    }
+    return Array.from({ length: current + 1 }, (_, i) => i);
+  }
+  function updateQuantity(product: CartProduct, nextQuantity: number) {
+    if (Number.isNaN(nextQuantity)) return;
+    const existing = $cart.find((i) => i.product.id === product.id);
+    if (!existing) {
+      if (nextQuantity > 0) {
+        cart.add(product, nextQuantity);
+      }
+      return;
+    }
+    cart.setQuantity(product.id, nextQuantity);
+  }
+
   async function placeOrder() {
     if ($cart.length === 0 || submitting) return;
     submitAttempted = true;
@@ -233,12 +463,11 @@ import { getLocale } from '$lib/paraglide/runtime.js';
 {#if renderItems.length}
   <!-- Order summary first with warm backdrop and fewer lines -->
   <div class="u-full-bleed mb-8" style="background-color:#edeae6; box-shadow: inset 0 -10px 14px -12px rgba(0,0,0,0.2);">
-    <section class="mx-auto max-w-lg px-4 pt-8 pb-6">
+    <section class="mx-auto max-w-lg px-4 pt-8 pb-6 order-summary">
       <ul class="space-y-3">
-        {#each renderItems as { product } (product.id)}
-          <li class="flex items-center gap-2 sm:gap-3 w-full">
-            <!-- Image only; proportional container with generous max-width -->
-            <div class="flex-1 min-w-0 max-w-[30rem] sm:max-w-[38rem] flex flex-col items-start">
+        {#each renderItems as { product, quantity } (product.id)}
+          <li class="order-item">
+            <div class="order-item__media">
               {#if imageFor(product)}
                 <div class="preview-image-wrapper">
                   <img
@@ -250,42 +479,31 @@ import { getLocale } from '$lib/paraglide/runtime.js';
                 </div>
               {/if}
             </div>
-            <!-- Qty + price (fixed width) -->
-            <div class="pl-2 sm:pl-3 text-right flex flex-col items-end shrink-0 ml-auto" style="width: clamp(10.5rem, 36vw, 13.5rem);">
-              <div class="flex items-center gap-2 mb-2">
-                <span class="text-xs uppercase tracking-[0.22em] text-gray-500">{t('carrito.checkout.labels.quantity') ?? 'Cantidad'}</span>
-                <div class="flex items-center gap-2">
-                <button
-                  class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gray-100 hover:bg-gray-200 text-xl leading-none"
-                  aria-label="Restar"
-                  onclick={() => {
-                    const current = $cart.find((i) => i.product.id === product.id)?.quantity ?? 0;
-                    cart.setQuantity(product.id, Math.max(0, current - 1));
-                  }}
-                >-</button>
-                <span class="min-w-[2.25rem] text-xl sm:text-2xl font-bold text-gray-900 text-center">{$cart.find((i) => i.product.id === product.id)?.quantity ?? 0}</span>
-                <button
-                  class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gray-100 hover:bg-gray-200 text-xl leading-none"
-                  aria-label="Sumar"
-                  onclick={() => {
-                    const current = $cart.find((i) => i.product.id === product.id)?.quantity ?? 0;
-                    if (current === 0) {
-                      cart.add(product, 1);
-                    } else {
-                      cart.setQuantity(product.id, current + 1);
-                    }
-                  }}
-                >+</button>
+            <div class="order-item__qty">
+              <label class="order-item__qty-label">
+                <span class="order-item__title order-item__title--compact">{displayName(product)}</span>
+                <div class="order-item__select-shell">
+                  <select
+                    class="order-item__select"
+                    aria-label={`${displayName(product)} – ${quantityText}`}
+                    onchange={(event) => {
+                      const next = Number((event.currentTarget as HTMLSelectElement).value);
+                      updateQuantity(product, next);
+                    }}
+                  >
+                    {#each optionsForQuantity(quantity) as option}
+                      <option value={option} selected={option === quantity}>{option}</option>
+                    {/each}
+                  </select>
                 </div>
-              </div>
-              <div class="text-sm sm:text-base text-gray-900 font-semibold max-w-full whitespace-normal break-words leading-snug text-right">{displayName(product)}</div>
+              </label>
             </div>
           </li>
         {/each}
       </ul>
-      <div class="mt-2 pt-3 border-t border-gray-200 text-right">
-        <div class="text-sm text-gray-700">{t('pagar.total')}</div>
-        <div class="font-semibold text-gray-900 text-2xl">{fmtCOP.format(total)}</div>
+      <div class="summary-total">
+        <div class="summary-total__label">{t('pagar.total')}</div>
+        <div class="summary-total__value">{fmtCOP.format(total)}</div>
       </div>
     </section>
   </div>
@@ -323,12 +541,42 @@ import { getLocale } from '$lib/paraglide/runtime.js';
     {/if}
   </label>
 
-  <!-- Address textarea temporarily removed during pre-order period -->
+  <label class="block">
+    <span class="text-base text-gray-800">{t('pagar.direccion_envio')}</span>
+    <input
+      id="fld-direccion"
+      name="street-address"
+      type="text"
+      autocomplete="street-address"
+      class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300"
+      bind:this={direccionInputEl}
+      bind:value={direccion_envio}
+      placeholder={t('pagar.placeholder.direccion')}
+      disabled={!$cart.length}
+      oninput={persistToStorage}
+    />
+  </label>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
     <label class="block">
       <span class="text-base text-gray-800">{t('pagar.ciudad')}</span>
-      <input id="fld-ciudad" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okCiudad} bind:value={ciudad} placeholder={t('pagar.placeholder.ciudad')} disabled={!$cart.length} oninput={persistToStorage} />
+      <input
+        id="fld-ciudad"
+        name="city"
+        autocomplete="address-level2"
+        class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300"
+        class:border-red-500={submitAttempted && !validateAll().okCiudad}
+        bind:value={ciudad}
+        placeholder={t('pagar.placeholder.ciudad')}
+        disabled={!$cart.length}
+        list="checkout-city-options"
+        oninput={handleCityInputEvent}
+      />
+      <datalist id="checkout-city-options">
+        {#each CITY_DIRECTORY as option (option.ciudad)}
+          <option value={`${option.ciudad}, ${option.departamento}`}></option>
+        {/each}
+      </datalist>
       {#if submitAttempted && !validateAll().okCiudad}
         <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.requerido')}</p>
       {/if}
@@ -369,6 +617,167 @@ import { getLocale } from '$lib/paraglide/runtime.js';
   .pagar-title {
     font-family: 'Elgraine', 'Montserrat', 'Helvetica Neue', sans-serif;
     font-weight: 500;
+  }
+
+  .order-item {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.9rem, 1vw, 1.4rem);
+    width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .order-item {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: clamp(1.1rem, 1.5vw, 1.6rem);
+    }
+  }
+
+  .order-item__media {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 30rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  @media (min-width: 640px) {
+    .order-item__media {
+      max-width: 38rem;
+    }
+  }
+
+  .order-item__title {
+    font-size: clamp(0.95rem, 0.22vw + 0.98rem, 1.18rem);
+    font-weight: 500;
+    color: #2c2623;
+    line-height: 1.35;
+  }
+
+  .order-item__title--compact {
+    display: block;
+    margin-bottom: clamp(0.35rem, 0.45vw, 0.6rem);
+    text-align: right;
+  }
+
+  .order-item__qty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: clamp(0.65rem, 0.85vw, 0.95rem);
+    width: 100%;
+    min-width: 0;
+  }
+
+  @media (min-width: 640px) {
+    .order-item__qty {
+      margin-left: auto;
+      width: auto;
+      min-width: clamp(9.5rem, 30vw, 12rem);
+    }
+  }
+
+  .order-item__qty-label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: clamp(0.45rem, 0.6vw, 0.75rem);
+    width: 100%;
+    text-align: right;
+  }
+
+  .order-item__select-shell {
+    position: relative;
+    width: 100%;
+  }
+
+  .order-item__select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    border-radius: 9999px;
+    border: 2px solid #2a1f1a;
+    background-color: #ffffff;
+    background-image: none;
+    background-repeat: no-repeat;
+    padding: clamp(0.7rem, 0.9vw, 0.9rem) 2.9rem clamp(0.7rem, 0.9vw, 0.9rem) 1.25rem;
+    font-size: clamp(1.08rem, 0.35vw + 1rem, 1.35rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: #201916;
+    cursor: pointer;
+    box-shadow:
+      0 18px 32px -24px rgba(25, 15, 20, 0.5),
+      0 10px 24px -20px rgba(25, 15, 20, 0.28),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .order-item__select:focus {
+    outline: none;
+    border-color: #f3a361;
+    box-shadow:
+      0 22px 36px -22px rgba(181, 118, 62, 0.4),
+      0 0 0 3px rgba(243, 163, 97, 0.18);
+  }
+
+  .order-item__select:hover {
+    transform: translateY(-1px);
+  }
+
+  .order-item__select-shell::after {
+    content: '';
+    position: absolute;
+    right: 1.4rem;
+    top: 50%;
+    margin-top: -0.3rem;
+    border-left: 0.4rem solid transparent;
+    border-right: 0.4rem solid transparent;
+    border-top: 0.55rem solid #2a1f1a;
+    pointer-events: none;
+  }
+
+  .order-item__select::-ms-expand {
+    display: none;
+  }
+
+  .order-summary {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.2rem, 1.6vw, 1.9rem);
+  }
+
+  .summary-total {
+    width: 100%;
+    border-top: 1px solid rgba(68, 58, 52, 0.12);
+    padding-top: clamp(1rem, 1.3vw, 1.6rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: clamp(1rem, 1.1vw, 1.4rem);
+  }
+
+  .summary-total__label {
+    font-size: 0.95rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(56, 47, 42, 0.8);
+    margin-bottom: 0;
+    text-align: left;
+  }
+
+  .summary-total__value {
+    font-size: clamp(1.6rem, 0.65vw + 1.5rem, 2.1rem);
+    font-weight: 650;
+    color: #2b211b;
+    margin-left: auto;
+    text-align: right;
   }
 
   .preview-image-wrapper {
