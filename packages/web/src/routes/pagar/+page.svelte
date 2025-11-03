@@ -64,6 +64,87 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
     currency: 'COP',
     maximumFractionDigits: 0
   });
+  function fetchPredictions(input: string) {
+    if (!autocompleteService) return;
+    const placesNs = (window as any).google?.maps?.places;
+    ensureSession(placesNs);
+    autocompleteService.getPlacePredictions(
+      {
+        input,
+        componentRestrictions: { country: ['co'] },
+        sessionToken,
+        types: ['geocode'],
+        language: 'es'
+      },
+      (results: any[], status: any) => {
+        if (status !== placesNs?.PlacesServiceStatus?.OK || !results?.length) {
+          clearSuggestions();
+          return;
+        }
+        suggestions = results;
+        highlightedIndex = -1;
+        suggestionsOpen = true;
+      }
+    );
+  }
+  function selectPrediction(prediction: any) {
+    if (!prediction) return;
+    if (placesService) {
+      placesService.getDetails(
+        {
+          placeId: prediction.place_id,
+          fields: ['address_components', 'formatted_address'],
+          sessionToken
+        },
+        (place: any, status: any) => {
+          const okStatus = (window as any).google?.maps?.places?.PlacesServiceStatus?.OK;
+          if (status === okStatus && place) {
+            applyPlace(place);
+          } else {
+            checkoutLog('getDetails fallback using prediction description');
+            applyPlace({ formatted_address: prediction.description });
+          }
+          clearSuggestions();
+          sessionToken = null;
+        }
+      );
+    } else {
+      applyPlace({ formatted_address: prediction.description });
+      clearSuggestions();
+    }
+  }
+  function handleDireccionInput(event: Event) {
+    const value = (event.currentTarget as HTMLInputElement).value;
+    direccion_envio = value;
+    persistToStorage();
+    if (!value.trim()) {
+      clearSuggestions();
+      return;
+    }
+    fetchPredictions(value.trim());
+  }
+  function handleDireccionKeydown(event: KeyboardEvent) {
+    if (!suggestionsOpen || !suggestions.length) return;
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      highlightedIndex = (highlightedIndex + 1) % suggestions.length;
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      highlightedIndex = highlightedIndex <= 0 ? suggestions.length - 1 : highlightedIndex - 1;
+    } else if (event.key === 'Enter') {
+      if (highlightedIndex >= 0 && highlightedIndex < suggestions.length) {
+        event.preventDefault();
+        selectPrediction(suggestions[highlightedIndex]);
+      }
+    } else if (event.key === 'Escape') {
+      clearSuggestions();
+    }
+  }
+  function handleDireccionBlur() {
+    setTimeout(() => {
+      clearSuggestions();
+    }, 120);
+  }
 
   // Customer fields
   let nombre = $state('');
@@ -78,6 +159,12 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
 
   let direccionInputEl: HTMLInputElement | null = null;
   let detachAddressAutocomplete: (() => void) | null = null;
+  let autocompleteService: any = null;
+  let placesService: any = null;
+  let sessionToken: any = null;
+  let suggestions = $state<any[]>([]);
+  let suggestionsOpen = $state(false);
+  let highlightedIndex = $state(-1);
 
   let submitting = $state(false);
   let errorMsg = $state('');
@@ -247,6 +334,57 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
       return normalized === city || normalized === combined;
     });
   };
+  function applyPlace(place: any) {
+    checkoutLog('Autocomplete selection', place?.formatted_address ?? '(sin dirección)');
+    if (place?.formatted_address) {
+      direccion_envio = place.formatted_address;
+      if (direccionInputEl) {
+        direccionInputEl.value = place.formatted_address;
+      }
+    }
+    if (place?.address_components) {
+      type AddressComponent = { long_name?: string; types?: string[] };
+      const components = place.address_components as AddressComponent[];
+      const cityComp = components.find((component) => (component.types ?? []).includes('locality'));
+      const departmentComp =
+        components.find((component) => (component.types ?? []).includes('administrative_area_level_1')) ??
+        components.find((component) => (component.types ?? []).includes('political'));
+      const postalComp = components.find((component) => (component.types ?? []).includes('postal_code'));
+      if (cityComp?.long_name) {
+        ciudad = cityComp.long_name;
+      }
+      if (departmentComp?.long_name) {
+        departamento = departmentComp.long_name;
+      }
+      if (postalComp?.long_name) {
+        codigo_postal = postalComp.long_name;
+      }
+    } else {
+      checkoutLog('Autocomplete place missing address_components.');
+    }
+    persistToStorage();
+  }
+  const clearSuggestions = () => {
+    suggestions = [];
+    highlightedIndex = -1;
+    suggestionsOpen = false;
+  };
+  const ensureSession = (placesNs: any) => {
+    if (!sessionToken && placesNs?.AutocompleteSessionToken) {
+      sessionToken = new placesNs.AutocompleteSessionToken();
+    }
+  };
+  function handlePlaceElementChange(event: CustomEvent<any>) {
+    const element = event.currentTarget as any;
+    const detail = event.detail ?? {};
+    const place =
+      detail.place ??
+      (typeof element.getPlace === 'function' ? element.getPlace() : undefined) ??
+      element.place ??
+      element.value ??
+      null;
+    applyPlace(place);
+  }
   function handleCityInputEvent(event: Event) {
     const inputEl = event.currentTarget as HTMLInputElement;
     const value = inputEl.value;
@@ -301,83 +439,21 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
           'places namespace keys',
           Object.keys(placesNs ?? {}).join(',') || '(none)'
         );
-        const AutocompleteCtor =
-          (placesNs && typeof placesNs.Autocomplete === 'function'
-            ? placesNs.Autocomplete
-            : undefined);
-
-        const handlePlace = (place: any) => {
-          checkoutLog('Autocomplete selection', place?.formatted_address ?? '(sin dirección)');
-          if (place?.formatted_address) {
-            direccion_envio = place.formatted_address;
-            if (direccionInputEl) {
-              direccionInputEl.value = place.formatted_address;
-            }
-          }
-          if (place?.address_components) {
-            type AddressComponent = { long_name?: string; types?: string[] };
-            const components = place.address_components as AddressComponent[];
-            const cityComp = components.find((component) =>
-              (component.types ?? []).includes('locality')
-            );
-            const departmentComp =
-              components.find((component) =>
-                (component.types ?? []).includes('administrative_area_level_1')
-              ) ??
-              components.find((component) => (component.types ?? []).includes('political'));
-            const postalComp = components.find((component) =>
-              (component.types ?? []).includes('postal_code')
-            );
-            if (cityComp?.long_name) {
-              ciudad = cityComp.long_name;
-            }
-            if (departmentComp?.long_name) {
-              departamento = departmentComp.long_name;
-            }
-            if (postalComp?.long_name) {
-              codigo_postal = postalComp.long_name;
-            }
-          } else {
-            checkoutLog('Autocomplete place missing address_components.');
-          }
-          persistToStorage();
-        };
-
-        if (!AutocompleteCtor) {
-          checkoutLog('Autocomplete constructor not available; aborting attachment.');
-          return;
-        }
-
-        let autocomplete: any;
         try {
-          autocomplete = new AutocompleteCtor(direccionInputEl, {
-            componentRestrictions: { country: ['co'] },
-            fields: ['formatted_address', 'address_components'],
-            types: ['geocode']
-          });
+          autocompleteService = new placesNs.AutocompleteService();
+          placesService = new placesNs.PlacesService(document.createElement('div'));
+          checkoutLog('Places services initialised.');
         } catch (err) {
-          checkoutLog('Failed to instantiate Autocomplete', err);
-          return;
+          checkoutLog('Failed to create Places services', err);
         }
-        const handleChange = () => {
-          const place = autocomplete.getPlace ? autocomplete.getPlace() : null;
-          handlePlace(place);
-        };
-        const listener =
-          typeof autocomplete.addListener === 'function'
-            ? autocomplete.addListener('place_changed', handleChange)
-            : google.maps?.event?.addListener?.(autocomplete, 'place_changed', handleChange);
         detachAddressAutocomplete = () => {
-          if (listener?.remove) {
-            listener.remove();
-          } else if (listener && google.maps?.event?.removeListener) {
-            google.maps.event.removeListener(listener);
-          }
-          checkoutLog('Google Places listener detached.');
+          checkoutLog('Disposing autocomplete services.');
+          suggestions = [];
+          highlightedIndex = -1;
+          suggestionsOpen = false;
+          sessionToken = null;
           detachAddressAutocomplete = null;
         };
-
-        checkoutLog('Google Places autocomplete attached.');
       })
       .catch((err) => {
         // silence errors; autocomplete is optional
@@ -541,7 +617,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
     {/if}
   </label>
 
-  <label class="block">
+  <label class="block relative">
     <span class="text-base text-gray-800">{t('pagar.direccion_envio')}</span>
     <input
       id="fld-direccion"
@@ -553,8 +629,29 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
       bind:value={direccion_envio}
       placeholder={t('pagar.placeholder.direccion')}
       disabled={!$cart.length}
-      oninput={persistToStorage}
+      oninput={handleDireccionInput}
+      onkeydown={handleDireccionKeydown}
+      onblur={handleDireccionBlur}
     />
+    {#if suggestionsOpen && suggestions.length}
+      <ul class="address-suggestions">
+        {#each suggestions as suggestion, i}
+          <li>
+            <button
+              type="button"
+              class:active-suggestion={highlightedIndex === i}
+              onclick={() => selectPrediction(suggestion)}
+              onmouseenter={() => (highlightedIndex = i)}
+            >
+              {suggestion.structured_formatting?.main_text ?? suggestion.description}
+              {#if suggestion.structured_formatting?.secondary_text}
+                <span class="address-secondary">{suggestion.structured_formatting.secondary_text}</span>
+              {/if}
+            </button>
+          </li>
+        {/each}
+      </ul>
+    {/if}
   </label>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -795,5 +892,52 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
     display: block;
     width: 100%;
     height: auto;
+  }
+
+  .address-suggestions {
+    position: absolute;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    top: calc(100% + 0.35rem);
+    z-index: 30;
+    border-radius: 14px;
+    border: 1px solid rgba(43, 33, 27, 0.12);
+    background: #ffffff;
+    box-shadow: 0 16px 30px -18px rgba(30, 20, 15, 0.4);
+    padding: 0.4rem;
+    list-style: none;
+    max-height: 18rem;
+    overflow-y: auto;
+  }
+
+  .address-suggestions li + li {
+    margin-top: 0.25rem;
+  }
+
+  .address-suggestions button {
+    width: 100%;
+    text-align: left;
+    padding: 0.55rem 0.75rem;
+    border-radius: 10px;
+    background: transparent;
+    border: none;
+    font-size: 0.95rem;
+    color: #2b211b;
+    line-height: 1.35;
+    cursor: pointer;
+    transition: background-color 140ms ease, color 140ms ease;
+  }
+
+  .address-suggestions button:hover,
+  .address-suggestions button.active-suggestion {
+    background-color: rgba(243, 163, 97, 0.12);
+    color: #1f120d;
+  }
+
+  .address-secondary {
+    display: block;
+    font-size: 0.8rem;
+    color: rgba(43, 33, 27, 0.6);
+    margin-top: 0.1rem;
   }
 </style>
