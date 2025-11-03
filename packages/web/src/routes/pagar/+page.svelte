@@ -499,7 +499,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
   <div class="grid gap-3 mb-5" class:opacity-60={!$cart.length}>
   <label class="block">
     <span class="text-base text-gray-800">{t('pagar.nombre')}<span class="required-marker">*</span></span>
-    <input id="fld-nombre" name="name" autocomplete="name" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okNombre} bind:value={nombre} placeholder={t('pagar.placeholder.nombre')} disabled={!$cart.length} oninput={persistToStorage} />
+    <input id="fld-nombre" name="name" autocomplete="name" class="mt-1 w-full rounded-xl border checkout-input text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okNombre} bind:value={nombre} placeholder={t('pagar.placeholder.nombre')} disabled={!$cart.length} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okNombre}
       <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.requerido')}</p>
     {/if}
@@ -507,7 +507,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
 
   <label class="block">
     <span class="text-base text-gray-800">{t('pagar.correo')}<span class="required-marker">*</span></span>
-    <input id="fld-correo" name="email" autocomplete="email" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okEmail} type="email" bind:value={correo_electronico} placeholder={t('pagar.placeholder.correo')} disabled={!$cart.length} oninput={persistToStorage} />
+    <input id="fld-correo" name="email" autocomplete="email" class="mt-1 w-full rounded-xl border checkout-input text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okEmail} type="email" bind:value={correo_electronico} placeholder={t('pagar.placeholder.correo')} disabled={!$cart.length} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okEmail}
       <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.correo_invalido')}</p>
     {/if}
@@ -518,7 +518,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
       <Icon icon={whatsappIcon} class="h-5 w-5 text-emerald-500" aria-hidden="true" />
       {t('pagar.whatsapp')}<span class="required-marker">*</span>
     </span>
-    <input id="fld-whatsapp" name="tel" type="tel" inputmode="numeric" autocomplete="tel" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okPhone} bind:value={numero_whatsapp} placeholder={t('pagar.placeholder.whatsapp')} disabled={!$cart.length} onblur={() => { numero_whatsapp = normalizePhoneCO(numero_whatsapp); persistToStorage(); }} oninput={persistToStorage} />
+    <input id="fld-whatsapp" name="tel" type="tel" inputmode="numeric" autocomplete="tel" class="mt-1 w-full rounded-xl border checkout-input text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okPhone} bind:value={numero_whatsapp} placeholder={t('pagar.placeholder.whatsapp')} disabled={!$cart.length} onblur={() => { numero_whatsapp = normalizePhoneCO(numero_whatsapp); persistToStorage(); }} oninput={persistToStorage} />
     {#if submitAttempted && !validateAll().okPhone}
       <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.telefono_invalido')}</p>
     {/if}
@@ -557,7 +557,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
         id="fld-ciudad"
         name="city"
         autocomplete="address-level2"
-        class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300"
+        class="mt-1 w-full rounded-xl border checkout-input text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300"
         class:border-red-500={submitAttempted && !validateAll().okCiudad}
         bind:value={ciudad}
         placeholder={t('pagar.placeholder.ciudad')}
@@ -570,7 +570,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
     </label>
     <label class="block">
       <span class="text-base text-gray-800">{t('pagar.departamento')}<span class="required-marker">*</span></span>
-      <input id="fld-departamento" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDepto} bind:value={departamento} placeholder={t('pagar.placeholder.departamento')} disabled={!$cart.length || !direccion_envio} oninput={persistToStorage} />
+      <input id="fld-departamento" class="mt-1 w-full rounded-xl border checkout-input text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300" class:border-red-500={submitAttempted && !validateAll().okDepto} bind:value={departamento} placeholder={t('pagar.placeholder.departamento')} disabled={!$cart.length || !direccion_envio} oninput={persistToStorage} />
       {#if submitAttempted && !validateAll().okDepto}
         <p class="text-sm text-red-600 mt-1">{t('pagar.validacion.requerido')}</p>
       {/if}
@@ -578,7 +578,7 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
   </div>
   <label class="block">
     <span class="text-base text-gray-800">{t('pagar.codigo_postal')}<span class="required-marker">*</span></span>
-    <input id="fld-codpostal" class="mt-1 w-full rounded-xl border p-4 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus-border-amber-300" bind:value={codigo_postal} placeholder={t('pagar.placeholder.codigo_postal')} disabled={!$cart.length || !direccion_envio} oninput={persistToStorage} />
+    <input id="fld-codpostal" class="mt-1 w-full rounded-xl border checkout-input text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus-border-amber-300" bind:value={codigo_postal} placeholder={t('pagar.placeholder.codigo_postal')} disabled={!$cart.length || !direccion_envio} oninput={persistToStorage} />
   </label>
 
   <label class="block">
@@ -767,6 +767,22 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
     text-align: right;
   }
 
+  .checkout-input {
+    padding: clamp(0.85rem, 1.4vw, 1rem) clamp(1.05rem, 1.8vw, 1.25rem);
+    font-size: clamp(1.04rem, 1.8vw, 1.2rem);
+    color: #2b211b;
+  }
+
+  .checkout-input:disabled {
+    background: rgba(243, 240, 238, 0.9);
+    color: rgba(43, 33, 27, 0.55);
+    cursor: not-allowed;
+  }
+
+  .checkout-input:disabled::placeholder {
+    color: rgba(43, 33, 27, 0.35);
+  }
+
   .direccion-field {
     position: relative;
     margin-top: 0.3rem;
@@ -774,10 +790,10 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
 
   .direccion-input {
     width: 100%;
-    border-radius: 0.85rem;
+    border-radius: 0.9rem;
     border: 1px solid rgba(43, 33, 27, 0.2);
-    padding: 1rem 3rem 1rem 1.05rem;
-    font-size: 1rem;
+    padding: clamp(0.85rem, 1.4vw, 1rem) clamp(1.35rem, 2.4vw, 1.85rem) clamp(0.85rem, 1.4vw, 1rem) clamp(1.1rem, 1.8vw, 1.35rem);
+    font-size: clamp(1.06rem, 1.9vw, 1.24rem);
     color: #2b211b;
     background: #fff;
     transition: border-color 140ms ease, box-shadow 140ms ease;
@@ -790,7 +806,8 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
   }
 
   .direccion-input:disabled {
-    background: rgba(243, 240, 238, 0.8);
+    background: rgba(243, 240, 238, 0.92);
+    color: rgba(43, 33, 27, 0.55);
     cursor: not-allowed;
   }
 
@@ -821,6 +838,13 @@ import { PUBLIC_GOOGLE_PLACES_KEY } from '$env/static/public';
   .direccion-clear:focus-visible {
     outline: 2px solid rgba(243, 163, 97, 0.8);
     outline-offset: 2px;
+  }
+
+  .required-marker {
+    margin-left: 0.3rem;
+    color: #d97706;
+    font-weight: 600;
+    font-size: 0.85em;
   }
 
   .preview-image-wrapper {
